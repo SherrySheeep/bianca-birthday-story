@@ -465,7 +465,7 @@ export function Room({ onDone }: { onDone: Done }) {
   );
 }
 
-export function FlightBooking({ onDone }: { onDone: Done }) {
+export function FlightBookingLegacy({ onDone }: { onDone: Done }) {
   const [selected, setSelected] = useState("");
   const [booked, setBooked] = useState(false);
   const choose = (type: string) =>
@@ -533,7 +533,7 @@ export function FlightBooking({ onDone }: { onDone: Done }) {
   );
 }
 
-export function Packing({ onDone }: { onDone: Done }) {
+export function PackingLegacy({ onDone }: { onDone: Done }) {
   const [packed, setPacked] = useState<string[]>([]);
   const [note, setNote] = useState("");
   const add = (x: string) => setPacked((p) => (p.includes(x) ? p : [...p, x]));
@@ -584,6 +584,197 @@ export function Packing({ onDone }: { onDone: Done }) {
           <div className="suitcase-base">
             {packed.map((x) => (
               <span key={x}>{x}</span>
+            ))}
+            {!packed.length && <small>点选物品装进行李箱</small>}
+          </div>
+        </div>
+      </div>
+      {note && (
+        <div className="inline-note coral" onClick={() => setNote("")}>
+          {note}
+        </div>
+      )}
+      {complete && (
+        <div className="ready-banner">
+          <Sparkles /> 准备出发！ <Sparkles />
+        </div>
+      )}
+      {complete && <ContinueButton onClick={onDone} />}
+    </section>
+  );
+}
+
+type FareType = "经济舱" | "超经舱" | "商务舱";
+
+const fareOptions: Array<{
+  name: FareType;
+  icon: string;
+  price: string;
+  message: string;
+}> = [
+  {
+    name: "经济舱",
+    icon: "💺",
+    price: "生日特价 · $520",
+    message: "经济舱已锁定，省下的钱拿去快乐。",
+  },
+  {
+    name: "超经舱",
+    icon: "✨",
+    price: "舒服一点 · $888",
+    message: "很心动，但我们要把钱留给奶茶。",
+  },
+  {
+    name: "商务舱",
+    icon: "🥂",
+    price: "梦想价格 · $8888",
+    message: "想得美。生日预算不允许。",
+  },
+];
+
+export function FlightBooking({ onDone }: { onDone: Done }) {
+  const [selectedFare, setSelectedFare] = useState<FareType | null>(null);
+  const [booked, setBooked] = useState(false);
+  const selectedOption = fareOptions.find((fare) => fare.name === selectedFare);
+
+  return (
+    <section className="scene blue-scene">
+      <SectionHeader number="02" kicker="TICKET DESK" title="先把机票订好">
+        <p>目的地已经决定，唯一悬念是：预算能撑到哪个舱位？</p>
+      </SectionHeader>
+      <div className="route-card">
+        <div>
+          <small>出发地</small>
+          <b>{content.trip.from}</b>
+          <span>{content.trip.fromCode}</span>
+        </div>
+        <Plane />
+        <div>
+          <small>目的地</small>
+          <b>{content.trip.to}</b>
+          <span>{content.trip.toCode}</span>
+        </div>
+      </div>
+      <div className="date-row">
+        <span>去程 <b>{content.trip.departure}</b></span>
+        <span>回程 <b>{content.trip.returnDate}</b></span>
+      </div>
+      <div className="ticket-options">
+        {fareOptions.map((fare) => (
+          <button
+            key={fare.name}
+            className={selectedFare === fare.name ? "active" : ""}
+            onClick={() => setSelectedFare(fare.name)}
+          >
+            <span>{fare.icon}</span>
+            <b>{fare.name}</b>
+            <small>{fare.price}</small>
+          </button>
+        ))}
+      </div>
+      {selectedOption && <div className="inline-note">{selectedOption.message}</div>}
+      {!booked ? (
+        <StickerButton
+          disabled={selectedFare !== "经济舱"}
+          onClick={() => setBooked(true)}
+        >
+          确认订票
+        </StickerButton>
+      ) : (
+        <>
+          <BoardingPassCard />
+          <ContinueButton onClick={onDone} />
+        </>
+      )}
+    </section>
+  );
+}
+
+const packingFileNames = [
+  "Passport.png",
+  "Boarding Pass.png",
+  "Phone.png",
+  "Charger.png",
+  "Cloth.png",
+  "Gift.png",
+];
+
+const jokePackingFileNames = [
+  "Working laptop.png",
+  "Too many shoes.png",
+  "Entire Sydney.png",
+];
+
+function PackingImage({ fileName, label }: { fileName: string; label: string }) {
+  return (
+    <span className="packing-image-frame" data-file={fileName}>
+      <img
+        src={`${import.meta.env.BASE_URL}packing-items/${fileName}`}
+        alt={label}
+        onError={(event) => {
+          event.currentTarget.hidden = true;
+          event.currentTarget.parentElement?.classList.add("missing");
+        }}
+      />
+    </span>
+  );
+}
+
+export function Packing({ onDone }: { onDone: Done }) {
+  const [packed, setPacked] = useState<string[]>([]);
+  const [note, setNote] = useState("");
+  const add = (item: string) =>
+    setPacked((current) =>
+      current.includes(item) ? current : [...current, item],
+    );
+  const complete = packed.length === content.requiredItems.length;
+
+  return (
+    <section className="scene peach-scene">
+      <SectionHeader
+        number="03"
+        kicker="PACK WITH ME"
+        title="行李箱：请合理使用空间"
+      >
+        <p>该带的一个别落，不该带的……也许可以先问问箱子。</p>
+      </SectionHeader>
+      <div className="packing-layout">
+        <div className="items-grid">
+          {content.requiredItems.map((item, index) => (
+            <button
+              disabled={packed.includes(item)}
+              onClick={() => add(item)}
+              key={item}
+            >
+              <PackingImage fileName={packingFileNames[index]} label={item} />
+              <span>{item}</span>
+              {packed.includes(item) && <Check />}
+            </button>
+          ))}
+          {content.sillyItems.map((item, index) => (
+            <button
+              className="joke-item"
+              onClick={() => setNote(item.reply)}
+              key={item.name}
+            >
+              <PackingImage
+                fileName={jokePackingFileNames[index]}
+                label={item.name}
+              />
+              <span>{item.name}</span>
+            </button>
+          ))}
+        </div>
+        <div className={`open-suitcase ${complete ? "ready" : ""}`}>
+          <div className="suitcase-lid bianca-id-slot">
+            <img
+              src={`${import.meta.env.BASE_URL}packing-items/Bianca ID.png`}
+              alt="Bianca 角色卡"
+            />
+          </div>
+          <div className="suitcase-base">
+            {packed.map((item) => (
+              <span key={item}>{item}</span>
             ))}
             {!packed.length && <small>点选物品装进行李箱</small>}
           </div>

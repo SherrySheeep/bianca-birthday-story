@@ -509,10 +509,16 @@ main {
   cursor: pointer;
   box-shadow: 3px 3px 0;
 }
-.ticket-options button:hover,
 .ticket-options .active {
   background: #fff0bc;
   transform: translateX(3px);
+}
+
+@media (hover: hover) {
+  .ticket-options button:hover {
+    background: #fff0bc;
+    transform: translateX(3px);
+  }
 }
 .ticket-options button span {
   font-size: 1.6rem;
@@ -2155,6 +2161,47 @@ main {
   background-position: center;
 }
 
+.packing-image-frame {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 58px;
+}
+
+.packing-image-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(2px 3px 0 #fff);
+}
+
+.packing-image-frame.missing {
+  border: 2px dashed #b78c7e;
+  border-radius: 10px;
+  background: #fff8e8;
+}
+
+.packing-image-frame.missing::after {
+  content: attr(data-file);
+  padding: 4px;
+  color: #8d665d;
+  font-size: 0.62rem;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.bianca-id-slot {
+  padding: 8px;
+}
+
+.bianca-id-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(2px 3px 0 #fff8);
+}
+
 /*
  * Responsive room canvas
  *
@@ -2170,8 +2217,8 @@ main {
 .clean-desk {
   left: 1%;
   bottom: -1%;
-  width: 57.35%;
-  height: 48.08%;
+  width: 74.56%;
+  height: 62.5%;
 }
 
 .desk-lamp {
