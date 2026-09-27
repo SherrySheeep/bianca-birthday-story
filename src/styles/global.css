@@ -2154,3 +2154,70 @@ main {
   background-image: url("/desk-items/plant.png");
   background-position: center;
 }
+
+/*
+ * Responsive room canvas
+ *
+ * Keep every room sticker on the same 680 × 520 coordinate system.
+ * Widths and heights are percentages of that canvas, so phones scale the
+ * whole composition instead of changing the relative sticker positions.
+ */
+.room-view {
+  height: auto;
+  aspect-ratio: 17 / 13;
+}
+
+.clean-desk {
+  left: 1%;
+  bottom: -1%;
+  width: 57.35%;
+  height: 48.08%;
+}
+
+.desk-lamp {
+  width: 23.08%;
+  height: 40%;
+}
+
+.desk-books {
+  width: 22.05%;
+  height: 24%;
+}
+
+.desk-laptop-front {
+  width: 32.31%;
+  height: 37.6%;
+}
+
+.desk-coffee {
+  width: 15.9%;
+  height: 26.4%;
+}
+
+.desk-plant {
+  width: 20%;
+  height: 37.6%;
+}
+
+.wall-map {
+  width: 15.88%;
+  height: 18.46%;
+}
+
+.wall-map span {
+  font-size: clamp(1.35rem, 5vw, 2.5rem);
+}
+
+.wall-map b {
+  font-size: clamp(0.72rem, 2.4vw, 1.15rem);
+}
+
+.room-window.opera-sticker {
+  width: 21.32%;
+  height: 24.62%;
+}
+
+.room-object.suitcase {
+  width: 22.06%;
+  height: 33.08%;
+}
