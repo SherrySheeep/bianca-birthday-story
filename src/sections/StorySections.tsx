@@ -27,6 +27,7 @@ import {
   SectionHeader,
   StickerButton,
 } from "../components/UI";
+import { CheckInDialogue } from "../components/CheckInDialogue";
 
 type Done = () => void;
 export function Cover({ onDone }: { onDone: Done }) {
@@ -802,8 +803,13 @@ export function Airport({ onDone }: { onDone: Done }) {
     ["登机口", "到达登机口！难得没有一路狂奔。"],
   ];
   const [done, setDone] = useState<number[]>([]);
+  const [checkInOpen, setCheckInOpen] = useState(false);
   const next = (i: number) => {
-    if (i === 0 || done.includes(i - 1))
+    if (i === 0) {
+      if (!done.includes(0)) setCheckInOpen(true);
+      return;
+    }
+    if (done.includes(i - 1))
       setDone((d) => (d.includes(i) ? d : [...d, i]));
   };
   return (
@@ -837,6 +843,14 @@ export function Airport({ onDone }: { onDone: Done }) {
       </div>
       {done.length === 3 && (
         <ContinueButton label="可以登机啦 ✈" onClick={onDone} />
+      )}
+      {checkInOpen && (
+        <CheckInDialogue
+          onComplete={() => {
+            setDone((current) => current.includes(0) ? current : [...current, 0]);
+            setCheckInOpen(false);
+          }}
+        />
       )}
     </section>
   );

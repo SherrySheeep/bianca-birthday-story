@@ -2191,15 +2191,39 @@ main {
  * scale() 控制大小；translateX/translateY 控制左右和上下位置。
  */
 .packing-image-frame[data-file="Phone.png"] img {
-  transform: scale(0.94);
+  transform: scale(0.94) translateY(-10px);
 }
 
 .packing-image-frame[data-file="Passport.png"] img {
-  transform: translateY(-3px);
+  transform:  translateX(-1px) translateY(-7px);
+}
+
+.packing-image-frame[data-file="Charger.png"] img {
+  transform: translateX(-2px) translateY(-5px);
+}
+
+.packing-image-frame[data-file="Cloth.png"] img {
+  transform: translateX(-1px) translateY(-5px);
+}
+
+.packing-image-frame[data-file="Gift.png"] img {
+  transform: translateX(-1px) translateY(-5px);
+}
+
+.packing-image-frame[data-file="Working laptop.png"] img {
+  transform: translateX(-1px) translateY(-6px);
+}
+
+.packing-image-frame[data-file="Too many shoes.png"] img {
+  transform: translateX(-1px) translateY(-6px);
+}
+
+.packing-image-frame[data-file="Entire Sydney.png"] img {
+  transform: scale(1.1) translateY(-2px);
 }
 
 .bianca-id-slot {
-  padding: 8px;
+  padding: 3px;
 }
 
 .bianca-id-slot img {
@@ -2275,3 +2299,238 @@ main {
   width: 22.06%;
   height: 33.08%;
 }
+
+/* Chapter 4: check-in visual novel */
+.checkin-overlay {
+  position: fixed;
+  z-index: 120;
+  inset: 0;
+  overflow-y: auto;
+  padding: 14px;
+  background: rgba(38, 54, 78, 0.72);
+  backdrop-filter: blur(8px);
+}
+
+.checkin-scene {
+  width: min(100%, 760px);
+  min-height: calc(100dvh - 28px);
+  margin: auto;
+  display: grid;
+  grid-template-rows: minmax(310px, 54dvh) auto;
+  overflow: hidden;
+  border: 3px solid #2c3853;
+  border-radius: 28px;
+  background: #ffe9a9;
+  box-shadow: 10px 12px 0 rgba(29, 38, 57, 0.32);
+}
+
+.checkin-stage {
+  position: relative;
+  overflow: hidden;
+  min-height: 310px;
+  background: radial-gradient(circle at 18% 24%, #fff 0 3px, transparent 4px), linear-gradient(155deg, #bfe8ff 0 58%, #e9f7ff 58% 100%);
+}
+
+.checkin-airport-sign {
+  position: absolute;
+  z-index: 4;
+  top: 16px;
+  left: 18px;
+  padding: 7px 13px;
+  border: 2px solid #263650;
+  border-radius: 999px;
+  background: #fff7da;
+  color: #263650;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  transform: rotate(-2deg);
+}
+
+.checkin-counter-image,
+.checkin-counter-placeholder {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  bottom: -2%;
+  width: 92%;
+  height: 47%;
+  transform: translateX(-50%);
+}
+
+.checkin-counter-image {
+  object-fit: contain;
+  object-position: center bottom;
+  filter: drop-shadow(0 8px 4px rgba(54, 48, 43, 0.2));
+}
+
+.checkin-counter-placeholder {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  border: 3px dashed #db8877;
+  border-radius: 24px 24px 0 0;
+  background: #ffd3a5;
+  color: #86534d;
+  font-weight: 900;
+  text-align: center;
+}
+
+.checkin-stage.has-counter .checkin-counter-placeholder { display: none; }
+
+.checkin-portrait,
+.checkin-portrait-placeholder {
+  position: absolute;
+  z-index: 2;
+  right: 4%;
+  bottom: 17%;
+  width: 58%;
+  height: 83%;
+}
+
+.checkin-portrait {
+  object-fit: contain;
+  object-position: right bottom;
+  animation: portrait-pop 0.28s ease-out;
+  filter: drop-shadow(4px 7px 0 rgba(255, 255, 255, 0.62));
+}
+
+.checkin-portrait.missing { display: none; }
+.checkin-stage.has-portrait .checkin-portrait-placeholder { display: none; }
+
+.checkin-portrait-placeholder {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  border: 2px dashed #6979a8;
+  border-radius: 50% 50% 18px 18px;
+  background: rgba(151, 167, 222, 0.35);
+  color: #48557c;
+  font-weight: 900;
+  text-align: center;
+}
+
+.checkin-dialogue-card {
+  position: relative;
+  z-index: 5;
+  min-height: 260px;
+  padding: 27px 20px 22px;
+  border-top: 3px solid #2c3853;
+  background: #fffaf0;
+  animation: dialogue-in 0.2s ease-out;
+}
+
+.dialogue-speaker {
+  position: absolute;
+  top: -18px;
+  left: 18px;
+  padding: 7px 16px;
+  border: 2px solid #2c3853;
+  border-radius: 12px;
+  background: #ff8f7d;
+  color: #fff;
+  font-weight: 900;
+  box-shadow: 3px 3px 0 #2c3853;
+}
+
+.speaker-Bianca { background: #5da9dd; }
+.speaker-旁白 { background: #76a96b; }
+
+.checkin-dialogue-card p {
+  min-height: 70px;
+  margin: 6px 0 18px;
+  color: #302f3f;
+  font-size: clamp(1rem, 3.6vw, 1.15rem);
+  font-weight: 700;
+  line-height: 1.75;
+  white-space: pre-line;
+}
+
+.dialogue-options { display: grid; gap: 9px; }
+
+.dialogue-options button,
+.dialogue-next {
+  width: 100%;
+  border: 2px solid #2c3853;
+  border-radius: 14px;
+  padding: 12px 15px;
+  background: #fff;
+  color: #302f3f;
+  font: inherit;
+  font-weight: 850;
+  text-align: left;
+  box-shadow: 3px 4px 0 #2c3853;
+  cursor: pointer;
+  transition: transform 0.16s, background 0.16s;
+}
+
+.dialogue-options button:active,
+.dialogue-next:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 2px 0 #2c3853;
+}
+
+.dialogue-next {
+  width: auto;
+  min-width: 120px;
+  float: right;
+  background: #ffe071;
+  text-align: center;
+}
+
+.traveler-scan {
+  min-height: 160px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  border: 2px dashed #5c6687;
+  border-radius: 16px;
+  background: #263650;
+  color: #d7f7ff;
+  font-family: monospace;
+  letter-spacing: 0.13em;
+}
+
+.traveler-scan span { animation: tag-old 1.2s forwards; }
+.traveler-scan b { margin-top: -1.25em; opacity: 0; animation: tag-new 1.2s 0.65s forwards; }
+
+.checkin-complete {
+  width: fit-content;
+  margin: 4px auto 18px;
+  padding: 9px 18px;
+  border: 2px solid #376a48;
+  border-radius: 999px;
+  background: #d8f1c9;
+  color: #376a48;
+  font-weight: 950;
+}
+
+.return-airport { background: #ff907d; color: #fff; }
+
+@media (hover: hover) {
+  .dialogue-options button:hover { background: #fff0ae; transform: translateY(-2px); }
+}
+
+@media (min-width: 700px) {
+  .checkin-overlay { padding: 24px; }
+  .checkin-scene { min-height: calc(100dvh - 48px); grid-template-rows: minmax(390px, 60dvh) auto; }
+  .checkin-dialogue-card { padding: 32px 34px 26px; }
+  .dialogue-options { grid-template-columns: repeat(3, 1fr); }
+}
+
+@keyframes portrait-pop {
+  from { opacity: 0; transform: translateX(12px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes dialogue-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes tag-old {
+  0%, 55% { opacity: 1; }
+  65%, 100% { opacity: 0; transform: translateY(-5px); }
+}
+
+@keyframes tag-new { to { opacity: 1; } }
