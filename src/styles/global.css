@@ -2589,13 +2589,13 @@ main {
   .checkin-counter-placeholder {
     left: 30%;
     bottom: 0;
-    width: 100%;
-    height: 120%;
+    width: 150%;
+    height: 150%;
   }
 
   .checkin-portrait,
   .checkin-portrait-placeholder {
-    right: 1%;
+    right: 5%;
     bottom: 25%;
     width: 54%;
     height: 74%;
