@@ -2587,16 +2587,16 @@ main {
 
   .checkin-counter-image,
   .checkin-counter-placeholder {
-    left: 30%;
-    bottom: 0;
-    width: 150%;
-    height: 150%;
+    left: 45%;
+    bottom: 5%;
+    width: 90%;
+    height: 100%;
   }
 
   .checkin-portrait,
   .checkin-portrait-placeholder {
     right: 5%;
-    bottom: 25%;
+    bottom: 18%;
     width: 54%;
     height: 74%;
   }
