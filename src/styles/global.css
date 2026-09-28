@@ -195,6 +195,19 @@ main {
   text-decoration: underline;
   cursor: pointer;
 }
+
+.chapter-back {
+  position: fixed;
+  top: 16px;
+  left: 14px;
+  z-index: 21;
+  border: 0;
+  background: transparent;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
 .cover {
   background: linear-gradient(145deg, #fff5d4 0 47%, #ffbba5 47%);
   padding-top: 55px;
@@ -1871,9 +1884,17 @@ main {
   top: 7%;
   width: 108px;
   height: 96px;
-  background: #fff1b9;
+  background: transparent;
   transform: rotate(3deg);
-  border-style: dashed;
+  border: 0;
+  padding: 0;
+}
+
+.wall-map img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(3px 4px 0 rgba(69, 50, 47, 0.22));
 }
 .wall-map span {
   font-size: 2.5rem;
@@ -2534,3 +2555,53 @@ main {
 }
 
 @keyframes tag-new { to { opacity: 1; } }
+
+/* Phone-only sizing: desktop proportions above stay unchanged. */
+@media (max-width: 699px) {
+  .items-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 9px;
+  }
+
+  .items-grid button {
+    width: 100%;
+    min-height: 0;
+    aspect-ratio: 1 / 1;
+    padding: 6px;
+  }
+
+  .packing-image-frame {
+    height: 100%;
+  }
+
+  .checkin-overlay {
+    padding: 8px;
+  }
+
+  .checkin-scene {
+    width: 100%;
+    min-height: calc(100dvh - 16px);
+    grid-template-rows: minmax(285px, 48dvh) auto;
+    border-radius: 20px;
+  }
+
+  .checkin-counter-image,
+  .checkin-counter-placeholder {
+    left: 50%;
+    bottom: 0;
+    width: 86%;
+    height: 40%;
+  }
+
+  .checkin-portrait,
+  .checkin-portrait-placeholder {
+    right: -3%;
+    bottom: 21%;
+    width: 54%;
+    height: 74%;
+  }
+
+  .checkin-dialogue-card {
+    min-height: 250px;
+  }
+}

@@ -204,8 +204,10 @@ export function Room({ onDone }: { onDone: Done }) {
           aria-label="打开地图"
           onClick={() => setPanel("map")}
         >
-          <span>🌏</span>
-          <b>地图</b>
+          <img
+            src={`${import.meta.env.BASE_URL}room-items/Worldmap1.png`}
+            alt="世界地图贴纸"
+          />
         </button>
         <button
           className="room-object image-sticker suitcase"
