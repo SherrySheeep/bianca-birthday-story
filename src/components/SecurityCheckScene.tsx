@@ -40,7 +40,7 @@ export function SecurityCheckScene({ onComplete }: Props) {
     return () => window.clearTimeout(timer);
   }, [phase, monologueIndex]);
 
-  const portraitFile = node?.portrait === 3 ? "AnjianFelinsi3.png" : `AnjianFeilinsi${node?.portrait ?? 1}.png`;
+  const portraitFile = node?.portrait === 3 ? "AnjianFeilinsi3.png" : `AnjianFeilinsi${node?.portrait ?? 1}.png`;
 
   return (
     <div className="security-overlay" role="dialog" aria-modal="true" aria-label="机场安检">
