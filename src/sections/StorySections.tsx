@@ -745,9 +745,9 @@ export function Packing({ onDone }: { onDone: Done }) {
               disabled={packed.includes(item)}
               onClick={() => add(item)}
               key={item}
+              aria-label={`装入${item}`}
             >
               <PackingImage fileName={packingFileNames[index]} label={item} />
-              <span>{item}</span>
               {packed.includes(item) && <Check />}
             </button>
           ))}
@@ -756,12 +756,12 @@ export function Packing({ onDone }: { onDone: Done }) {
               className="joke-item"
               onClick={() => setNote(item.reply)}
               key={item.name}
+              aria-label={item.name}
             >
               <PackingImage
                 fileName={jokePackingFileNames[index]}
                 label={item.name}
               />
-              <span>{item.name}</span>
             </button>
           ))}
         </div>

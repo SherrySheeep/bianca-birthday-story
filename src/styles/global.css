@@ -2183,12 +2183,19 @@ main {
 }
 
 .packing-image-frame.missing::after {
-  content: attr(data-file);
-  padding: 4px;
-  color: #8d665d;
-  font-size: 0.62rem;
-  font-weight: 800;
-  overflow-wrap: anywhere;
+  content: "";
+}
+
+/*
+ * 第三章单张贴纸微调区
+ * scale() 控制大小；translateX/translateY 控制左右和上下位置。
+ */
+.packing-image-frame[data-file="Phone.png"] img {
+  transform: scale(0.94);
+}
+
+.packing-image-frame[data-file="Passport.png"] img {
+  transform: translateY(-3px);
 }
 
 .bianca-id-slot {
