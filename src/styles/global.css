@@ -299,6 +299,7 @@ main {
 }
 .room-view {
   position: relative;
+  --room-floor-height: 24%;
   width: min(100%, 680px);
   height: 500px;
   margin: auto;
@@ -314,7 +315,7 @@ main {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 19%;
+  height: var(--room-floor-height);
   background: repeating-linear-gradient(
     90deg,
     #d09b63 0 48px,
@@ -1888,6 +1889,10 @@ main {
   transform: rotate(3deg);
   border: 0;
   padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+  appearance: none;
 }
 
 .wall-map img {
@@ -2556,6 +2561,179 @@ main {
 
 @keyframes tag-new { to { opacity: 1; } }
 
+/* Chapter 4: baggage security scene */
+.security-overlay {
+  position: fixed;
+  z-index: 125;
+  inset: 0;
+  overflow-y: auto;
+  padding: 18px;
+  background: rgba(38, 54, 78, 0.76);
+  backdrop-filter: blur(8px);
+}
+
+.security-scene {
+  width: min(100%, 800px);
+  min-height: calc(100dvh - 36px);
+  margin: auto;
+  display: grid;
+  grid-template-rows: minmax(390px, 61dvh) auto;
+  overflow: hidden;
+  border: 3px solid #29354d;
+  border-radius: 28px;
+  background: #fff7df;
+  box-shadow: 10px 12px 0 rgba(29, 38, 57, 0.32);
+}
+
+.security-stage {
+  position: relative;
+  overflow: hidden;
+  min-height: 390px;
+  background: linear-gradient(160deg, #d4efff 0 64%, #f6d9a8 64% 100%);
+}
+
+.security-task {
+  position: absolute;
+  z-index: 8;
+  top: 16px;
+  left: 18px;
+  display: grid;
+  gap: 2px;
+  max-width: 70%;
+  padding: 9px 14px;
+  border: 2px solid #29354d;
+  border-radius: 14px;
+  background: #fff9df;
+  box-shadow: 3px 4px 0 #29354d;
+}
+
+.security-task span { font-size: 0.76rem; }
+
+.security-machine,
+.security-machine-placeholder {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  bottom: 2%;
+  width: 88%;
+  height: 72%;
+  transform: translateX(-50%);
+}
+
+.security-machine {
+  object-fit: contain;
+  object-position: center bottom;
+  filter: drop-shadow(0 8px 5px rgba(44, 49, 59, 0.22));
+}
+
+.security-machine-placeholder,
+.security-staff-placeholder {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  border: 3px dashed #7fa1b5;
+  border-radius: 22px;
+  background: rgba(208, 238, 250, 0.82);
+  color: #4d6879;
+  font-weight: 900;
+  text-align: center;
+}
+
+.security-stage.has-security-machine .security-machine-placeholder,
+.security-stage.has-security-staff .security-staff-placeholder {
+  display: none;
+}
+
+.upright-luggage {
+  position: absolute;
+  z-index: 7;
+  left: 8%;
+  bottom: 4%;
+  width: 25%;
+  height: 48%;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  animation: luggage-invite 1s infinite alternate ease-in-out;
+}
+
+.upright-luggage img,
+.moving-luggage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(3px 5px 0 rgba(255, 255, 255, 0.75));
+}
+
+.upright-luggage span {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  bottom: -2px;
+  width: max-content;
+  transform: translateX(-50%);
+  padding: 5px 9px;
+  border: 2px solid #29354d;
+  border-radius: 999px;
+  background: #ffe270;
+  color: #29354d;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.moving-luggage {
+  position: absolute;
+  z-index: 5;
+  width: 31%;
+  height: 29%;
+  transition: none;
+}
+
+.moving-luggage.frame-1 { left: 13%; bottom: 20%; transform: scale(1); }
+.moving-luggage.frame-2 { left: 34%; bottom: 23%; transform: scale(0.84); }
+.moving-luggage.frame-3 { left: 51%; bottom: 27%; transform: scale(0.67); }
+
+.security-staff,
+.security-staff-placeholder {
+  position: absolute;
+  z-index: 4;
+  right: 1%;
+  bottom: 8%;
+  width: 46%;
+  height: 77%;
+}
+
+.security-staff {
+  object-fit: contain;
+  object-position: right bottom;
+  filter: drop-shadow(4px 6px 0 rgba(255, 255, 255, 0.7));
+  animation: portrait-pop 0.25s ease-out;
+}
+
+.security-dialogue-card {
+  position: relative;
+  z-index: 9;
+  min-height: 250px;
+  padding: 28px 24px 24px;
+  border-top: 3px solid #29354d;
+  background: #fffaf0;
+  animation: dialogue-in 0.2s ease-out;
+}
+
+.security-dialogue-card p {
+  min-height: 78px;
+  margin: 7px 0 18px;
+  color: #302f3f;
+  font-size: clamp(1rem, 3.6vw, 1.15rem);
+  font-weight: 700;
+  line-height: 1.72;
+  white-space: pre-line;
+}
+
+@keyframes luggage-invite {
+  to { transform: translateY(-7px) rotate(1.5deg); }
+}
+
 /* Phone-only sizing: desktop proportions above stay unchanged. */
 @media (max-width: 699px) {
   .items-grid {
@@ -2603,5 +2781,48 @@ main {
 
   .checkin-dialogue-card {
     min-height: 250px;
+  }
+
+  .security-overlay { padding: 8px; }
+
+  .security-scene {
+    width: 100%;
+    min-height: calc(100dvh - 16px);
+    grid-template-rows: minmax(290px, 49dvh) auto;
+    border-radius: 20px;
+  }
+
+  .security-stage { min-height: 290px; }
+
+  .security-machine,
+  .security-machine-placeholder {
+    bottom: 1%;
+    width: 94%;
+    height: 63%;
+  }
+
+  .upright-luggage {
+    left: 4%;
+    bottom: 4%;
+    width: 30%;
+    height: 43%;
+  }
+
+  .moving-luggage { width: 35%; height: 27%; }
+  .moving-luggage.frame-1 { left: 7%; bottom: 17%; }
+  .moving-luggage.frame-2 { left: 31%; bottom: 20%; }
+  .moving-luggage.frame-3 { left: 51%; bottom: 23%; }
+
+  .security-staff,
+  .security-staff-placeholder {
+    right: -4%;
+    bottom: 8%;
+    width: 54%;
+    height: 72%;
+  }
+
+  .security-dialogue-card {
+    min-height: 255px;
+    padding: 27px 18px 20px;
   }
 }

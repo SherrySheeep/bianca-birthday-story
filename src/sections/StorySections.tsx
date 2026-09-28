@@ -28,6 +28,7 @@ import {
   StickerButton,
 } from "../components/UI";
 import { CheckInDialogue } from "../components/CheckInDialogue";
+import { SecurityCheckScene } from "../components/SecurityCheckScene";
 
 type Done = () => void;
 export function Cover({ onDone }: { onDone: Done }) {
@@ -207,6 +208,7 @@ export function Room({ onDone }: { onDone: Done }) {
           <img
             src={`${import.meta.env.BASE_URL}room-items/Worldmap1.png`}
             alt="世界地图贴纸"
+            onError={(event) => { event.currentTarget.hidden = true; }}
           />
         </button>
         <button
@@ -806,9 +808,14 @@ export function Airport({ onDone }: { onDone: Done }) {
   ];
   const [done, setDone] = useState<number[]>([]);
   const [checkInOpen, setCheckInOpen] = useState(false);
+  const [securityOpen, setSecurityOpen] = useState(false);
   const next = (i: number) => {
     if (i === 0) {
       if (!done.includes(0)) setCheckInOpen(true);
+      return;
+    }
+    if (i === 1 && done.includes(0)) {
+      if (!done.includes(1)) setSecurityOpen(true);
       return;
     }
     if (done.includes(i - 1))
@@ -851,6 +858,14 @@ export function Airport({ onDone }: { onDone: Done }) {
           onComplete={() => {
             setDone((current) => current.includes(0) ? current : [...current, 0]);
             setCheckInOpen(false);
+          }}
+        />
+      )}
+      {securityOpen && (
+        <SecurityCheckScene
+          onComplete={() => {
+            setDone((current) => current.includes(1) ? current : [...current, 1]);
+            setSecurityOpen(false);
           }}
         />
       )}
