@@ -1,7 +1,7 @@
 export type CheckInPortrait = 1 | 2 | 3 | 4;
 export type CheckInOption = { label: string; next: string };
 export type CheckInNode = {
-  speaker?: "菲林斯" | "Bianca" | "旁白" | "系统";
+  speaker?: "工作人员" | "菲林斯" | "Bianca" | "旁白" | "系统";
   text: string;
   portrait?: CheckInPortrait;
   options?: CheckInOption[];
@@ -15,7 +15,8 @@ const q = (text: string, portrait: CheckInPortrait, options: CheckInOption[]): C
 
 export const checkInStartNode = "opening";
 export const checkInDialogue: Record<string, CheckInNode> = {
-  opening: { speaker: "菲林斯", text: "下午好。护照和机票，请。", portrait: 1, options: [{ label: "给。（交出护照）", next: "handover" }] },
+  opening: { speaker: "工作人员", text: "下午好。护照和机票，请。", portrait: 1, options: [{ label: "菲林斯！？", next: "flinsIgnore" }] },
+  flinsIgnore: n("菲林斯", "……请给我您的护照和机票。", 1, "handover"),
   handover: n("旁白", "Bianca 把护照和机票递了过去。", 1, "recognise"),
   recognise: n("菲林斯", "……Bianca。\n悉尼出发。\n又要旅行？", 1, "q1"),
   q1: q("那么，例行问题。\n这次出行的主要目的是什么？", 1, [
@@ -24,7 +25,7 @@ export const checkInDialogue: Record<string, CheckInNode> = {
   q1a: n("菲林斯", "很标准的回答。\n至少听起来不像是临时起意。", 1, "q2"),
   q1b: n("菲林斯", "……非常诚实。\n我开始替你的行李额度担心了。", 2, "q2"),
   q1c: n("菲林斯", "理直气壮。\n看来这趟旅程不需要什么更深刻的理由。", 2, "q2"),
-  q2: q("嗯……\n系统显示，你今年的出行记录似乎不少。\n\n经常旅行？", 1, [
+  q2: q("嗯……\n系统显示，你今年的出行记录似乎不少。\n经常旅行？", 1, [
     { label: "还好吧，也就到处跑跑。", next: "q2a1" }, { label: "今年确实飞得有点多。", next: "q2b1" }, { label: "我都回国两次了。", next: "q2c1" },
   ]),
   q2a1: n("菲林斯", "“也就到处跑跑。”\n真是很有旅行者风范的说法。", 2, "q2a2"),
@@ -35,7 +36,7 @@ export const checkInDialogue: Record<string, CheckInNode> = {
   q2c2: n("菲林斯", "……倒也符合旅行者的习惯。", 3, "q2c3"),
   q2c3: n("Bianca", "什么？", 3, "q2c4"),
   q2c4: n("菲林斯", "我说，符合经常旅行的人的习惯。\n请不要在意。", 4, "q3"),
-  q3: q("最后一项常规确认。\n\n如果只能随身保留一样东西，你会选什么？", 1, [
+  q3: q("最后一项常规确认。\n如果只能随身保留一样东西，你会选什么？", 1, [
     { label: "护照。", next: "q3a1" }, { label: "手机。", next: "q3b1" }, { label: "钱包。", next: "q3c1" },
   ]),
   q3a1: n("菲林斯", "理智的选择。\n没有它，有些“世界”确实进不去。", 3, "q3a2"),
@@ -51,7 +52,7 @@ export const checkInDialogue: Record<string, CheckInNode> = {
   travelerTag: { speaker: "系统", text: "", portrait: 3, systemTag: true, next: "strange4" },
   strange4: n("菲林斯", "旅行者吗？\n有意思。", 3, "strange5"),
   strange5: n("菲林斯", "……频繁旅行者。\n系统翻译偶尔不太准确。", 4, "q4"),
-  q4: q("还有一个问题。\n\n假如——我只是说假如——\n你的航班最终抵达的地方，和机票上写的不一样。\n\n你会怎么做？", 3, [
+  q4: q("还有一个问题。\n假如——我只是说假如——\n你的航班最终抵达的地方，和机票上写的不一样。\n你会怎么做？", 3, [
     { label: "先下飞机再说。", next: "q4a1" }, { label: "先看看那里有什么好玩的。", next: "q4b1" }, { label: "那我要投诉航空公司。", next: "q4c1" },
   ]),
   q4a1: n("菲林斯", "很好。", 2, "q4a2"),
@@ -62,7 +63,7 @@ export const checkInDialogue: Record<string, CheckInNode> = {
   q4c2: n("菲林斯", "不过如果那里没有航空公司呢？", 3, "q4c3"),
   q4c3: n("Bianca", "啥？", 3, "q4c4"),
   q4c4: n("菲林斯", "……我的意思是，\n如果是代码共享航班。", 4, "q5"),
-  q5: q("最后一个问题。\n\n你相信这个世界之外，\n还有别的世界吗？", 3, [
+  q5: q("最后一个问题。\n你相信这个世界之外，\n还有别的世界吗？", 3, [
     { label: "你们值机现在还问这个？", next: "q5a1" }, { label: "不信。", next: "q5b1" }, { label: "为什么不信？", next: "q5c1" },
   ]),
   q5a1: n("菲林斯", "……", 4, "q5a2"),
@@ -74,7 +75,7 @@ export const checkInDialogue: Record<string, CheckInNode> = {
   q5c2: n("菲林斯", "那么希望你抵达之后，也还能这么回答。", 3, "q5c3"),
   q5c3: n("Bianca", "抵达哪里？", 3, "q5c4"),
   q5c4: n("菲林斯", "中国。\n……当然是中国。", 4, "ending1"),
-  ending1: n("菲林斯", "好了。\n\n行李已经托运。\n登机牌收好。\n\n接下来去安检，然后前往登机口。", 1, "ending2"),
+  ending1: n("菲林斯", "好了。\n行李已经托运。\n登机牌收好。\n接下来去安检，然后前往登机口。", 1, "ending2"),
   ending2: n("菲林斯", "祝你旅途愉快，旅行者。", 3, "ending3"),
   ending3: n("Bianca", "嗯？", 3, "ending4"),
   ending4: n("菲林斯", "……旅客。\n我说的是旅客。", 4, "complete"),

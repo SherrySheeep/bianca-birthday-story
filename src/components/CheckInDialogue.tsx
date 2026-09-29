@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { checkInDialogue, checkInStartNode } from "../data/checkInDialogue";
 
 type Props = { onComplete: () => void };
@@ -6,8 +6,17 @@ const asset = (fileName: string) => `${import.meta.env.BASE_URL}airport-checkin/
 
 export function CheckInDialogue({ onComplete }: Props) {
   const [nodeId, setNodeId] = useState(checkInStartNode);
+  const [scanFinished, setScanFinished] = useState(false);
   const node = checkInDialogue[nodeId];
   const portrait = node.portrait ?? 1;
+
+  useEffect(() => {
+    setScanFinished(false);
+    if (!node.systemTag) return;
+
+    const timer = window.setTimeout(() => setScanFinished(true), 1850);
+    return () => window.clearTimeout(timer);
+  }, [nodeId, node.systemTag]);
 
   return (
     <div className="checkin-overlay" role="dialog" aria-modal="true" aria-label="值机对话">
@@ -56,7 +65,7 @@ export function CheckInDialogue({ onComplete }: Props) {
             </div>
           ) : node.completed ? (
             <button className="dialogue-next return-airport" onClick={onComplete}>返回机场流程</button>
-          ) : (
+          ) : node.systemTag && !scanFinished ? null : (
             <button className="dialogue-next" onClick={() => node.next && setNodeId(node.next)}>继续</button>
           )}
         </div>
