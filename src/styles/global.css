@@ -2622,6 +2622,121 @@ main {
 
 @keyframes tag-new { to { opacity: 1; } }
 
+/* Chapter 4: boarding gate interaction */
+.boarding-overlay {
+  position: fixed;
+  z-index: 125;
+  inset: 0;
+  overflow-y: auto;
+  padding: 18px;
+  background: rgba(38, 54, 78, 0.76);
+  backdrop-filter: blur(8px);
+}
+
+.boarding-scene {
+  width: min(100%, 880px);
+  min-height: calc(100dvh - 36px);
+  margin: auto;
+  display: grid;
+  grid-template-rows: minmax(360px, 66dvh) auto;
+  overflow: hidden;
+  border: 3px solid #29354d;
+  border-radius: 28px;
+  background: #fffaf0;
+  box-shadow: 10px 12px 0 rgba(29, 38, 57, 0.32);
+}
+
+.boarding-visual {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  min-height: 360px;
+  padding: 12px;
+  background: #dcefff;
+}
+
+.boarding-image,
+.boarding-image-placeholder {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.boarding-image {
+  position: relative;
+  z-index: 2;
+  display: block;
+  object-fit: contain;
+  animation: boarding-image-in 0.4s ease-out both;
+}
+
+.boarding-image-placeholder {
+  position: absolute;
+  inset: 12px;
+  width: auto;
+  height: auto;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  border: 3px dashed #7fa1b5;
+  border-radius: 20px;
+  background: #cdeaf7;
+  color: #4d6879;
+  font-weight: 900;
+  text-align: center;
+}
+
+.boarding-visual.has-boarding-image .boarding-image-placeholder { display: none; }
+
+.boarding-white-fade {
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  background: #fff;
+  animation: boarding-white-transition 0.55s ease-in-out both;
+}
+
+.boarding-dialogue-card {
+  position: relative;
+  z-index: 6;
+  min-height: 210px;
+  padding: 30px 28px 24px;
+  border-top: 3px solid #29354d;
+  background: #fffaf0;
+  animation: dialogue-in 0.2s ease-out;
+}
+
+.boarding-dialogue-card p {
+  min-height: 64px;
+  margin: 7px 0 18px;
+  color: #302f3f;
+  font-size: clamp(1rem, 3.6vw, 1.16rem);
+  font-weight: 700;
+  line-height: 1.72;
+  white-space: pre-line;
+}
+
+.boarding-completion {
+  display: block;
+  text-align: center;
+}
+
+.boarding-completion p { min-height: 0; }
+.boarding-completion .dialogue-next { float: none; }
+
+@keyframes boarding-image-in {
+  from { opacity: 0; transform: scale(1.015); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes boarding-white-transition {
+  0% { opacity: 0; }
+  45%, 70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
 /* Chapter 4: baggage security scene */
 .security-overlay {
   position: fixed;
@@ -2958,5 +3073,26 @@ main {
   .security-dialogue-card {
     min-height: 255px;
     padding: 27px 18px 20px;
+  }
+
+  .boarding-overlay { padding: 8px; }
+
+  .boarding-scene {
+    width: 100%;
+    min-height: calc(100dvh - 16px);
+    grid-template-rows: minmax(230px, 48dvh) auto;
+    border-radius: 20px;
+  }
+
+  .boarding-visual {
+    min-height: 230px;
+    padding: 6px;
+  }
+
+  .boarding-image-placeholder { inset: 6px; }
+
+  .boarding-dialogue-card {
+    min-height: 230px;
+    padding: 29px 18px 20px;
   }
 }

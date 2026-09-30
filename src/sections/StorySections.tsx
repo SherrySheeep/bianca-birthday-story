@@ -29,6 +29,7 @@ import {
 } from "../components/UI";
 import { CheckInDialogue } from "../components/CheckInDialogue";
 import { SecurityCheckScene } from "../components/SecurityCheckScene";
+import { BoardingScene } from "../components/BoardingScene";
 
 type Done = () => void;
 export function Cover({ onDone }: { onDone: Done }) {
@@ -809,11 +810,12 @@ export function Airport({ onDone, debugMode = false, paused = false }: { onDone:
   const [done, setDone] = useState<number[]>([]);
   const [checkInOpen, setCheckInOpen] = useState(false);
   const [securityOpen, setSecurityOpen] = useState(false);
+  const [boardingOpen, setBoardingOpen] = useState(false);
   const next = (i: number) => {
     if (debugMode) {
       if (i === 0) setCheckInOpen(true);
       if (i === 1) setSecurityOpen(true);
-      if (i === 2) setDone((current) => current.includes(2) ? current : [...current, 2]);
+      if (i === 2) setBoardingOpen(true);
       return;
     }
     if (i === 0) {
@@ -824,8 +826,7 @@ export function Airport({ onDone, debugMode = false, paused = false }: { onDone:
       if (!done.includes(1)) setSecurityOpen(true);
       return;
     }
-    if (done.includes(i - 1))
-      setDone((d) => (d.includes(i) ? d : [...d, i]));
+    if (i === 2 && done.includes(1)) setBoardingOpen(true);
   };
   return (
     <section className="scene airport-scene">
@@ -874,6 +875,15 @@ export function Airport({ onDone, debugMode = false, paused = false }: { onDone:
           onComplete={() => {
             setDone((current) => current.includes(1) ? current : [...current, 1]);
             setSecurityOpen(false);
+          }}
+        />
+      )}
+      {boardingOpen && (
+        <BoardingScene
+          paused={paused}
+          onComplete={() => {
+            setDone((current) => current.includes(2) ? current : [...current, 2]);
+            setBoardingOpen(false);
           }}
         />
       )}

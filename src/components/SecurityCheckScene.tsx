@@ -25,7 +25,7 @@ export function SecurityCheckScene({ onComplete, paused = false, debugMode = fal
         setFlashing(false);
         setMoveFrame(0);
         setPhase("monologue");
-      }, 1970),
+      }, 2400),
     ];
     return () => timers.forEach(window.clearTimeout);
   }, [phase, paused]);
