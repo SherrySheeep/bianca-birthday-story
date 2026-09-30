@@ -2622,6 +2622,268 @@ main {
 
 @keyframes tag-new { to { opacity: 1; } }
 
+/* Chapter 5: interrupted flight to Mondstadt */
+.chapter-five-story {
+  align-content: start;
+  gap: 14px;
+  overflow-x: hidden;
+}
+
+.chapter-five-route,
+.mondstadt-visual {
+  position: relative;
+  width: min(100%, 780px);
+  height: min(48vh, 410px);
+  min-height: 300px;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 3px solid #344660;
+  border-radius: 28px;
+  background: linear-gradient(#9edaf5, #edfaff 68%, #b7d98e 68%);
+  box-shadow: 7px 8px 0 rgba(52, 70, 96, 0.28);
+}
+
+.chapter-five-route .route-dots {
+  position: absolute;
+  left: 16%;
+  right: 16%;
+  top: 52%;
+  height: 3px;
+  border-top: 4px dashed rgba(50, 75, 101, 0.52);
+  transform: rotate(-7deg);
+}
+
+.chapter-five-route .city {
+  position: absolute;
+  z-index: 4;
+  display: grid;
+  padding: 8px 11px;
+  border: 2px solid #344660;
+  border-radius: 13px;
+  background: #fff8df;
+  box-shadow: 3px 4px 0 #344660;
+  text-align: center;
+}
+
+.chapter-five-route .city small { font-size: 0.7rem; }
+.chapter-five-route .syd { left: 6%; bottom: 16%; }
+.chapter-five-route .pvg { right: 6%; top: 18%; }
+
+.chapter-five-plane {
+  position: absolute;
+  z-index: 6;
+  left: 14%;
+  top: 57%;
+  width: 44px;
+  height: 44px;
+  padding: 8px;
+  border: 2px solid #344660;
+  border-radius: 50%;
+  background: #fff4b5;
+  color: #3187bd;
+  transform: rotate(-8deg);
+  filter: drop-shadow(2px 3px 0 rgba(52, 70, 96, 0.25));
+}
+
+.route-active .chapter-five-plane {
+  animation: interrupted-flight 2.4s steps(18, end) forwards;
+}
+
+.dimensional-clouds {
+  position: absolute;
+  z-index: 7;
+  left: 43%;
+  top: 31%;
+  width: 30%;
+  height: 42%;
+  animation: cloud-disturbance 0.7s ease-in-out infinite alternate;
+}
+
+.dimensional-clouds i {
+  position: absolute;
+  width: 46%;
+  aspect-ratio: 1.7;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 0 18px rgba(125, 231, 220, 0.75);
+}
+
+.dimensional-clouds i:nth-child(1) { left: 0; top: 8%; }
+.dimensional-clouds i:nth-child(2) { right: 0; top: 20%; }
+.dimensional-clouds i:nth-child(3) { left: 24%; top: 42%; }
+.dimensional-clouds i:nth-child(4) { left: -8%; bottom: 0; }
+.dimensional-clouds i:nth-child(5) { right: -7%; bottom: 3%; }
+
+.dimension-flash {
+  position: absolute;
+  z-index: 15;
+  inset: 0;
+  background: radial-gradient(circle, #ecfff7 0 12%, #8ef2d7 25%, #fff 64%);
+  animation: dimension-flash 0.48s ease-out both;
+}
+
+.mondstadt-visual {
+  background: #cce7c0;
+}
+
+.mondstadt-background,
+.mondstadt-placeholder {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.mondstadt-background {
+  z-index: 2;
+  object-fit: contain;
+  background: #d9efd0;
+  animation: boarding-image-in 0.4s ease-out both;
+}
+
+.mondstadt-placeholder {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  border: 3px dashed #76a57b;
+  background: #d9efd0;
+  color: #496952;
+  font-weight: 900;
+  text-align: center;
+}
+
+.mondstadt-visual.has-mondstadt-image .mondstadt-placeholder { display: none; }
+
+.amber-portrait,
+.amber-placeholder {
+  position: absolute;
+  z-index: 5;
+  right: 1%;
+  bottom: 0;
+  width: 47%;
+  height: 89%;
+}
+
+.amber-portrait {
+  object-fit: contain;
+  object-position: right bottom;
+  filter: drop-shadow(4px 6px 0 rgba(255, 255, 255, 0.72));
+  animation: portrait-pop 0.25s ease-out;
+}
+
+.amber-placeholder {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  border: 2px dashed #b86647;
+  border-radius: 50% 50% 18px 18px;
+  background: rgba(255, 190, 121, 0.62);
+  color: #77482f;
+  font-weight: 900;
+  text-align: center;
+}
+
+.mondstadt-visual.has-amber-image .amber-placeholder { display: none; }
+
+.is-falling {
+  animation: uncontrolled-fall 0.85s ease-in both;
+}
+
+.is-falling .mondstadt-background {
+  animation: falling-background 0.85s ease-in both;
+}
+
+.wind-streaks {
+  position: absolute;
+  z-index: 8;
+  inset: -20%;
+  background: repeating-linear-gradient(105deg, transparent 0 34px, rgba(255, 255, 255, 0.72) 35px 39px, transparent 40px 78px);
+  animation: wind-streak 0.28s linear infinite;
+}
+
+.is-dragging {
+  animation: dragged-away 0.34s ease-in-out infinite alternate;
+}
+
+.chapter-five-dialogue {
+  position: relative;
+  z-index: 10;
+  width: min(100%, 780px);
+  min-height: 190px;
+  margin: 0 auto;
+  padding: 30px 24px 22px;
+  border: 3px solid #344660;
+  border-radius: 22px;
+  background: #fffaf0;
+  box-shadow: 5px 6px 0 rgba(52, 70, 96, 0.28);
+  animation: dialogue-in 0.2s ease-out;
+}
+
+.chapter-five-dialogue p {
+  min-height: 62px;
+  margin: 7px 0 18px;
+  color: #302f3f;
+  font-size: clamp(1rem, 3.7vw, 1.16rem);
+  font-weight: 700;
+  line-height: 1.72;
+  white-space: pre-line;
+}
+
+.chapter-five-status {
+  width: fit-content;
+  margin: 4px auto 0;
+  padding: 10px 18px;
+  border: 2px solid #344660;
+  border-radius: 999px;
+  background: #fff1a9;
+  color: #344660;
+  font-weight: 900;
+  box-shadow: 3px 4px 0 #344660;
+}
+
+.chapter-five-status.danger { background: #ff9e8a; }
+
+.chapter-five-completion { text-align: center; }
+.chapter-five-completion p { min-height: 0; }
+.chapter-five-completion .dialogue-next { float: none; }
+
+@keyframes interrupted-flight {
+  from { left: 14%; top: 57%; }
+  to { left: 49%; top: 45%; }
+}
+
+@keyframes cloud-disturbance {
+  from { transform: scale(0.86) rotate(-2deg); opacity: 0.82; }
+  to { transform: scale(1.08) rotate(2deg); opacity: 1; }
+}
+
+@keyframes dimension-flash {
+  0% { opacity: 0; transform: scale(0.5); }
+  45% { opacity: 1; transform: scale(1.05); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes uncontrolled-fall {
+  0% { transform: rotate(0); }
+  25% { transform: rotate(-2deg) translateX(-5px); }
+  48% { transform: rotate(2.5deg) translateX(7px); }
+  72% { transform: rotate(-3deg) translateY(8px); }
+  100% { transform: rotate(1deg) translateY(24px); filter: brightness(1.65); }
+}
+
+@keyframes falling-background {
+  to { transform: scale(1.17); }
+}
+
+@keyframes wind-streak {
+  to { transform: translateY(70px); }
+}
+
+@keyframes dragged-away {
+  from { transform: translateX(0) rotate(-0.5deg); }
+  to { transform: translateX(11px) rotate(1deg); }
+}
+
 /* Chapter 4: boarding gate interaction */
 .boarding-overlay {
   position: fixed;
@@ -3094,5 +3356,42 @@ main {
   .boarding-dialogue-card {
     min-height: 230px;
     padding: 29px 18px 20px;
+  }
+
+  .chapter-five-story { gap: 10px; }
+
+  .chapter-five-route,
+  .mondstadt-visual {
+    height: min(39vh, 330px);
+    min-height: 245px;
+    border-radius: 20px;
+  }
+
+  .chapter-five-plane {
+    width: 38px;
+    height: 38px;
+    padding: 7px;
+  }
+
+  .dimensional-clouds {
+    left: 39%;
+    width: 39%;
+  }
+
+  .amber-portrait,
+  .amber-placeholder {
+    right: -5%;
+    width: 57%;
+    height: 88%;
+  }
+
+  .chapter-five-dialogue {
+    min-height: 205px;
+    padding: 29px 17px 19px;
+    border-radius: 18px;
+  }
+
+  .chapter-five-dialogue .dialogue-options {
+    grid-template-columns: 1fr;
   }
 }

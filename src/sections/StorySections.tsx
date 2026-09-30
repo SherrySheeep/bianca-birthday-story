@@ -30,6 +30,7 @@ import {
 import { CheckInDialogue } from "../components/CheckInDialogue";
 import { SecurityCheckScene } from "../components/SecurityCheckScene";
 import { BoardingScene } from "../components/BoardingScene";
+import { ChapterFiveStory } from "../components/ChapterFiveStory";
 
 type Done = () => void;
 export function Cover({ onDone }: { onDone: Done }) {
@@ -892,36 +893,7 @@ export function Airport({ onDone, debugMode = false, paused = false }: { onDone:
 }
 
 export function Flying({ onDone, paused = false }: { onDone: Done; paused?: boolean }) {
-  useEffect(() => {
-    if (paused) return;
-    const t = setTimeout(onDone, 4200);
-    return () => clearTimeout(t);
-  }, [onDone, paused]);
-  return (
-    <section className="scene flight-scene">
-      <SectionHeader number="05" kicker="NOW BOARDING" title="下一站：中国">
-        <p>请系好安全带，快乐即将起飞。</p>
-      </SectionHeader>
-      <div className="flight-map">
-        <span className="city syd">
-          <b>SYD</b>
-          <small>悉尼</small>
-        </span>
-        <div className="route-dots" />
-        <Plane className="flying-plane" />
-        <span className="city pvg">
-          <b>PVG</b>
-          <small>中国</small>
-        </span>
-        <span className="cloud c1">☁</span>
-        <span className="cloud c2">☁</span>
-        <span className="cloud c3">☁</span>
-      </div>
-      <div className="loading-copy">
-        正在跨越海岸线 <span>•••</span>
-      </div>
-    </section>
-  );
+  return <ChapterFiveStory onComplete={onDone} paused={paused} />;
 }
 
 export function ChinaFun({ onDone }: { onDone: Done }) {
