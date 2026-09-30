@@ -17,7 +17,14 @@ export default function App(){
   const advance=useCallback(()=>setChapter(c=>Math.min(c+1,TOTAL)),[]);
   const goBack=useCallback(()=>setChapter(c=>Math.max(c-1,0)),[]);
   return <main className={paused?'debug-paused':''}>
-    <button className={`debug-toggle ${debugMode?'active':''}`} onClick={()=>setDebugMode(value=>!value)}>{debugMode?'退出 debugger':'debugger'}</button>
+    <button
+      className={`debug-toggle ${debugMode?'active':''}`}
+      onClick={()=>setDebugMode(value=>!value)}
+      aria-label={debugMode?'退出 debugger，返回正式模式':'进入 debugger 模式'}
+      title={debugMode?'返回正式模式':'进入 debugger 模式'}
+    >
+      <img src={`${import.meta.env.BASE_URL}ui/debugger.png`} alt="" />
+    </button>
     {debugMode&&<div className="debug-controls"><button onClick={()=>setPaused(value=>!value)}>{paused?'继续':'暂停'}</button><button onClick={advance}>下一章</button></div>}
     {chapter>0&&<><button className="chapter-back" onClick={goBack}>回到过去</button><ProgressBadge current={chapter} total={TOTAL}/><button className="restart" onClick={()=>setChapter(0)}>从头再来</button></>}
     {chapter===0&&<Cover onDone={advance}/>} {chapter===1&&<Room onDone={advance}/>} {chapter===2&&<FlightBooking onDone={advance}/>} {chapter===3&&<Packing onDone={advance}/>} {chapter===4&&<Airport onDone={advance} debugMode={debugMode} paused={paused}/>} {chapter===5&&<Flying onDone={advance} paused={paused}/>} {chapter===6&&<ChinaFun onDone={advance}/>} {chapter===7&&<Memories onDone={advance}/>} {chapter===8&&<Jokes onDone={advance}/>} {chapter===9&&<Messages onDone={advance}/>} {chapter===10&&<FinalCard/>}
