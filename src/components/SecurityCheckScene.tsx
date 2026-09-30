@@ -30,17 +30,12 @@ export function SecurityCheckScene({ onComplete, paused = false, debugMode = fal
     return () => timers.forEach(window.clearTimeout);
   }, [phase, paused]);
 
-  useEffect(() => {
-    if (phase !== "monologue" || paused) return;
-    if (monologueIndex >= monologue.length - 1) {
-      const timer = window.setTimeout(() => setPhase("ask"), 850);
-      return () => window.clearTimeout(timer);
-    }
-    const timer = window.setTimeout(() => setMonologueIndex((value) => value + 1), 850);
-    return () => window.clearTimeout(timer);
-  }, [phase, monologueIndex, paused]);
-
   const portraitFile = node?.portrait === 3 ? "AnjianFeilinsi3.png" : `AnjianFeilinsi${node?.portrait ?? 1}.png`;
+  const advanceMonologue = () => {
+    if (paused) return;
+    if (monologueIndex < monologue.length - 1) setMonologueIndex((value) => value + 1);
+    else setPhase("ask");
+  };
 
   return (
     <div className="security-overlay" role="dialog" aria-modal="true" aria-label="机场安检">
@@ -87,7 +82,7 @@ export function SecurityCheckScene({ onComplete, paused = false, debugMode = fal
               <img src={asset("Luggage1.png")} alt="竖着的橙色行李箱" onError={(event) => { event.currentTarget.hidden = true; }} />
             </button>
           )}
-          {phase === "moving" && moveFrame > 0 && (
+          {phase === "moving" && moveFrame > 0 && !flashing && (
             <img className={`moving-luggage frame-${moveFrame}`} src={asset("Luggage2.png")} alt="传送带上的橙色行李箱" onError={(event) => { event.currentTarget.hidden = true; }} />
           )}
 
@@ -113,6 +108,7 @@ export function SecurityCheckScene({ onComplete, paused = false, debugMode = fal
           <div className="security-dialogue-card">
             <span className="dialogue-speaker speaker-Bianca">Bianca</span>
             <p>{monologue[monologueIndex]}</p>
+            {phase === "monologue" && <button className="dialogue-next" onClick={advanceMonologue}>继续</button>}
             {phase === "ask" && <button className="dialogue-next" onClick={() => setPhase("dialogue")}>问问工作人员</button>}
           </div>
         )}

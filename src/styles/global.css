@@ -2725,10 +2725,10 @@ main {
 .security-flash-sticker {
   position: absolute;
   z-index: 6;
-  left: 57%;
-  bottom: 24%;
-  width: 19%;
-  height: 34%;
+  left: 54.5%;
+  bottom: 32%;
+  width: 20%;
+  height: 20%;
   object-fit: contain;
   pointer-events: none;
   transform: translateX(-50%);
@@ -2757,10 +2757,10 @@ main {
 .upright-luggage {
   position: absolute;
   z-index: 7;
-  left: 8%;
-  bottom: 4%;
-  width: 25%;
-  height: 48%;
+  left: 2.5%;
+  bottom: 1%;
+  width: 30%;
+  height: 43%;
   border: 0;
   background: transparent;
   cursor: pointer;
@@ -2795,15 +2795,15 @@ main {
 .moving-luggage {
   position: absolute;
   z-index: 5;
-  width: 31%;
-  height: 29%;
+  width: 35%;
+  height: 27%;
   transition: none;
 }
 
 /* 横放行李箱：电脑端三帧位置 */
-.moving-luggage.frame-1 { left: 13%; bottom: 20%; transform: scale(1); }
-.moving-luggage.frame-2 { left: 34%; bottom: 23%; transform: scale(0.84); }
-.moving-luggage.frame-3 { left: 51%; bottom: 27%; transform: scale(0.67); }
+.moving-luggage.frame-1 { left: 20%; bottom: 15%; transform: scale(1); }
+.moving-luggage.frame-2 { left: 27%; bottom: 18%; transform: scale(0.84); }
+.moving-luggage.frame-3 { left: 35%; bottom: 23%; transform: scale(0.67); }
 
 .security-staff,
 .security-staff-placeholder {
@@ -2928,10 +2928,10 @@ main {
 
   /* 闪光贴纸：手机端位置与大小 */
   .security-flash-sticker {
-    left: 58%;
-    bottom: 22%;
-    width: 22%;
-    height: 32%;
+    left: 54.5%;
+    bottom: 32%;
+    width: 20%;
+    height: 20%;
   }
 
   .upright-luggage {
