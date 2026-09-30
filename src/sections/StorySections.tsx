@@ -800,7 +800,7 @@ export function Packing({ onDone }: { onDone: Done }) {
   );
 }
 
-export function Airport({ onDone }: { onDone: Done }) {
+export function Airport({ onDone, debugMode = false, paused = false }: { onDone: Done; debugMode?: boolean; paused?: boolean }) {
   const steps = [
     ["值机", "行李托运成功，箱子去走自己的冒险线了。"],
     ["安检", "安检通过 ✓ 液体超过100ml？这题跳过。"],
@@ -810,6 +810,12 @@ export function Airport({ onDone }: { onDone: Done }) {
   const [checkInOpen, setCheckInOpen] = useState(false);
   const [securityOpen, setSecurityOpen] = useState(false);
   const next = (i: number) => {
+    if (debugMode) {
+      if (i === 0) setCheckInOpen(true);
+      if (i === 1) setSecurityOpen(true);
+      if (i === 2) setDone((current) => current.includes(2) ? current : [...current, 2]);
+      return;
+    }
     if (i === 0) {
       if (!done.includes(0)) setCheckInOpen(true);
       return;
@@ -863,6 +869,8 @@ export function Airport({ onDone }: { onDone: Done }) {
       )}
       {securityOpen && (
         <SecurityCheckScene
+          debugMode={debugMode}
+          paused={paused}
           onComplete={() => {
             setDone((current) => current.includes(1) ? current : [...current, 1]);
             setSecurityOpen(false);
@@ -873,11 +881,12 @@ export function Airport({ onDone }: { onDone: Done }) {
   );
 }
 
-export function Flying({ onDone }: { onDone: Done }) {
+export function Flying({ onDone, paused = false }: { onDone: Done; paused?: boolean }) {
   useEffect(() => {
+    if (paused) return;
     const t = setTimeout(onDone, 4200);
     return () => clearTimeout(t);
-  }, [onDone]);
+  }, [onDone, paused]);
   return (
     <section className="scene flight-scene">
       <SectionHeader number="05" kicker="NOW BOARDING" title="下一站：中国">

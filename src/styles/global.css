@@ -208,6 +208,55 @@ main {
   text-decoration: underline;
   cursor: pointer;
 }
+
+.debug-toggle {
+  position: fixed;
+  z-index: 220;
+  left: 10px;
+  bottom: 8px;
+  border: 0;
+  padding: 4px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.62rem;
+  font-weight: 700;
+  opacity: 0.24;
+  cursor: pointer;
+}
+
+.debug-toggle:hover,
+.debug-toggle.active {
+  opacity: 0.72;
+}
+
+.debug-controls {
+  position: fixed;
+  z-index: 220;
+  right: 10px;
+  bottom: 8px;
+  display: flex;
+  gap: 6px;
+}
+
+.debug-controls button {
+  border: 1px solid rgba(44, 56, 83, 0.5);
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: rgba(255, 250, 235, 0.72);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 800;
+  backdrop-filter: blur(5px);
+  cursor: pointer;
+}
+
+.debug-paused *,
+.debug-paused *::before,
+.debug-paused *::after {
+  animation-play-state: paused !important;
+}
 .cover {
   background: linear-gradient(145deg, #fff5d4 0 47%, #ffbba5 47%);
   padding-top: 55px;

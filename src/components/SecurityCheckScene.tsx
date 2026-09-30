@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import { securityDialogue } from "../data/securityDialogue";
 
-type Props = { onComplete: () => void };
+type Props = { onComplete: () => void; paused?: boolean; debugMode?: boolean };
 type Phase = "ready" | "moving" | "monologue" | "ask" | "dialogue";
 
 const asset = (name: string) => `${import.meta.env.BASE_URL}airport-security/${name}`;
 const monologue = ["……？", "我箱子呢？", "刚才是不是……闪了一下？", "不是。\n我的箱子怎么直接没了？？？"];
 
-export function SecurityCheckScene({ onComplete }: Props) {
-  const debugMode = new URLSearchParams(window.location.search).get("debugSecurity") === "1";
+export function SecurityCheckScene({ onComplete, paused = false, debugMode = false }: Props) {
   const [phase, setPhase] = useState<Phase>("ready");
   const [moveFrame, setMoveFrame] = useState(0);
   const [flashing, setFlashing] = useState(false);
@@ -17,7 +16,7 @@ export function SecurityCheckScene({ onComplete }: Props) {
   const node = securityDialogue[nodeId];
 
   useEffect(() => {
-    if (phase !== "moving" || debugMode) return;
+    if (phase !== "moving" || paused) return;
     const timers = [
       window.setTimeout(() => setMoveFrame(2), 550),
       window.setTimeout(() => setMoveFrame(3), 1100),
@@ -29,17 +28,17 @@ export function SecurityCheckScene({ onComplete }: Props) {
       }, 1970),
     ];
     return () => timers.forEach(window.clearTimeout);
-  }, [phase, debugMode]);
+  }, [phase, paused]);
 
   useEffect(() => {
-    if (phase !== "monologue") return;
+    if (phase !== "monologue" || paused) return;
     if (monologueIndex >= monologue.length - 1) {
       const timer = window.setTimeout(() => setPhase("ask"), 850);
       return () => window.clearTimeout(timer);
     }
     const timer = window.setTimeout(() => setMonologueIndex((value) => value + 1), 850);
     return () => window.clearTimeout(timer);
-  }, [phase, monologueIndex]);
+  }, [phase, monologueIndex, paused]);
 
   const portraitFile = node?.portrait === 3 ? "AnjianFeilinsi3.png" : `AnjianFeilinsi${node?.portrait ?? 1}.png`;
 
