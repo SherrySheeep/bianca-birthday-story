@@ -2703,7 +2703,7 @@ main {
   cursor: pointer;
 }
 
-/* 安检仪：电脑端位置与大小，Anjianyi1/2 共用 */
+/* 安检仪：电脑端位置与大小，底图始终使用 Anjianyi1 */
 .security-machine,
 .security-machine-placeholder {
   position: absolute;
@@ -2719,6 +2719,21 @@ main {
   object-fit: contain;
   object-position: center bottom;
   filter: drop-shadow(0 8px 5px rgba(44, 49, 59, 0.22));
+}
+
+/* 闪光贴纸：电脑端位置与大小 */
+.security-flash-sticker {
+  position: absolute;
+  z-index: 6;
+  left: 57%;
+  bottom: 24%;
+  width: 19%;
+  height: 34%;
+  object-fit: contain;
+  pointer-events: none;
+  transform: translateX(-50%);
+  animation: security-flash-pop 0.32s ease-out both;
+  filter: drop-shadow(0 0 10px rgba(255, 221, 64, 0.85));
 }
 
 .security-machine-placeholder,
@@ -2831,6 +2846,12 @@ main {
   to { transform: translateY(-7px) rotate(1.5deg); }
 }
 
+@keyframes security-flash-pop {
+  0% { opacity: 0; transform: translateX(-50%) scale(0.45); }
+  35% { opacity: 1; transform: translateX(-50%) scale(1.08); }
+  100% { opacity: 0.9; transform: translateX(-50%) scale(1); }
+}
+
 /* Phone-only sizing: desktop proportions above stay unchanged. */
 @media (max-width: 699px) {
   .items-grid {
@@ -2905,18 +2926,26 @@ main {
     height: 63%;
   }
 
+  /* 闪光贴纸：手机端位置与大小 */
+  .security-flash-sticker {
+    left: 58%;
+    bottom: 22%;
+    width: 22%;
+    height: 32%;
+  }
+
   .upright-luggage {
-    left: 4%;
-    bottom: 4%;
+    left: 2.5%;
+    bottom: 1%;
     width: 30%;
     height: 43%;
   }
 
   /* 横放行李箱：手机端大小与三帧位置，会覆盖电脑端规则 */
   .moving-luggage { width: 35%; height: 27%; }
-  .moving-luggage.frame-1 { left: 7%; bottom: 17%; }
-  .moving-luggage.frame-2 { left: 31%; bottom: 20%; }
-  .moving-luggage.frame-3 { left: 51%; bottom: 23%; }
+  .moving-luggage.frame-1 { left: 20%; bottom: 15%; }
+  .moving-luggage.frame-2 { left: 27%; bottom: 18%; }
+  .moving-luggage.frame-3 { left: 35%; bottom: 23%; }
 
   .security-staff,
   .security-staff-placeholder {

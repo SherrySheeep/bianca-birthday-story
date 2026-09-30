@@ -61,10 +61,10 @@ export function SecurityCheckScene({ onComplete, paused = false, debugMode = fal
             {phase === "ready" && <span>点击你的行李箱进行安检。</span>}
           </div>
 
-          <div className="security-machine-placeholder">安检仪<br /><small>{flashing ? "Anjianyi2.png" : "Anjianyi1.png"}</small></div>
+          <div className="security-machine-placeholder">安检仪<br /><small>Anjianyi1.png</small></div>
           <img
             className="security-machine"
-            src={asset(flashing ? "Anjianyi2.png" : "Anjianyi1.png")}
+            src={asset("Anjianyi1.png")}
             alt="安检传送带和扫描仪"
             onLoad={(event) => event.currentTarget.parentElement?.classList.add("has-security-machine")}
             onError={(event) => {
@@ -72,6 +72,14 @@ export function SecurityCheckScene({ onComplete, paused = false, debugMode = fal
               event.currentTarget.parentElement?.classList.remove("has-security-machine");
             }}
           />
+          {flashing && (
+            <img
+              className="security-flash-sticker"
+              src={asset("shanguang1.png")}
+              alt="扫描闪光"
+              onError={(event) => { event.currentTarget.hidden = true; }}
+            />
+          )}
 
           {phase === "ready" && (
             <button className="upright-luggage" onClick={() => { setMoveFrame(1); setPhase("moving"); }} aria-label="把行李放上传送带">
