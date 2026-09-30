@@ -2609,6 +2609,39 @@ main {
 
 .security-task span { font-size: 0.76rem; }
 
+.security-debug-panel {
+  position: absolute;
+  z-index: 30;
+  top: 76px;
+  left: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  max-width: min(92%, 430px);
+  padding: 8px;
+  border: 2px solid #29354d;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 3px 4px 0 #29354d;
+}
+
+.security-debug-panel b {
+  width: 100%;
+  font-size: 0.76rem;
+}
+
+.security-debug-panel button {
+  border: 1px solid #29354d;
+  border-radius: 8px;
+  padding: 5px 8px;
+  background: #ffe277;
+  color: #29354d;
+  font: inherit;
+  font-size: 0.7rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
 .security-machine,
 .security-machine-placeholder {
   position: absolute;
@@ -2793,6 +2826,12 @@ main {
   }
 
   .security-stage { min-height: 290px; }
+
+  .security-debug-panel {
+    top: 74px;
+    left: 10px;
+    max-width: calc(100% - 20px);
+  }
 
   .security-machine,
   .security-machine-placeholder {

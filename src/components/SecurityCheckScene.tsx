@@ -8,6 +8,7 @@ const asset = (name: string) => `${import.meta.env.BASE_URL}airport-security/${n
 const monologue = ["……？", "我箱子呢？", "刚才是不是……闪了一下？", "不是。\n我的箱子怎么直接没了？？？"];
 
 export function SecurityCheckScene({ onComplete }: Props) {
+  const debugMode = new URLSearchParams(window.location.search).get("debugSecurity") === "1";
   const [phase, setPhase] = useState<Phase>("ready");
   const [moveFrame, setMoveFrame] = useState(0);
   const [flashing, setFlashing] = useState(false);
@@ -16,7 +17,7 @@ export function SecurityCheckScene({ onComplete }: Props) {
   const node = securityDialogue[nodeId];
 
   useEffect(() => {
-    if (phase !== "moving") return;
+    if (phase !== "moving" || debugMode) return;
     const timers = [
       window.setTimeout(() => setMoveFrame(2), 550),
       window.setTimeout(() => setMoveFrame(3), 1100),
@@ -28,7 +29,7 @@ export function SecurityCheckScene({ onComplete }: Props) {
       }, 1970),
     ];
     return () => timers.forEach(window.clearTimeout);
-  }, [phase]);
+  }, [phase, debugMode]);
 
   useEffect(() => {
     if (phase !== "monologue") return;
@@ -46,6 +47,16 @@ export function SecurityCheckScene({ onComplete }: Props) {
     <div className="security-overlay" role="dialog" aria-modal="true" aria-label="机场安检">
       <div className="security-scene">
         <div className="security-stage">
+          {debugMode && (
+            <div className="security-debug-panel">
+              <b>行李位置调试</b>
+              <button onClick={() => { setPhase("ready"); setMoveFrame(0); setFlashing(false); }}>竖箱</button>
+              {[1, 2, 3].map((frame) => (
+                <button key={frame} onClick={() => { setPhase("moving"); setMoveFrame(frame); setFlashing(false); }}>第 {frame} 帧</button>
+              ))}
+              <button onClick={() => { setPhase("moving"); setMoveFrame(3); setFlashing(true); }}>闪光</button>
+            </div>
+          )}
           <div className="security-task">
             <b>{phase === "ready" ? "把行李放上传送带" : "行李安检中"}</b>
             {phase === "ready" && <span>点击你的行李箱进行安检。</span>}
