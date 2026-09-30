@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { securityDialogue } from "../data/securityDialogue";
 
 type Props = { onComplete: () => void; paused?: boolean; debugMode?: boolean };
-type Phase = "ready" | "moving" | "monologue" | "ask" | "dialogue";
+type Phase = "ready" | "moving" | "monologue" | "dialogue";
 
 const asset = (name: string) => `${import.meta.env.BASE_URL}airport-security/${name}`;
 const monologue = ["……？", "我箱子呢？", "刚才是不是……闪了一下？", "不是。\n我的箱子怎么直接没了？？？"];
@@ -34,7 +34,7 @@ export function SecurityCheckScene({ onComplete, paused = false, debugMode = fal
   const advanceMonologue = () => {
     if (paused) return;
     if (monologueIndex < monologue.length - 1) setMonologueIndex((value) => value + 1);
-    else setPhase("ask");
+    else setPhase("dialogue");
   };
 
   return (
@@ -104,12 +104,13 @@ export function SecurityCheckScene({ onComplete, paused = false, debugMode = fal
           )}
         </div>
 
-        {(phase === "monologue" || phase === "ask") && (
+        {phase === "monologue" && (
           <div className="security-dialogue-card">
             <span className="dialogue-speaker speaker-Bianca">Bianca</span>
             <p>{monologue[monologueIndex]}</p>
-            {phase === "monologue" && <button className="dialogue-next" onClick={advanceMonologue}>继续</button>}
-            {phase === "ask" && <button className="dialogue-next" onClick={() => setPhase("dialogue")}>问问工作人员</button>}
+            <button className="dialogue-next" onClick={advanceMonologue}>
+              {monologueIndex === monologue.length - 1 ? "问问工作人员" : "继续"}
+            </button>
           </div>
         )}
 
