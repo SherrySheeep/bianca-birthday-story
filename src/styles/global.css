@@ -3586,6 +3586,133 @@ main {
   to { opacity: 0; transform: translateX(-50%) translateY(-18px); }
 }
 
+/* Chapter 7: the wager at Angel's Share */
+.chapter-seven-story {
+  align-content: start;
+  gap: 13px;
+  overflow-x: hidden;
+  background: linear-gradient(155deg, #fff0c8, #d8ead2 62%, #bad9e7);
+}
+
+.chapter-seven-visual {
+  position: relative;
+  width: min(100%, 800px);
+  height: min(50vh, 430px);
+  min-height: 310px;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 3px solid #344660;
+  border-radius: 28px;
+  background: #d8e8d1;
+  box-shadow: 7px 8px 0 rgba(52, 70, 96, 0.28);
+}
+
+.chapter-seven-background,
+.chapter-seven-placeholder {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.chapter-seven-background {
+  z-index: 1;
+  object-fit: cover;
+  object-position: center;
+  animation: boarding-image-in 0.35s ease-out both;
+}
+
+.chapter-seven-placeholder {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  background: #d8e8d1;
+  color: #52715a;
+  font-weight: 900;
+  text-align: center;
+}
+
+.chapter-seven-visual.has-chapter-seven-bg .chapter-seven-placeholder {
+  display: none;
+}
+
+.chapter-seven-portrait,
+.chapter-seven-portrait-placeholder {
+  position: absolute;
+  z-index: 3;
+  right: 1%;
+  bottom: 0;
+  width: 47%;
+  height: 90%;
+}
+
+.chapter-seven-portrait {
+  object-fit: contain;
+  object-position: right bottom;
+  filter: drop-shadow(4px 6px 0 rgba(255, 255, 255, 0.72));
+  animation: portrait-pop 0.25s ease-out;
+}
+
+.chapter-seven-portrait-placeholder {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  border: 2px dashed #9b694f;
+  border-radius: 50% 50% 18px 18px;
+  background: rgba(255, 218, 158, 0.68);
+  color: #694837;
+  font-weight: 900;
+  text-align: center;
+}
+
+.chapter-seven-dialogue,
+.chapter-seven-completion {
+  position: relative;
+  z-index: 7;
+  width: min(100%, 800px);
+  margin: 0 auto;
+  padding: 30px 24px 22px;
+  border: 3px solid #344660;
+  border-radius: 22px;
+  background: #fffaf0;
+  box-shadow: 5px 6px 0 rgba(52, 70, 96, 0.28);
+}
+
+.chapter-seven-dialogue {
+  min-height: 190px;
+  animation: dialogue-in 0.2s ease-out;
+}
+
+.chapter-seven-dialogue p {
+  min-height: 62px;
+  margin: 7px 0 18px;
+  color: #302f3f;
+  font-size: clamp(1rem, 3.7vw, 1.16rem);
+  font-weight: 700;
+  line-height: 1.72;
+  white-space: pre-line;
+}
+
+.chapter-seven-completion {
+  display: grid;
+  justify-items: center;
+  gap: 11px;
+  text-align: center;
+  background: linear-gradient(145deg, #fff8da, #d6f1e2);
+}
+
+.chapter-seven-completion p {
+  margin: 4px 0;
+  font-size: 1.08rem;
+  font-weight: 800;
+  line-height: 1.65;
+}
+
+.chapter-seven-completion .dialogue-next {
+  float: none;
+}
+
 /* Phone-only sizing: desktop proportions above stay unchanged. */
 @media (max-width: 699px) {
   .items-grid {
@@ -3806,5 +3933,29 @@ main {
   .chapter-six-result {
     grid-template-columns: 32% 1fr;
     gap: 12px;
+  }
+
+  .chapter-seven-story {
+    gap: 10px;
+  }
+
+  .chapter-seven-visual {
+    height: min(39vh, 330px);
+    min-height: 245px;
+    border-radius: 20px;
+  }
+
+  .chapter-seven-portrait,
+  .chapter-seven-portrait-placeholder {
+    right: -5%;
+    width: 57%;
+    height: 88%;
+  }
+
+  .chapter-seven-dialogue,
+  .chapter-seven-completion {
+    min-height: 205px;
+    padding: 29px 17px 19px;
+    border-radius: 18px;
   }
 }

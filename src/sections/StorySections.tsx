@@ -905,7 +905,7 @@ export function ChinaFun({ onDone }: { onDone: Done }) {
   };
   return (
     <section className="scene china-scene">
-      <SectionHeader number="07" kicker="HAPPY LANDING" title="B老师的快乐地图">
+      <SectionHeader number="08" kicker="HAPPY LANDING" title="B老师的快乐地图">
         <p>这趟没有行程表。看到喜欢的，就去点一点。</p>
       </SectionHeader>
       <div className="fun-grid">
@@ -936,7 +936,7 @@ export function ChinaFun({ onDone }: { onDone: Done }) {
 export function Memories({ onDone }: { onDone: Done }) {
   return (
     <section className="scene memory-scene">
-      <SectionHeader number="08" kicker="MEMORY FILM" title="这一年的旅行存档">
+      <SectionHeader number="09" kicker="MEMORY FILM" title="这一年的旅行存档">
         <p>照片的位置先留好了，等真实回忆来入住。</p>
       </SectionHeader>
       <div className="polaroid-grid">
@@ -952,7 +952,7 @@ export function Memories({ onDone }: { onDone: Done }) {
 export function Jokes({ onDone }: { onDone: Done }) {
   return (
     <section className="scene joke-scene">
-      <SectionHeader number="09" kicker="FRIENDS ONLY" title="只有自己人看得懂">
+      <SectionHeader number="10" kicker="FRIENDS ONLY" title="只有自己人看得懂">
         <p>一些经得起时间，但经不起追问的内部资料。</p>
       </SectionHeader>
       <div className="joke-wall">
@@ -972,7 +972,7 @@ export function Messages({ onDone }: { onDone: Done }) {
   return (
     <section className="scene message-scene">
       <SectionHeader
-        number="10"
+        number="11"
         kicker="POSTCARDS FOR B"
         title="朋友们寄来的几句话"
       >
