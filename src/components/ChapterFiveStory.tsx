@@ -15,9 +15,12 @@ export function ChapterFiveStory({ onComplete, paused = false }: Props) {
   const [stage, setStage] = useState<Stage>("intro");
   const [lineIndex, setLineIndex] = useState(0);
   const [nodeId, setNodeId] = useState("amberOpening");
+  const [amberLoaded, setAmberLoaded] = useState(false);
   const inputLocked = useRef(false);
   const inputTimer = useRef<number | undefined>(undefined);
   const node = chapterFiveDialogue[nodeId];
+
+  useEffect(() => setAmberLoaded(false), [node.portrait]);
 
   useEffect(() => () => window.clearTimeout(inputTimer.current), []);
   useEffect(() => {
@@ -112,16 +115,16 @@ export function ChapterFiveStory({ onComplete, paused = false }: Props) {
           />
           {(stage === "amber" || stage === "dragging") && (
             <>
-              <div className="amber-placeholder">安柏<br /><small>Anbo{node.portrait ?? 1}.png</small></div>
+              {!amberLoaded && <div className="amber-placeholder">安柏<br /><small>Anbo{node.portrait ?? 1}.png</small></div>}
               <img
                 key={node.portrait}
                 className="amber-portrait"
                 src={asset(`Anbo${node.portrait ?? 1}.png`)}
                 alt={`安柏表情 ${node.portrait ?? 1}`}
-                onLoad={(event) => event.currentTarget.parentElement?.classList.add("has-amber-image")}
+                onLoad={() => setAmberLoaded(true)}
                 onError={(event) => {
                   event.currentTarget.hidden = true;
-                  event.currentTarget.parentElement?.classList.remove("has-amber-image");
+                  setAmberLoaded(false);
                 }}
               />
             </>
