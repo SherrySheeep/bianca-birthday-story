@@ -3409,12 +3409,21 @@ main {
 }
 
 .chapter-six-notice {
-  width: fit-content;
+  width: min(100%, 520px);
   padding: 14px 22px;
   background: #fff0a8;
   font-size: 1.04rem;
   text-align: center;
   animation: pop 0.3s ease-out;
+}
+
+.chapter-six-notice b {
+  display: block;
+  margin-bottom: 14px;
+}
+
+.chapter-six-notice .dialogue-next {
+  float: none;
 }
 
 .flight-game {
@@ -3516,6 +3525,24 @@ main {
   width: 100%;
   max-height: 230px;
   object-fit: contain;
+}
+
+.chapter-six-result h3 {
+  margin: 0 0 7px;
+  font-size: clamp(1.3rem, 4vw, 1.75rem);
+}
+
+.chapter-six-result p {
+  margin: 11px 0;
+  line-height: 1.65;
+}
+
+.chapter-six-result > div > b {
+  color: #376a48;
+}
+
+.chapter-six-failed > div > b {
+  color: #b04d42;
 }
 
 .flight-licence,
