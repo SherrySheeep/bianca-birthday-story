@@ -3280,6 +3280,285 @@ main {
   100% { opacity: 0.9; transform: translateX(-50%) scale(1); }
 }
 
+/* Chapter 6: Mondstadt flight examination */
+.chapter-six-story {
+  align-content: start;
+  gap: 13px;
+  overflow-x: hidden;
+  background: linear-gradient(160deg, #fff1bd, #c9ebde 72%);
+}
+
+.chapter-six-visual,
+.flight-game {
+  position: relative;
+  width: min(100%, 800px);
+  height: min(50vh, 430px);
+  min-height: 310px;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 3px solid #344660;
+  border-radius: 28px;
+  background: #cdebd9;
+  box-shadow: 7px 8px 0 rgba(52, 70, 96, 0.28);
+}
+
+.chapter-six-background,
+.chapter-six-placeholder,
+.flight-game-bg {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.chapter-six-background,
+.flight-game-bg {
+  z-index: 1;
+  object-fit: cover;
+  object-position: center;
+}
+
+.chapter-six-placeholder {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  background: #d8efe0;
+  color: #52715a;
+  font-weight: 900;
+  text-align: center;
+}
+
+.chapter-six-visual.has-chapter-six-bg .chapter-six-placeholder { display: none; }
+
+.chapter-six-amber,
+.chapter-six-amber-placeholder {
+  position: absolute;
+  z-index: 3;
+  right: 1%;
+  bottom: 0;
+  width: 47%;
+  height: 90%;
+}
+
+.chapter-six-amber {
+  object-fit: contain;
+  object-position: right bottom;
+  filter: drop-shadow(4px 6px 0 rgba(255, 255, 255, 0.72));
+  animation: portrait-pop 0.25s ease-out;
+}
+
+.chapter-six-amber-placeholder {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  border: 2px dashed #b86647;
+  border-radius: 50% 50% 18px 18px;
+  background: rgba(255, 190, 121, 0.62);
+  color: #77482f;
+  font-weight: 900;
+  text-align: center;
+}
+
+.chapter-six-dialogue,
+.chapter-six-notice,
+.chapter-six-result,
+.flight-licence,
+.chapter-six-completion {
+  position: relative;
+  z-index: 7;
+  width: min(100%, 800px);
+  margin: 0 auto;
+  padding: 30px 24px 22px;
+  border: 3px solid #344660;
+  border-radius: 22px;
+  background: #fffaf0;
+  box-shadow: 5px 6px 0 rgba(52, 70, 96, 0.28);
+}
+
+.chapter-six-dialogue { min-height: 190px; animation: dialogue-in 0.2s ease-out; }
+
+.chapter-six-dialogue p {
+  min-height: 62px;
+  margin: 7px 0 18px;
+  color: #302f3f;
+  font-size: clamp(1rem, 3.7vw, 1.16rem);
+  font-weight: 700;
+  line-height: 1.72;
+  white-space: pre-line;
+}
+
+.courage-line {
+  padding: 12px 15px;
+  border: 2px dashed #cf8d45;
+  border-radius: 14px;
+  background: #fff0b8;
+  color: #91522f !important;
+  font-size: clamp(1.08rem, 4vw, 1.28rem) !important;
+  text-align: center;
+}
+
+.control-hint {
+  width: fit-content;
+  margin: -8px auto 15px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: #d8f1ff;
+  color: #355779;
+  font-weight: 900;
+}
+
+.chapter-six-notice {
+  width: fit-content;
+  padding: 14px 22px;
+  background: #fff0a8;
+  font-size: 1.04rem;
+  text-align: center;
+  animation: pop 0.3s ease-out;
+}
+
+.flight-game {
+  height: min(72vh, 650px);
+  min-height: 520px;
+  touch-action: manipulation;
+}
+
+.flight-game-hud {
+  position: absolute;
+  z-index: 8;
+  top: 14px;
+  left: 50%;
+  width: min(90%, 360px);
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: space-between;
+  padding: 9px 14px;
+  border: 2px solid #344660;
+  border-radius: 999px;
+  background: rgba(255, 250, 230, 0.9);
+  color: #344660;
+  box-shadow: 3px 4px 0 #344660;
+}
+
+.wind-ring {
+  position: absolute;
+  z-index: 4;
+  top: 9%;
+  width: 12%;
+  height: 12%;
+  object-fit: contain;
+  transform: translateX(-50%) scale(0.42);
+  animation: wind-ring-approach 2.05s linear forwards;
+  filter: drop-shadow(0 0 8px rgba(184, 255, 230, 0.68));
+}
+
+.flight-pilot {
+  position: absolute;
+  z-index: 6;
+  top: 78%;
+  width: 18%;
+  height: 17%;
+  object-fit: contain;
+  transform: translate(-50%, -50%);
+  transition: left 0.2s ease-out;
+  filter: drop-shadow(3px 5px 0 rgba(255, 255, 255, 0.58));
+}
+
+.perfect-pop {
+  position: absolute;
+  z-index: 12;
+  left: 50%;
+  top: 57%;
+  transform: translateX(-50%);
+  padding: 7px 15px;
+  border-radius: 999px;
+  background: #fff1a5;
+  color: #43815a;
+  font-size: 1.2rem;
+  font-weight: 950;
+  animation: perfect-pop 0.55s ease-out both;
+}
+
+.flight-controls {
+  position: absolute;
+  z-index: 10;
+  left: 50%;
+  bottom: 12px;
+  width: min(76%, 390px);
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.flight-controls button {
+  width: 74px;
+  height: 58px;
+  border: 2px solid #344660;
+  border-radius: 18px;
+  background: rgba(255, 247, 213, 0.9);
+  color: #344660;
+  font-size: 1.8rem;
+  font-weight: 950;
+  box-shadow: 4px 5px 0 #344660;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.chapter-six-result {
+  display: grid;
+  grid-template-columns: minmax(110px, 34%) 1fr;
+  align-items: center;
+  gap: 18px;
+}
+
+.chapter-six-result img {
+  width: 100%;
+  max-height: 230px;
+  object-fit: contain;
+}
+
+.flight-licence,
+.chapter-six-completion {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  text-align: center;
+  background: linear-gradient(145deg, #fff8da, #d6f1e2);
+}
+
+.flight-licence img {
+  width: min(42%, 210px);
+  max-height: 190px;
+  object-fit: contain;
+}
+
+.flight-licence > span {
+  padding: 7px 15px;
+  border: 2px solid #43815a;
+  border-radius: 999px;
+  background: #d8f1c9;
+  color: #376a48;
+  font-weight: 950;
+}
+
+.flight-licence .dialogue-next,
+.chapter-six-completion .dialogue-next {
+  float: none;
+}
+
+@keyframes wind-ring-approach {
+  0% { top: 9%; transform: translateX(-50%) scale(0.42); opacity: 0.78; }
+  78% { opacity: 1; }
+  100% { top: 79%; transform: translateX(-50%) scale(1.42); opacity: 0; }
+}
+
+@keyframes perfect-pop {
+  from { opacity: 0; transform: translateX(-50%) scale(0.7); }
+  45% { opacity: 1; transform: translateX(-50%) scale(1.08); }
+  to { opacity: 0; transform: translateX(-50%) translateY(-18px); }
+}
+
 /* Phone-only sizing: desktop proportions above stay unchanged. */
 @media (max-width: 699px) {
   .items-grid {
@@ -3443,5 +3722,62 @@ main {
 
   .chapter-five-dialogue .dialogue-options {
     grid-template-columns: 1fr;
+  }
+
+  .chapter-six-story {
+    gap: 10px;
+  }
+
+  .chapter-six-visual {
+    height: min(39vh, 330px);
+    min-height: 245px;
+    border-radius: 20px;
+  }
+
+  .chapter-six-amber,
+  .chapter-six-amber-placeholder {
+    right: -5%;
+    width: 57%;
+    height: 88%;
+  }
+
+  .chapter-six-dialogue,
+  .chapter-six-result,
+  .flight-licence,
+  .chapter-six-completion {
+    padding: 29px 17px 19px;
+    border-radius: 18px;
+  }
+
+  .flight-game {
+    height: min(72dvh, 620px);
+    min-height: 500px;
+    border-radius: 20px;
+  }
+
+  .flight-pilot {
+    top: 79%;
+    width: 23%;
+    height: 18%;
+  }
+
+  .wind-ring {
+    width: 17%;
+    height: 14%;
+  }
+
+  .flight-controls {
+    width: 86%;
+    bottom: 10px;
+  }
+
+  .flight-controls button {
+    width: 72px;
+    height: 58px;
+  }
+
+  .chapter-six-result {
+    grid-template-columns: 32% 1fr;
+    gap: 12px;
   }
 }
