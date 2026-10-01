@@ -56,7 +56,11 @@ export function ChapterFiveStory({ onComplete, paused = false }: Props) {
     else if (node.next) setNodeId(node.next);
   };
 
-  const sceneImage = stage === "air" || stage === "falling" ? "chengjiao1.png" : "chengjiao2.png";
+  const sceneImage = stage === "air" || stage === "falling"
+    ? "chengjiao1.png"
+    : stage === "amber" || stage === "dragging" || stage === "completed"
+      ? "chengjiao3.png"
+      : "chengjiao2.png";
   const showMondstadt = ["air", "falling", "crash", "amberIntro", "amber", "dragging", "completed"].includes(stage);
 
   return (

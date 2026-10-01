@@ -2,6 +2,7 @@
 
 chengjiao1.png    蒙德高空风之翼第一视角
 chengjiao2.png    蒙德城郊坠落后的第一视角
+chengjiao3.png    安柏出现后的蒙德城郊背景
 Anbo1.png         普通状态安柏
 Anbo2.png         震惊状态安柏
 Anbo3.png         友好状态安柏
