@@ -2643,45 +2643,59 @@ main {
   box-shadow: 7px 8px 0 rgba(52, 70, 96, 0.28);
 }
 
-.chapter-five-route .route-dots {
+.travel-map-background,
+.travel-map-placeholder {
   position: absolute;
-  left: 16%;
-  right: 16%;
-  top: 52%;
-  height: 3px;
-  border-top: 4px dashed rgba(50, 75, 101, 0.52);
-  transform: rotate(-7deg);
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
-.chapter-five-route .city {
-  position: absolute;
-  z-index: 4;
+.travel-map-background {
+  z-index: 1;
+  object-fit: cover;
+  object-position: center;
+}
+
+.travel-map-placeholder {
   display: grid;
-  padding: 8px 11px;
-  border: 2px solid #344660;
-  border-radius: 13px;
-  background: #fff8df;
-  box-shadow: 3px 4px 0 #344660;
+  place-items: center;
+  align-content: center;
+  background: #d8edf0;
+  color: #4d6879;
+  font-weight: 900;
   text-align: center;
 }
 
-.chapter-five-route .city small { font-size: 0.7rem; }
-.chapter-five-route .syd { left: 6%; bottom: 16%; }
-.chapter-five-route .pvg { right: 6%; top: 18%; }
+.chapter-five-route.has-travel-map .travel-map-placeholder { display: none; }
+
+.chapter-five-route-line {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.chapter-five-route-line path {
+  fill: none;
+  stroke: rgba(255, 250, 222, 0.92);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-dasharray: 2.5 4.8;
+  filter: drop-shadow(0 1px 1px rgba(86, 94, 89, 0.35));
+}
 
 .chapter-five-plane {
   position: absolute;
   z-index: 6;
-  left: 14%;
-  top: 57%;
-  width: 44px;
-  height: 44px;
-  padding: 8px;
-  border: 2px solid #344660;
-  border-radius: 50%;
-  background: #fff4b5;
-  color: #3187bd;
-  transform: rotate(-8deg);
+  left: 77%;
+  top: 69%;
+  width: clamp(48px, 9%, 74px);
+  height: auto;
+  object-fit: contain;
+  transform: translate(-50%, -50%) rotate(-8deg);
   filter: drop-shadow(2px 3px 0 rgba(52, 70, 96, 0.25));
 }
 
@@ -2692,34 +2706,54 @@ main {
 .dimensional-clouds {
   position: absolute;
   z-index: 7;
-  left: 43%;
-  top: 31%;
-  width: 30%;
-  height: 42%;
-  animation: cloud-disturbance 0.7s ease-in-out infinite alternate;
+  inset: 0;
+  pointer-events: none;
 }
 
-.dimensional-clouds i {
+.dimensional-clouds img {
   position: absolute;
-  width: 46%;
-  aspect-ratio: 1.7;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 0 18px rgba(125, 231, 220, 0.75);
+  object-fit: contain;
+  opacity: 0;
+  filter: drop-shadow(0 0 10px rgba(125, 231, 220, 0.48));
+  animation: cloud-arrive 0.65s ease-out forwards;
 }
 
-.dimensional-clouds i:nth-child(1) { left: 0; top: 8%; }
-.dimensional-clouds i:nth-child(2) { right: 0; top: 20%; }
-.dimensional-clouds i:nth-child(3) { left: 24%; top: 42%; }
-.dimensional-clouds i:nth-child(4) { left: -8%; bottom: 0; }
-.dimensional-clouds i:nth-child(5) { right: -7%; bottom: 3%; }
+.dimensional-clouds img:nth-child(1) { left: 30%; top: 19%; width: 24%; --cloud-x: 11%; --cloud-y: 7%; animation-delay: 0s; }
+.dimensional-clouds img:nth-child(2) { right: 17%; top: 25%; width: 31%; --cloud-x: -12%; --cloud-y: 6%; animation-delay: 0.16s; }
+.dimensional-clouds img:nth-child(3) { left: 35%; bottom: 16%; width: 27%; --cloud-x: 10%; --cloud-y: -8%; animation-delay: 0.3s; }
+.dimensional-clouds img:nth-child(4) { left: 20%; bottom: 28%; width: 19%; --cloud-x: 18%; --cloud-y: -2%; animation-delay: 0.48s; }
+.dimensional-clouds img:nth-child(5) { right: 27%; bottom: 12%; width: 22%; --cloud-x: -14%; --cloud-y: -9%; animation-delay: 0.62s; }
+
+.stage-flash .dimensional-clouds img {
+  opacity: 1;
+  animation: cloud-close 0.58s ease-in forwards;
+}
+
+.stage-flash .chapter-five-plane { opacity: 0; }
+
+.dimension-glow {
+  position: absolute;
+  z-index: 8;
+  left: 49%;
+  top: 47%;
+  width: 24%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(241, 255, 251, 0.96), rgba(119, 241, 216, 0.46) 38%, transparent 72%);
+  transform: translate(-50%, -50%);
+  animation: magical-glow 0.75s ease-in-out infinite alternate;
+}
 
 .dimension-flash {
   position: absolute;
   z-index: 15;
   inset: 0;
   background: radial-gradient(circle, #ecfff7 0 12%, #8ef2d7 25%, #fff 64%);
-  animation: dimension-flash 0.48s ease-out both;
+  animation: dimension-flash 0.42s 0.55s ease-out both;
+}
+
+.stage-flash.chapter-five-route {
+  animation: map-soft-shake 0.28s 0.43s ease-in-out;
 }
 
 .mondstadt-visual {
@@ -2736,7 +2770,8 @@ main {
 
 .mondstadt-background {
   z-index: 2;
-  object-fit: contain;
+  object-fit: cover;
+  object-position: center;
   background: #d9efd0;
   animation: boarding-image-in 0.4s ease-out both;
 }
@@ -2848,13 +2883,29 @@ main {
 .chapter-five-completion .dialogue-next { float: none; }
 
 @keyframes interrupted-flight {
-  from { left: 14%; top: 57%; }
-  to { left: 49%; top: 45%; }
+  from { left: 77%; top: 69%; }
+  to { left: 49%; top: 47%; }
 }
 
-@keyframes cloud-disturbance {
-  from { transform: scale(0.86) rotate(-2deg); opacity: 0.82; }
-  to { transform: scale(1.08) rotate(2deg); opacity: 1; }
+@keyframes cloud-arrive {
+  from { opacity: 0; transform: translate(var(--cloud-x), var(--cloud-y)) scale(0.72); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes cloud-close {
+  from { opacity: 1; transform: none; }
+  to { opacity: 1; transform: translate(var(--cloud-x), var(--cloud-y)) scale(0.84); }
+}
+
+@keyframes magical-glow {
+  from { opacity: 0.48; transform: translate(-50%, -50%) scale(0.74); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1.14); }
+}
+
+@keyframes map-soft-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px) rotate(-0.2deg); }
+  60% { transform: translateX(3px) rotate(0.2deg); }
 }
 
 @keyframes dimension-flash {
@@ -3368,14 +3419,13 @@ main {
   }
 
   .chapter-five-plane {
-    width: 38px;
-    height: 38px;
-    padding: 7px;
+    width: 12%;
+    height: auto;
   }
 
   .dimensional-clouds {
-    left: 39%;
-    width: 39%;
+    inset: 0;
+    width: auto;
   }
 
   .amber-portrait,

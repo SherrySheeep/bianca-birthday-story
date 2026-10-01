@@ -1,4 +1,3 @@
-import { Plane } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { chapterFiveDialogue } from "../data/chapterFiveDialogue";
 import { SectionHeader } from "./UI";
@@ -23,7 +22,7 @@ export function ChapterFiveStory({ onComplete, paused = false }: Props) {
   useEffect(() => () => window.clearTimeout(inputTimer.current), []);
   useEffect(() => {
     if (paused) return;
-    const delay = stage === "flight" ? 2400 : stage === "flash" ? 480 : stage === "falling" ? 850 : stage === "amberIntro" ? 450 : stage === "dragging" ? 750 : 0;
+    const delay = stage === "flight" ? 2400 : stage === "flash" ? 1000 : stage === "falling" ? 850 : stage === "amberIntro" ? 450 : stage === "dragging" ? 750 : 0;
     if (!delay) return;
     const timer = window.setTimeout(() => {
       if (stage === "flight") { setLineIndex(0); setStage("anomaly"); }
@@ -68,11 +67,27 @@ export function ChapterFiveStory({ onComplete, paused = false }: Props) {
 
       {!showMondstadt && (
         <div className={`chapter-five-route ${stage === "flight" || stage === "anomaly" || stage === "flash" ? "route-active" : ""}`}>
-          <span className="city syd"><b>SYD</b><small>悉尼</small></span>
-          <div className="route-dots" />
-          <Plane className="chapter-five-plane" />
-          <span className="city pvg"><b>PVG</b><small>中国</small></span>
-          {(stage === "anomaly" || stage === "flash") && <div className="dimensional-clouds"><i /><i /><i /><i /><i /></div>}
+          <div className="travel-map-placeholder">旅行地图<br /><small>TravelMap1.png</small></div>
+          <img
+            className="travel-map-background"
+            src={asset("TravelMap1.png")}
+            alt="悉尼到青海的手账旅行地图"
+            onLoad={(event) => event.currentTarget.parentElement?.classList.add("has-travel-map")}
+            onError={(event) => {
+              event.currentTarget.hidden = true;
+              event.currentTarget.parentElement?.classList.remove("has-travel-map");
+            }}
+          />
+          <svg className="chapter-five-route-line" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M 82 78 Q 67 56 45 35" pathLength="100" />
+          </svg>
+          <img className="chapter-five-plane" src={asset("Plane1.png")} alt="飞往青海的小飞机" onError={(event) => { event.currentTarget.hidden = true; }} />
+          {(stage === "anomaly" || stage === "flash") && (
+            <div className="dimensional-clouds">
+              {[1, 2, 3, 4, 5].map((number) => <img key={number} src={asset(`Cloud${number}.png`)} alt="" onError={(event) => { event.currentTarget.hidden = true; }} />)}
+            </div>
+          )}
+          {(stage === "anomaly" || stage === "flash") && <div className="dimension-glow" />}
           {stage === "flash" && <div className="dimension-flash" />}
         </div>
       )}
