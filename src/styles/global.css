@@ -3780,7 +3780,7 @@ main {
 .battle-overlay h3 { margin: 0 0 13px; font-size: 1.55rem; }
 .battle-overlay p { margin: 8px 0; line-height: 1.6; white-space: pre-line; }
 .battle-dialogue-overlay { position: absolute; z-index: 31; inset: 0; display: grid; align-items: end; padding: 18px; background: linear-gradient(transparent 35%, #0b1220aa 70%); }
-.battle-dialogue-overlay > div { width: min(100%, 680px); margin: 0 auto; padding: 22px; border: 2px solid #b8d8ed; border-radius: 18px; background: #fffaf0; color: #353549; box-shadow: 6px 7px 0 #111827; }
+.battle-dialogue-overlay > div { position: relative; width: min(100%, 680px); margin: 0 auto; padding: 28px 22px 22px; border: 2px solid #b8d8ed; border-radius: 18px; background: #fffaf0; color: #353549; box-shadow: 6px 7px 0 #111827; }
 .battle-dialogue-overlay p, .battle-dialogue-overlay blockquote { margin: 8px 0 15px; font-weight: 750; line-height: 1.65; white-space: pre-line; }
 .battle-dialogue-overlay blockquote { padding: 12px; border-radius: 12px; background: #ffe2ec; color: #8d3559; }
 .battle-dialogue-overlay.author-note > div { border-color: #d4769e; background: #fff0f5; }
