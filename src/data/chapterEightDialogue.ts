@@ -120,6 +120,11 @@ export const chapterEightBattleIntro: ChapterEightLine[] = [
   battle("Bianca", "等等。"),
   battle("Bianca", "这里不是提瓦特吗？"),
   battle("Bianca", "为什么突然变成回合制了啊？？？"),
+  battle("Bianca", "而且为什么是我一个人打啊？！"),
+  battle("作者大大", "因为你是本章唯一的行动角色。"),
+  battle("Bianca", "你又是谁？！为什么连你也来了？"),
+  battle("作者大大", "我是作者大大。顺便负责基础功能说明。"),
+  battle("Bianca", "这又是什么展开……"),
   battle("系统", "【普通攻击：普通攻击】"),
   battle("Bianca", "……这名字也太敷衍了吧。"),
   battle("作者大大", "基础功能。"),
@@ -135,8 +140,11 @@ export const chapterEightBattleIntro: ChapterEightLine[] = [
   battle("作者大大", "因为威力最大。"),
   battle("Bianca", "到底哪里威力最大了？！"),
   battle("作者大大", "不过你现在确实没有元素力。"),
-  battle("作者大大", "所以请先完成力量觉醒仪式。"),
-  battle("Bianca", "……什么仪式？"),
+  battle("作者大大", "所以，请认真念出一句话。"),
+  battle("作者大大", "“以疯狂星期四的名义，请赐予我打败深渊法师的力量！”"),
+  battle("Bianca", "我拒绝。"),
+  battle("作者大大", "不念不能继续。"),
+  battle("Bianca", "……"),
 ];
 
 export const chapterEightRitualAfter: ChapterEightLine[] = [

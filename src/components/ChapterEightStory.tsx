@@ -8,6 +8,7 @@ type EnemyId = "blue" | "red" | "purple";
 type Support = "amber" | "venti" | "zhongli";
 type Enemy = { id: EnemyId; name: string; hp: number; maxHp: number; shield: number; maxShield: number; image: string };
 type BattleOverlay = { title: string; lines: string[] } | null;
+type DamagePop = { id: EnemyId; value: number; kind: "shield" | "hp"; key: number };
 
 const asset = (name: string) => `${import.meta.env.BASE_URL}chapter-eight/${name}`;
 const publicAsset = (name: string) => `${import.meta.env.BASE_URL}${name}`;
@@ -31,20 +32,20 @@ function damageEnemy(enemy: Enemy, hpDamage: number, shieldDamage: number): Enem
 }
 
 function StoryFrame({ line }: { line: ChapterEightLine }) {
-  const sceneImage = line.scene === "observe" ? "shenyuanfashimen1.png" : line.scene === "close" ? "shenyuanfashimen2.png" : "BattleBg1.png";
+  const sceneImage = line.scene === "observe" ? "shenyuanfashimen1.png" : line.scene === "close" ? "shenyuanfashimen3.png" : "BattleBg1.png";
   const isClose = line.scene === "close";
   const enemySpeaker = line.speaker.includes("深渊法师") ? line.speaker.slice(0, 2) : "";
   const mood = line.enemyMood ?? 1;
   return (
     <div className={`chapter-eight-visual scene-${line.scene}`}>
       <img className="chapter-eight-background" src={asset(sceneImage)} alt="蒙德城外的异常现场" />
-      {isClose && <div className="abyss-story-row">
+      {isClose && <div className="abyss-story-composition">
         {(["Blue", "Red", "Purple"] as const).map((colour, index) => {
           const label = ["蓝色", "红色", "紫色"][index];
           const active = enemySpeaker === label;
-          return <img key={colour} className={`abyss-story-mage ${active ? "speaking" : ""}`} src={asset(`${colour}${active ? mood : 1}.png`)} alt={`${label}深渊法师`} />;
+          return <img key={colour} className={`abyss-story-mage story-${colour.toLowerCase()} ${active ? "speaking" : ""}`} src={asset(`${colour}${active ? mood : 1}.png`)} alt={`${label}深渊法师`} />;
         })}
-        <div className="mystery-glow" aria-label="发光的神秘物品">?</div>
+        <img className="story-mystery-item" src={asset("MysteriousItem.png")} alt="发光的神秘物品" />
       </div>}
       {line.portrait && <img className="chapter-eight-portrait" src={line.portrait.includes("/") ? publicAsset(line.portrait) : asset(line.portrait)} alt={`${line.speaker}立绘`} />}
     </div>
@@ -69,12 +70,24 @@ export function ChapterEightStory({ onComplete, paused = false }: Props) {
   const [seenSkill, setSeenSkill] = useState(false);
   const [seenUltimate, setSeenUltimate] = useState(false);
   const [seenResonance, setSeenResonance] = useState(false);
+  const [tipVisible, setTipVisible] = useState(false);
+  const [damagePops, setDamagePops] = useState<DamagePop[]>([]);
+  const [playerDamage, setPlayerDamage] = useState<{ value: number; key: number } | null>(null);
   const clickLock = useRef(false);
   const clickTimer = useRef<number | undefined>(undefined);
 
   const lines = phase === "story" ? chapterEightOpening : phase === "battleIntro" ? chapterEightBattleIntro : phase === "ritualAfter" ? chapterEightRitualAfter : chapterEightVictory;
   const currentLine = lines[Math.min(lineIndex, lines.length - 1)];
   const aliveEnemies = useMemo(() => enemies.filter((enemy) => enemy.hp > 0), [enemies]);
+  const actionOrder = useMemo(() => {
+    const enemyEntries = [
+      { id: "blue", label: "蓝", image: "SYBlue1.png" },
+      { id: "red", label: "红", image: "SYRed1.png" },
+      { id: "purple", label: "紫", image: "SYPurple1.png" },
+    ].filter((entry) => enemies.some((enemy) => enemy.id === entry.id && enemy.hp > 0));
+    const bianca = { id: "bianca", label: "B", image: "BiancaIcon.png" };
+    return delayed ? [enemyEntries[0], bianca, ...enemyEntries.slice(1)].filter(Boolean) : [bianca, ...enemyEntries];
+  }, [delayed, enemies]);
 
   useEffect(() => () => window.clearTimeout(clickTimer.current), []);
 
@@ -93,7 +106,7 @@ export function ChapterEightStory({ onComplete, paused = false }: Props) {
   const resetBattle = () => {
     setHp(180); setEnergy(0); setEnemies(initialEnemies()); setTarget("red"); setSupport("amber");
     setRound(0); setSkillCooldown(0); setBattleLog("选择目标与场外支援，然后发动技能。");
-    setOverlay(null); setDelayed(false); setPhase("battle");
+    setOverlay(null); setDelayed(false); setDamagePops([]); setPlayerDamage(null); setTipVisible(false); setPhase("battle");
   };
 
   const runEnemyTurn = (afterPlayer: Enemy[], nextRound: number) => {
@@ -132,6 +145,7 @@ export function ChapterEightStory({ onComplete, paused = false }: Props) {
     const finalDamage = Math.round(incoming * reduction);
     const nextHp = Math.max(0, hp - finalDamage);
     setEnemies(updated); setHp(nextHp); setEnergy((value) => Math.min(100, value + 12));
+    setPlayerDamage({ value: finalDamage, key: Date.now() });
     setBattleLog(`${messages.join("；")}。Bianca 受到 ${finalDamage} 点伤害。`);
     if (nextHp <= 0) { setFailures((value) => value + 1); setPhase("defeat"); }
   };
@@ -165,13 +179,24 @@ export function ChapterEightStory({ onComplete, paused = false }: Props) {
       setOverlay({ title: "终结技 · 软硬软拒绝", lines: ["软｜Bianca：那个……要不还是算了吧？", "硬｜Bianca：不行。", "软｜Bianca：谢谢理解。", ...(!seenUltimate ? ["作者大大：拒绝得很有力量。", "Bianca：这根本不是一回事吧！"] : [])] });
       setSeenUltimate(true); setBattleLog("风、岩与火的力量同时爆发，敌方全体受到重创。");
     }
+    const popKey = Date.now();
+    setDamagePops(next.flatMap((enemy, index) => {
+      const before = enemies.find((item) => item.id === enemy.id);
+      if (!before) return [];
+      const shieldLoss = Math.max(0, before.shield - enemy.shield);
+      const hpLoss = Math.max(0, Math.round(before.hp - enemy.hp));
+      return [
+        ...(shieldLoss ? [{ id: enemy.id, value: Math.round(shieldLoss), kind: "shield" as const, key: popKey + index * 2 }] : []),
+        ...(hpLoss ? [{ id: enemy.id, value: hpLoss, kind: "hp" as const, key: popKey + index * 2 + 1 }] : []),
+      ];
+    }));
     const nextRound = round + 1;
     setRound(nextRound); setSkillCooldown((value) => kind === "skill" ? value : Math.max(0, value - 1));
     setDelayed(false);
     runEnemyTurn(next, nextRound);
   };
 
-  const isStoryPhase = ["story", "battleIntro", "ritualAfter", "victory"].includes(phase);
+  const isStoryPhase = ["story", "victory"].includes(phase);
 
   return <section className="scene chapter-eight-story">
     <SectionHeader number="08" kicker="OTHERWORLDLY RESONANCE" title="深渊法师异常事件">
@@ -188,22 +213,20 @@ export function ChapterEightStory({ onComplete, paused = false }: Props) {
       </div>
     </>}
 
-    {phase === "ritual" && <div className="ritual-stage">
-      <div className="ritual-modal"><span>✦</span><h3>神秘力量觉醒仪式</h3><ol><li>双手合十</li><li>闭眼三秒</li><li>认真念出：</li></ol><blockquote>“以作者大大的名义，请赐予我打败深渊法师的力量。”</blockquote><p><b>Bianca：</b>我拒绝。</p><p className="author-copy"><b>作者大大：</b>不念不能继续。</p><button className="sticker-button" onClick={() => { setLineIndex(0); setPhase("ritualAfter"); }}>仪式完成</button></div>
-    </div>}
-
-    {(phase === "battle" || phase === "battleWon" || phase === "defeat") && <div className="battle-eight-card">
+    {(["battleIntro", "ritual", "ritualAfter", "battle", "battleWon", "defeat"] as Phase[]).includes(phase) && <div className="battle-eight-card">
       <img className="battle-eight-bg" src={asset("BattleBg1.png")} alt="回合制战斗场地" />
-      <div className="battle-order"><b>行动顺序</b>{delayed ? <><span>蓝</span><span className="active">B</span><span>红</span><span>紫</span></> : <><span className="active">B</span><span>蓝</span><span>红</span><span>紫</span></>}</div>
-      <div className="battle-enemies">{enemies.map((enemy) => <button key={enemy.id} className={`battle-enemy enemy-${enemy.id} ${target === enemy.id ? "selected" : ""} ${enemy.hp <= 0 ? "defeated" : ""}`} onClick={() => setTarget(enemy.id)} disabled={enemy.hp <= 0}><div className="enemy-bars"><b>{enemy.name}</b><i><em style={{ width: `${enemy.hp / enemy.maxHp * 100}%` }} /></i><i className="shield"><em style={{ width: `${enemy.shield / enemy.maxShield * 100}%` }} /></i></div><img src={asset(enemy.image)} alt={enemy.name} /></button>)}</div>
+      <div className={`battle-order ${delayed ? "is-delayed" : ""}`}><b>行动顺序</b>{actionOrder.map((entry, index) => <div className={`order-avatar ${index === 0 ? "active" : ""}`} key={entry.id}><img src={asset(entry.image)} alt={entry.label} onError={(event) => { event.currentTarget.hidden = true; }} /><span>{entry.label}</span></div>)}</div>
+      <div className="battle-enemies">{enemies.map((enemy) => <button key={enemy.id} className={`battle-enemy enemy-${enemy.id} ${target === enemy.id ? "selected" : ""} ${enemy.hp <= 0 ? "defeated" : ""}`} onClick={() => setTarget(enemy.id)} disabled={enemy.hp <= 0}><div className="enemy-bars"><b>{enemy.name}</b><i><em style={{ width: `${enemy.hp / enemy.maxHp * 100}%` }} /></i><i className="shield"><em style={{ width: `${enemy.shield / enemy.maxShield * 100}%` }} /></i></div><img src={asset(enemy.image)} alt={enemy.name} />{damagePops.filter((pop) => pop.id === enemy.id).map((pop) => <strong className={`damage-pop damage-${pop.kind}`} key={pop.key}>-{pop.value}</strong>)}</button>)}</div>
       <div className="battle-mystery" title="神秘物品">?</div>
-      <div className="bianca-battle"><img src={asset(overlay ? "BiancaBattle2.png" : "BiancaBattle1.png")} alt="战斗中的 Bianca" /><div><b>Bianca</b><i><em style={{ width: `${hp / 180 * 100}%` }} /></i><small>HP {hp}/180　能量 {energy}/100</small></div></div>
+      <div className="bianca-battle"><img src={asset(overlay ? "BiancaBattle2.png" : "BiancaBattle1.png")} alt="战斗中的 Bianca" />{playerDamage && <strong className="damage-pop player-damage" key={playerDamage.key}>-{playerDamage.value}</strong>}<div><b>Bianca</b><i><em style={{ width: `${hp / 180 * 100}%` }} /></i><small>HP {hp}/180　能量 {energy}/100</small></div></div>
       <div className="support-panel"><b>场外支援</b>{(["amber", "venti", "zhongli"] as Support[]).map((item) => <button key={item} className={support === item ? "active" : ""} onClick={() => setSupport(item)}>{item === "amber" ? "安柏·火" : item === "venti" ? "温迪·风" : "钟离·岩"}</button>)}</div>
-      <div className="battle-log">{battleLog}</div>
-      <div className="battle-skills"><button onClick={() => useAction("normal")}>普通攻击<small>单体</small></button><button onClick={() => useAction("skill")} disabled={skillCooldown > 0}>冷笑话<small>{skillCooldown ? "冷却中" : "群体"}</small></button><button className="ultimate" onClick={() => useAction("ultimate")} disabled={energy < 100}>软硬软拒绝<small>{energy}/100</small></button></div>
+      {phase === "battle" && <div className="battle-status-toast">{battleLog}</div>}
+      <div className="battle-skills"><button onClick={() => useAction("normal")} disabled={phase !== "battle"}>普通攻击<small>单体</small></button><button onClick={() => useAction("skill")} disabled={phase !== "battle" || skillCooldown > 0}>冷笑话<small>{skillCooldown ? "冷却中" : "群体"}</small></button><button className="ultimate" onClick={() => useAction("ultimate")} disabled={phase !== "battle" || energy < 100}>软硬软拒绝<small>{energy}/100</small></button></div>
+      {(phase === "battleIntro" || phase === "ritualAfter") && <div className={`battle-dialogue-overlay ${currentLine.speaker === "作者大大" ? "author-note" : ""}`}><div><span className={`dialogue-speaker speaker-${currentLine.speaker}`}>{currentLine.speaker}</span><p>{currentLine.text}</p><button className="dialogue-next" onClick={advanceStory}>继续</button></div></div>}
+      {phase === "ritual" && <div className="battle-dialogue-overlay author-note"><div><span className="dialogue-speaker">作者大大</span><p>现实中的 Bianca，请认真念出：</p><blockquote>“以疯狂星期四的名义，请赐予我打败深渊法师的力量！”</blockquote><button className="dialogue-next" onClick={() => { setLineIndex(0); setPhase("ritualAfter"); }}>我念完了</button></div></div>}
       {overlay && phase === "battle" && <div className="battle-overlay"><div><h3>{overlay.title}</h3>{overlay.lines.map((text, index) => <p key={index}>{text}</p>)}<button className="dialogue-next" onClick={() => setOverlay(null)}>继续战斗</button></div></div>}
       {phase === "battleWon" && <div className="battle-overlay"><div><h3>战斗胜利</h3><p>三只深渊法师的护盾终于全部熄灭了。</p><button className="dialogue-next" onClick={() => { setOverlay(null); setLineIndex(0); setPhase("victory"); }}>查看神秘物品</button></div></div>}
-      {phase === "defeat" && <div className="battle-overlay"><div><h3>战斗失败</h3><p><b>Bianca：</b>……三打一是不是有点过分了？</p><p className="author-copy"><b>作者大大：</b>要不再来一次？</p><div className="defeat-actions"><button className="dialogue-next" onClick={resetBattle}>重新挑战</button><button onClick={() => setBattleLog("小提示：先用对应支援击破护盾；能量满后立刻使用终结技。")}>查看小提示</button></div></div></div>}
+      {phase === "defeat" && <div className="battle-overlay"><div><h3>战斗失败</h3><p><b>Bianca：</b>……三打一是不是有点过分了？</p><p className="author-copy"><b>作者大大：</b>要不再来一次？</p>{tipVisible && <p className="battle-tip">小提示：先用对应支援击破护盾；能量满后立刻使用终结技。</p>}<div className="defeat-actions"><button className="dialogue-next" onClick={resetBattle}>重新挑战</button><button onClick={() => setTipVisible(true)}>查看小提示</button></div></div></div>}
     </div>}
 
     {phase === "complete" && <div className="chapter-eight-completion"><div className="checkin-complete">✓ 第八章完成</div><div className="mystery-item-icon">???</div><p>B老师终于找到了那个不属于提瓦特的东西。</p><small>至于它到底是什么……似乎还不到揭晓的时候。</small><button className="dialogue-next return-airport" onClick={onComplete}>返回旅程</button></div>}
