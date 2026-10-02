@@ -3713,6 +3713,69 @@ main {
   float: none;
 }
 
+/* Chapter 8: otherworldly resonance battle */
+.chapter-eight-story { align-content: start; gap: 13px; overflow-x: hidden; background: linear-gradient(155deg, #e8e5fa, #cde4d7 58%, #f7ddb0); }
+.chapter-eight-visual { position: relative; width: min(100%, 820px); height: min(50vh, 440px); min-height: 320px; margin: 0 auto; overflow: hidden; border: 3px solid #30364d; border-radius: 28px; background: #273149; box-shadow: 7px 8px 0 #30364d47; }
+.chapter-eight-background { position: absolute; z-index: 1; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.chapter-eight-portrait { position: absolute; z-index: 5; right: 0; bottom: 0; width: 47%; height: 91%; object-fit: contain; object-position: right bottom; filter: drop-shadow(4px 6px 0 #ffffffb8); animation: portrait-pop .25s ease-out; }
+.abyss-story-row { position: absolute; z-index: 3; inset: 8% 3% 0; display: grid; grid-template-columns: repeat(3, 1fr); align-items: end; }
+.abyss-story-mage { width: 100%; height: 78%; object-fit: contain; object-position: center bottom; opacity: .68; transition: .2s; filter: drop-shadow(0 0 8px #ffffff55); }
+.abyss-story-mage.speaking { opacity: 1; transform: scale(1.06) translateY(-4px); filter: drop-shadow(0 0 14px #fff5a5); }
+.mystery-glow, .battle-mystery { display: grid; place-items: center; border-radius: 50%; background: radial-gradient(circle, #fff 0 8%, #ffe994 14%, #d792ff99 42%, transparent 72%); color: #fff; font-weight: 950; text-shadow: 0 2px 5px #563579; animation: pulse 1.2s infinite alternate; }
+.mystery-glow { position: absolute; z-index: -1; left: 50%; bottom: 8%; width: 110px; height: 110px; transform: translateX(-50%); }
+.chapter-eight-dialogue, .chapter-eight-completion { position: relative; z-index: 8; width: min(100%, 820px); margin: 0 auto; padding: 30px 24px 22px; border: 3px solid #30364d; border-radius: 22px; background: #fffaf0; box-shadow: 5px 6px 0 #30364d47; }
+.chapter-eight-dialogue { min-height: 190px; animation: dialogue-in .2s ease-out; }
+.chapter-eight-dialogue p { min-height: 62px; margin: 7px 0 18px; font-size: clamp(1rem, 3.7vw, 1.16rem); font-weight: 700; line-height: 1.72; white-space: pre-line; }
+.chapter-eight-dialogue.author-note, .author-copy { background: #ffdbe8; color: #8d3559; font-family: "Ma Shan Zheng", "Noto Sans SC"; }
+.system-title { display: block; width: fit-content; margin: 2px 0 9px; padding: 6px 12px; border: 2px solid #684c8b; border-radius: 999px; background: #eee0ff; color: #684c8b; }
+.ritual-stage { width: min(100%, 720px); margin: auto; padding: 24px; border: 3px solid #6b4e82; border-radius: 28px; background: radial-gradient(circle at top, #f8e7ff, #d9c5ee); box-shadow: 8px 9px 0 #4d3d5d55; }
+.ritual-modal { padding: 24px; border: 2px dashed #a86798; border-radius: 20px; background: #fff9ef; text-align: center; }
+.ritual-modal > span { font-size: 3rem; color: #ca709c; }
+.ritual-modal h3 { margin: 0; font-size: 1.7rem; }
+.ritual-modal ol { width: fit-content; margin: 18px auto; text-align: left; line-height: 1.8; }
+.ritual-modal blockquote { margin: 18px 0; padding: 14px; border-radius: 14px; background: #ffe3ed; font-weight: 900; line-height: 1.7; }
+.battle-eight-card { position: relative; width: min(100%, 940px); height: min(78dvh, 720px); min-height: 620px; margin: auto; overflow: hidden; border: 3px solid #21283d; border-radius: 28px; background: #172038; box-shadow: 9px 10px 0 #21283d66; color: #fff; isolation: isolate; }
+.battle-eight-bg { position: absolute; z-index: -2; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .88; }
+.battle-eight-card:after { content: ""; position: absolute; z-index: -1; inset: 0; background: linear-gradient(180deg, #11182b22 30%, #0d1423d9 100%); pointer-events: none; }
+.battle-order { position: absolute; z-index: 8; top: 14px; right: 12px; display: grid; gap: 5px; width: 80px; padding: 9px; border: 1px solid #9fc5dc; border-radius: 14px; background: #111a2ccc; text-align: center; }
+.battle-order b { font-size: .65rem; }
+.battle-order span { padding: 3px; border-radius: 8px; background: #ffffff1f; font-weight: 900; font-size: .72rem; transition: .25s; }
+.battle-order .active { background: #ffe36d; color: #29324c; transform: scale(1.05); }
+.battle-enemies { position: absolute; top: 9%; left: 7%; right: 13%; height: 40%; display: grid; grid-template-columns: repeat(3, 1fr); align-items: end; gap: 2%; }
+.battle-enemy { position: relative; height: 100%; padding: 0; border: 2px solid transparent; border-radius: 16px; background: transparent; color: #fff; cursor: pointer; }
+.battle-enemy.selected { border-color: #ffe77c; background: #fff3a914; box-shadow: 0 0 18px #ffe77c88; }
+.battle-enemy.defeated { opacity: .22; filter: grayscale(1); }
+.battle-enemy img { width: 100%; height: 78%; object-fit: contain; object-position: center bottom; filter: drop-shadow(0 5px 6px #111); }
+.enemy-bars { position: absolute; z-index: 2; top: 0; left: 4%; right: 4%; display: grid; gap: 3px; text-align: left; font-size: .65rem; }
+.enemy-bars > i, .bianca-battle i { display: block; height: 7px; overflow: hidden; border: 1px solid #e5e8ef; border-radius: 999px; background: #151a28; }
+.enemy-bars em, .bianca-battle em { display: block; height: 100%; background: #f06c79; transition: width .35s; }
+.enemy-bars .shield em { background: #74c9f3; }
+.battle-mystery { position: absolute; z-index: 1; left: 50%; top: 36%; width: 80px; height: 80px; transform: translateX(-50%); opacity: .8; }
+.bianca-battle { position: absolute; z-index: 5; left: 4%; bottom: 17%; width: 39%; height: 39%; display: flex; align-items: flex-end; }
+.bianca-battle img { width: 56%; height: 100%; object-fit: contain; object-position: left bottom; filter: drop-shadow(4px 5px 0 #ffffff70); }
+.bianca-battle > div { width: 50%; padding: 8px; border-radius: 12px; background: #111a2dcc; }
+.bianca-battle small { display: block; margin-top: 5px; font-size: .6rem; }
+.support-panel { position: absolute; z-index: 8; left: 12px; bottom: 10px; display: flex; gap: 5px; align-items: center; padding: 7px; border-radius: 13px; background: #111a2dcc; }
+.support-panel > b { font-size: .68rem; }
+.support-panel button { border: 1px solid #9fc5dc; border-radius: 999px; padding: 7px 9px; background: #243451; color: #fff; font-size: .68rem; font-weight: 800; cursor: pointer; }
+.support-panel button.active { background: #ffe173; color: #29324c; }
+.battle-skills { position: absolute; z-index: 8; right: 12px; bottom: 10px; display: flex; gap: 7px; }
+.battle-skills button { min-width: 94px; min-height: 58px; border: 2px solid #b8d8ed; border-radius: 16px; background: #263757e8; color: #fff; font-weight: 900; cursor: pointer; }
+.battle-skills button.ultimate { background: #744c87e8; border-color: #f1c8ff; }
+.battle-skills button:disabled { opacity: .42; cursor: not-allowed; }
+.battle-skills small { display: block; margin-top: 3px; font-size: .6rem; }
+.battle-log { position: absolute; z-index: 7; left: 43%; right: 11%; bottom: 17%; min-height: 52px; padding: 10px 12px; border: 1px solid #a7c4d7; border-radius: 12px; background: #111a2dcc; font-size: .74rem; line-height: 1.45; }
+.battle-overlay { position: absolute; z-index: 30; inset: 0; display: grid; place-items: center; padding: 18px; background: #101728aa; backdrop-filter: blur(5px); }
+.battle-overlay > div { width: min(100%, 460px); max-height: 85%; overflow-y: auto; padding: 24px; border: 2px solid #b8d8ed; border-radius: 20px; background: #fffaf0; color: #353549; box-shadow: 7px 8px 0 #101728; }
+.battle-overlay h3 { margin: 0 0 13px; font-size: 1.55rem; }
+.battle-overlay p { margin: 8px 0; line-height: 1.6; white-space: pre-line; }
+.defeat-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.defeat-actions button { border: 2px solid #34384d; border-radius: 999px; padding: 9px 14px; background: #ffe27a; font-weight: 900; cursor: pointer; }
+.chapter-eight-completion { display: grid; justify-items: center; gap: 11px; text-align: center; background: linear-gradient(145deg, #fff8da, #e5d9f5); }
+.chapter-eight-completion p { margin: 4px 0; font-size: 1.08rem; font-weight: 800; }
+.chapter-eight-completion .dialogue-next { float: none; }
+.mystery-item-icon { display: grid; place-items: center; width: 92px; height: 92px; border-radius: 50%; background: radial-gradient(circle, #fff, #ffe381 25%, #aa7ccc 58%, transparent 70%); color: #fff; font-size: 1.35rem; font-weight: 950; text-shadow: 0 2px 5px #563579; }
+
 /* Phone-only sizing: desktop proportions above stay unchanged. */
 @media (max-width: 699px) {
   .items-grid {
@@ -3958,4 +4021,28 @@ main {
     padding: 29px 17px 19px;
     border-radius: 18px;
   }
+
+  .chapter-eight-story { gap: 10px; }
+  .chapter-eight-visual { height: min(39vh, 330px); min-height: 245px; border-radius: 20px; }
+  .chapter-eight-portrait { right: -5%; width: 57%; height: 88%; }
+  .chapter-eight-dialogue, .chapter-eight-completion { min-height: 205px; padding: 29px 17px 19px; border-radius: 18px; }
+  .abyss-story-row { inset: 13% 0 0; }
+  .mystery-glow { width: 76px; height: 76px; }
+  .ritual-stage { padding: 10px; border-radius: 20px; }
+  .ritual-modal { padding: 17px 13px; }
+  .battle-eight-card { height: min(82dvh, 680px); min-height: 590px; border-radius: 20px; }
+  .battle-order { top: 8px; right: 7px; width: 58px; padding: 6px; }
+  .battle-order b { display: none; }
+  .battle-enemies { top: 8%; left: 2%; right: 15%; height: 35%; gap: 0; }
+  .enemy-bars b { font-size: .5rem; }
+  .battle-mystery { top: 34%; width: 58px; height: 58px; }
+  .bianca-battle { left: 2%; bottom: 27%; width: 57%; height: 34%; }
+  .bianca-battle > div { width: 53%; padding: 6px; }
+  .support-panel { left: 7px; right: 7px; bottom: 91px; justify-content: center; }
+  .support-panel > b { display: none; }
+  .support-panel button { padding: 7px 8px; }
+  .battle-skills { left: 7px; right: 7px; bottom: 9px; justify-content: center; gap: 5px; }
+  .battle-skills button { min-width: 0; flex: 1; min-height: 67px; padding: 5px; font-size: .72rem; }
+  .battle-log { left: 42%; right: 7px; bottom: 27%; max-height: 88px; overflow-y: auto; font-size: .65rem; }
+  .battle-overlay > div { padding: 19px 16px; }
 }
