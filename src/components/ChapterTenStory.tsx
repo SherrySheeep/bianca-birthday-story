@@ -99,10 +99,6 @@ export function ChapterTenStory({ onComplete, paused = false }: Props) {
 
     {phase === "openEyes" && <div className="open-eyes-card"><span>✦</span><h3>现在，可以睁开眼睛了。</h3><button className="sticker-button" onClick={() => { setLineIndex(0); setPhase("cakeReveal"); }}>睁开眼睛</button></div>}
 
-    {phase === "chapterComplete" && <div className="chapter-ten-completion"><div className="checkin-complete">✓ Chapter 10 Complete</div><p>神秘物品安全抵达现实世界。</p><small>至于接下来——先许愿，先切蛋糕。</small><button className="dialogue-next return-airport" onClick={onComplete}>Ending</button></div>}
+    {phase === "chapterComplete" && <div className="chapter-ten-completion"><div className="checkin-complete">✓ 第十章完成</div><p>神秘物品安全抵达现实世界。</p><small>故事还没有结束，朋友们准备的最后几页正在后面等你。</small><button className="dialogue-next return-airport" onClick={onComplete}>继续往下</button></div>}
   </section>;
-}
-
-export function EndingPlaceholder() {
-  return <section className="scene ending-placeholder"><div className="chapter-ten-completion"><span className="final-kicker">ENDING · COMING SOON</span><h2>故事的最后一页，正在准备中。</h2><p>先回到生日聚会吧。</p></div></section>;
 }

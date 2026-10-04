@@ -4,10 +4,10 @@ import { ChapterSixStory } from './components/ChapterSixStory';
 import { ChapterSevenStory } from './components/ChapterSevenStory';
 import { ChapterEightStory } from './components/ChapterEightStory';
 import { ChapterNineStory } from './components/ChapterNineStory';
-import { ChapterTenStory, EndingPlaceholder } from './components/ChapterTenStory';
+import { ChapterTenStory } from './components/ChapterTenStory';
 import { Airport, ChinaFun, Cover, FinalCard, FlightBooking, Flying, Jokes, Memories, Messages, Packing, Room } from './sections/StorySections';
 
-const TOTAL=16;
+const TOTAL=15;
 export default function App(){
   const [chapter,setChapter]=useState(()=>Math.min(Number(localStorage.getItem('bianca-progress')||0),TOTAL));
   const [debugMode,setDebugMode]=useState(()=>new URLSearchParams(window.location.search).get('debug')==='1'||new URLSearchParams(window.location.search).get('debugSecurity')==='1');
@@ -32,6 +32,6 @@ export default function App(){
     </button>
     {debugMode&&<div className="debug-controls"><button onClick={()=>setPaused(value=>!value)}>{paused?'继续':'暂停'}</button><button onClick={advance}>下一章</button></div>}
     {chapter>0&&<><button className="chapter-back" onClick={goBack}>回到过去</button><ProgressBadge current={chapter} total={TOTAL}/><button className="restart" onClick={()=>setChapter(0)}>从头再来</button></>}
-    {chapter===0&&<Cover onDone={advance}/>} {chapter===1&&<Room onDone={advance}/>} {chapter===2&&<FlightBooking onDone={advance}/>} {chapter===3&&<Packing onDone={advance}/>} {chapter===4&&<Airport onDone={advance} debugMode={debugMode} paused={paused}/>} {chapter===5&&<Flying onDone={advance} paused={paused}/>} {chapter===6&&<ChapterSixStory onComplete={advance} paused={paused}/>} {chapter===7&&<ChapterSevenStory onComplete={advance} paused={paused}/>} {chapter===8&&<ChapterEightStory onComplete={advance} paused={paused}/>} {chapter===9&&<ChapterNineStory onComplete={advance} paused={paused}/>} {chapter===10&&<ChapterTenStory onComplete={advance} paused={paused}/>} {chapter===11&&<EndingPlaceholder/>} {chapter===12&&<ChinaFun onDone={advance}/>} {chapter===13&&<Memories onDone={advance}/>} {chapter===14&&<Jokes onDone={advance}/>} {chapter===15&&<Messages onDone={advance}/>} {chapter===16&&<FinalCard/>}
+    {chapter===0&&<Cover onDone={advance}/>} {chapter===1&&<Room onDone={advance}/>} {chapter===2&&<FlightBooking onDone={advance}/>} {chapter===3&&<Packing onDone={advance}/>} {chapter===4&&<Airport onDone={advance} debugMode={debugMode} paused={paused}/>} {chapter===5&&<Flying onDone={advance} paused={paused}/>} {chapter===6&&<ChapterSixStory onComplete={advance} paused={paused}/>} {chapter===7&&<ChapterSevenStory onComplete={advance} paused={paused}/>} {chapter===8&&<ChapterEightStory onComplete={advance} paused={paused}/>} {chapter===9&&<ChapterNineStory onComplete={advance} paused={paused}/>} {chapter===10&&<ChapterTenStory onComplete={advance} paused={paused}/>} {chapter===11&&<ChinaFun onDone={advance}/>} {chapter===12&&<Memories onDone={advance}/>} {chapter===13&&<Jokes onDone={advance}/>} {chapter===14&&<Messages onDone={advance}/>} {chapter===15&&<FinalCard/>}
   </main>
 }

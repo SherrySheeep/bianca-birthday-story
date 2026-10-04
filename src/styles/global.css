@@ -3950,8 +3950,7 @@ main {
 .reality-transition,
 .eyes-closed,
 .open-eyes-card,
-.chapter-ten-completion,
-.ending-placeholder {
+.chapter-ten-completion {
   min-height: min(66vh, 620px);
   border-radius: 30px;
 }
@@ -4044,12 +4043,6 @@ main {
 
 .chapter-ten-completion .checkin-complete {
   font-size: clamp(1.15rem, 3vw, 1.55rem);
-}
-
-.ending-placeholder {
-  display: grid;
-  place-content: center;
-  padding: 24px;
 }
 
 @keyframes chapter-ten-pop {
@@ -4373,5 +4366,5 @@ main {
   .chapter-ten-portrait { right: -5%; width: 57%; height: 88%; }
   .chapter-ten-dialogue { min-height: 205px; padding: 29px 17px 19px; border-radius: 18px; }
   .final-ritual-card, .open-eyes-card, .chapter-ten-completion { padding: 26px 18px; border-radius: 20px; }
-  .reality-transition, .eyes-closed, .open-eyes-card, .chapter-ten-completion, .ending-placeholder { min-height: min(62dvh, 520px); border-radius: 20px; }
+  .reality-transition, .eyes-closed, .open-eyes-card, .chapter-ten-completion { min-height: min(62dvh, 520px); border-radius: 20px; }
 }
