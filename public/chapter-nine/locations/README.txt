@@ -1,6 +1,7 @@
 地点场景图放这里：
 xifengqishituan1.png
 xifengdajiaotang1.png
+jiaotangguangchang1.png
 maoxianjiaxiehui1.png
 gededajiudian1.png
 penquanguangchang1.png

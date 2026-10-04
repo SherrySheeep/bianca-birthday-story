@@ -103,7 +103,7 @@ export function ChapterNineStory({ onComplete, paused = false }: Props) {
       <div className="chapter-nine-dialogue" key={lineIndex}><span className={`dialogue-speaker speaker-${currentLine.speaker}`}>{currentLine.speaker}</span><p>{currentLine.text}</p><button className="dialogue-next" onClick={advance}>继续</button></div>
     </>}
 
-    {phase === "task" && <div className="chapter-nine-task"><span>任务更新</span><h3>探索蒙德城</h3><p>异世界的信息：0 / 8</p><button className="sticker-button" onClick={() => setPhase("map")}>打开地图</button></div>}
+    {phase === "task" && <div className="chapter-nine-task"><span>任务更新</span><h3>探索蒙德城</h3><p>异世界的信息：0 / {chapterNineLocations.length}</p><button className="sticker-button" onClick={() => setPhase("map")}>打开地图</button></div>}
 
     {phase === "map" && <div className="mondstadt-map-page">
       <div className="map-progress"><b>异世界的信息</b><span>{progress}</span></div>
@@ -128,7 +128,7 @@ export function ChapterNineStory({ onComplete, paused = false }: Props) {
         <div className="map-gesture-hint">放大后可拖动地图</div>
         {selected && <div className="map-location-card"><button className="map-card-close" onClick={() => setSelectedId(null)}>×</button><b>{selected.name}</b><small>{explored.includes(selected.id) ? "这里的回响已经收集完毕" : "似乎有微弱的异界气息"}</small><button disabled={explored.includes(selected.id)} onClick={() => startLocation(selected)}>{explored.includes(selected.id) ? "已探索" : "探索"}</button></div>}
       </div>
-      {allExplored && <button className="sticker-button return-wall" onClick={() => { setLineIndex(0); setPhase("ending"); }}>回城墙找菲林斯</button>}
+      {allExplored && <button className="sticker-button return-wall" onClick={() => { setLineIndex(0); setPhase("ending"); }}>回去找菲林斯</button>}
     </div>}
 
     {phase === "location" && active && <>

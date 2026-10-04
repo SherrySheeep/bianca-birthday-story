@@ -1,6 +1,7 @@
 地点图标放这里：
 xifengqishituan.png
 xifengdajiaotang.png
+jiaotangguangchang.png
 maoxianjiaxiehui.png
 gededajiudian.png
 penquanguangchang.png
