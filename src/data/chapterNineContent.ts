@@ -62,7 +62,7 @@ export const chapterNineLocations: ChapterNineLocation[] = [
     message: { title: "异世界的信息", body: "愿生活偶尔慢下来，让你听见自己真正喜欢的声音。", signature: "一束很远的光", avatar: "touxiang2.png" },
   },
   {
-    id: "cathedral-square", name: "教堂广场", icon: "jiaotangguangchang.png", scene: "jiaotangguangchang1.png", position: { left: 26, top: 39 },
+    id: "cathedral-square", name: "教堂广场", icon: "jiaotangguangchang.png", scene: "jiaotangguangchang1.png", position: { left: 37.45, top: 39.8 },
     lines: [
       { speaker: "Bianca", text: "……好大。" },
       { speaker: "Bianca", text: "刚才在下面看的时候还没觉得这么夸张。" },
