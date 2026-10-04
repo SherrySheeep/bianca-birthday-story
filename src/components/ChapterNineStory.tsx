@@ -68,6 +68,8 @@ export function ChapterNineStory({ onComplete, paused = false }: Props) {
   };
 
   const startMapDrag = (event: React.PointerEvent<HTMLDivElement>) => {
+    const target = event.target as HTMLElement;
+    if (target.closest(".map-hotspot, .map-location-card, .map-zoom-controls")) return;
     dragRef.current = { x: event.clientX, y: event.clientY, panX: mapPan.x, panY: mapPan.y };
     draggedRef.current = false;
     event.currentTarget.setPointerCapture(event.pointerId);

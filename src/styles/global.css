@@ -4143,9 +4143,10 @@ main {
   .map-canvas.show-labels .map-hotspot small { display: block; }
   .map-canvas.is-crowded .map-hotspot { opacity: .32; filter: saturate(.25) brightness(1.18); }
   .map-canvas.is-crowded .map-hotspot.selected { opacity: 1; filter: none; }
-  .map-zoom-controls { display: flex; }
+  .map-zoom-controls { top: 8px; right: 8px; bottom: auto; left: auto; display: flex; flex-direction: column; border-radius: 16px; }
+  .map-zoom-controls b { min-width: 31px; writing-mode: horizontal-tb; }
   .map-gesture-hint { display: block; }
-  .map-location-card { top: 8px; right: 8px; width: min(210px, 57%); padding: 18px 11px 11px; }
+  .map-location-card { top: 8px; right: auto; left: 8px; width: min(210px, 57%); padding: 18px 11px 11px; }
   .map-location-card small { font-size: .66rem; }
   .otherworld-message { margin-top: 52px; padding: 66px 20px 24px; }
   .message-avatar, .message-avatar-placeholder { left: 18px; width: 96px; height: 96px; }
