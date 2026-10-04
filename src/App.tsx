@@ -5,10 +5,12 @@ import { ChapterSevenStory } from './components/ChapterSevenStory';
 import { ChapterEightStory } from './components/ChapterEightStory';
 import { ChapterNineStory } from './components/ChapterNineStory';
 import { ChapterTenStory } from './components/ChapterTenStory';
+import { LoadingScreen } from './components/LoadingScreen';
 import { Airport, ChinaFun, Cover, FinalCard, FlightBooking, Flying, Jokes, Memories, Messages, Packing, Room } from './sections/StorySections';
 
 const TOTAL=15;
 export default function App(){
+  const [preloadComplete,setPreloadComplete]=useState(false);
   const [chapter,setChapter]=useState(()=>Math.min(Number(localStorage.getItem('bianca-progress')||0),TOTAL));
   const [debugMode,setDebugMode]=useState(()=>new URLSearchParams(window.location.search).get('debug')==='1'||new URLSearchParams(window.location.search).get('debugSecurity')==='1');
   const [paused,setPaused]=useState(false);
@@ -21,6 +23,7 @@ export default function App(){
   },[debugMode]);
   const advance=useCallback(()=>setChapter(c=>Math.min(c+1,TOTAL)),[]);
   const goBack=useCallback(()=>setChapter(c=>Math.max(c-1,0)),[]);
+  if(!preloadComplete)return <LoadingScreen onStart={()=>setPreloadComplete(true)}/>;
   return <main className={paused?'debug-paused':''}>
     <button
       className={`debug-toggle ${debugMode?'active':''}`}
