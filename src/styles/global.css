@@ -3831,7 +3831,6 @@ main {
 .map-hotspot img:not([hidden]) + span { opacity: 0; }
 .map-hotspot small { position: absolute; left: 50%; top: calc(100% + 6px); width: max-content; max-width: 112px; transform: translateX(-50%); padding: 3px 6px; border: 1px solid #344660; border-radius: 7px; background: #fffaf0e8; font-size: .6rem; font-weight: 900; }
 .map-hotspot.explored { background: #9bcf91; filter: saturate(.7); }
-.map-hotspot.explored:after { content: "✓"; position: absolute; right: -5px; top: -5px; display: grid; place-items: center; width: 24px; height: 24px; border: 2px solid #fff; border-radius: 50%; background: #4e9b61; color: #fff; font-weight: 950; }
 .map-hotspot.selected { opacity: 1 !important; filter: none !important; box-shadow: 0 0 0 2px #344660, 0 0 0 6px #ffe46e, 3px 5px 0 #344660; }
 .map-zoom-controls { position: absolute; z-index: 10; left: 10px; bottom: 10px; display: none; align-items: center; gap: 4px; padding: 5px; border: 2px solid #344660; border-radius: 999px; background: #fffaf0e8; box-shadow: 2px 3px 0 #344660; backdrop-filter: blur(5px); }
 .map-zoom-controls button { min-width: 31px; height: 31px; border: 1px solid #344660; border-radius: 999px; background: #ffcf67; font-weight: 950; cursor: pointer; }
@@ -4135,7 +4134,7 @@ main {
   .chapter-nine-visual { height: min(39vh, 330px); min-height: 245px; border-radius: 20px; }
   .chapter-nine-portrait { right: -5%; width: 57%; height: 88%; }
   .chapter-nine-dialogue, .chapter-nine-completion { min-height: 205px; padding: 29px 17px 19px; border-radius: 18px; }
-  .mondstadt-map-frame { --map-icon-size: 15px; min-height: 0; aspect-ratio: auto; border-radius: 20px; }
+  .mondstadt-map-frame { --map-icon-size: 15px; --map-icon-border: 1px; --map-icon-gap: 0.1%; min-height: 0; aspect-ratio: auto; border-radius: 20px; }
   .map-canvas { position: relative; inset: auto; width: 100%; }
   .mondstadt-map-image { position: relative; inset: auto; display: block; width: 100%; height: auto; object-fit: contain; object-position: center; }
   .map-hotspot { transition: opacity .2s, filter .2s, transform .18s; }

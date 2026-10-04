@@ -121,7 +121,7 @@ export function ChapterNineStory({ onComplete, paused = false }: Props) {
           {chapterNineLocations.map((location, index) => {
             const done = explored.includes(location.id);
             const selectedHotspot = selectedId === location.id;
-            return <button className={`map-hotspot ${done ? "explored" : ""} ${selectedHotspot ? "selected" : ""}`} style={{ left: `${location.position.left}%`, top: `${location.position.top}%` }} key={location.id} onClick={(event) => { event.stopPropagation(); if (!draggedRef.current) setSelectedId(location.id); }} aria-label={location.name}><img src={asset("icons", location.icon)} alt="" draggable={false} onError={(event) => { event.currentTarget.hidden = true; }} /><span>{done ? "✓" : index + 1}</span><small>{location.name}</small></button>;
+            return <button className={`map-hotspot ${done ? "explored" : ""} ${selectedHotspot ? "selected" : ""}`} style={{ left: `${location.position.left}%`, top: `${location.position.top}%` }} key={location.id} onClick={(event) => { event.stopPropagation(); if (!draggedRef.current) setSelectedId(location.id); }} aria-label={location.name}><img src={asset("icons", location.icon)} alt="" draggable={false} onError={(event) => { event.currentTarget.hidden = true; }} /><span>{index + 1}</span><small>{location.name}</small></button>;
           })}
         </div>
         <div className="map-zoom-controls"><button onClick={() => changeZoom(-0.25)} disabled={mapZoom <= 1} aria-label="缩小地图">−</button><b>{Math.round(mapZoom * 100)}%</b><button onClick={() => changeZoom(0.25)} disabled={mapZoom >= 2.6} aria-label="放大地图">＋</button><button onClick={() => { setMapZoom(1); setMapPan({ x: 0, y: 0 }); }} aria-label="复位地图">复位</button></div>
