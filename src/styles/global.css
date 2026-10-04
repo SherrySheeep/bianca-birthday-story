@@ -3858,6 +3858,224 @@ main {
 .chapter-nine-completion p { margin: 4px 0; font-size: 1.08rem; font-weight: 800; }
 .chapter-nine-completion .dialogue-next { float: none; }
 
+/* Chapter 10 · 回到现实 */
+.chapter-ten-story {
+  display: grid;
+  gap: 18px;
+}
+
+.chapter-ten-visual {
+  position: relative;
+  width: 100%;
+  height: min(62vh, 650px);
+  min-height: 430px;
+  overflow: hidden;
+  border: 5px solid rgba(255, 255, 255, 0.94);
+  border-radius: 30px;
+  background: #f8dca4;
+  box-shadow: 0 15px 34px rgba(82, 52, 37, 0.2), 0 0 0 2px rgba(116, 71, 43, 0.18);
+  isolation: isolate;
+}
+
+.chapter-ten-background,
+.chapter-ten-placeholder {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.chapter-ten-background {
+  z-index: 1;
+  object-fit: cover;
+}
+
+.chapter-ten-placeholder {
+  display: grid;
+  place-content: center;
+  color: #9a6750;
+  text-align: center;
+  background: linear-gradient(145deg, #ffe5ae, #ffc8bd);
+}
+
+.chapter-ten-portrait {
+  position: absolute;
+  z-index: 2;
+  right: 1%;
+  bottom: -2%;
+  width: min(43%, 390px);
+  height: 86%;
+  object-fit: contain;
+  object-position: right bottom;
+  filter: drop-shadow(0 10px 9px rgba(68, 37, 30, 0.25));
+  animation: chapter-ten-pop 0.35s ease-out both;
+}
+
+.chapter-ten-dialogue {
+  position: relative;
+  z-index: 4;
+  min-height: 145px;
+  padding: 28px 24px 20px;
+  border: 3px solid #744d3b;
+  border-radius: 22px;
+  background: rgba(255, 250, 234, 0.97);
+  box-shadow: 7px 8px 0 rgba(116, 77, 59, 0.16);
+  animation: chapter-ten-pop 0.25s ease-out both;
+}
+
+.chapter-ten-dialogue .dialogue-speaker {
+  position: absolute;
+  top: -18px;
+  left: 20px;
+  padding: 6px 15px;
+  border: 2px solid #744d3b;
+  border-radius: 999px;
+  color: #573426;
+  font-weight: 900;
+  background: #ffd872;
+}
+
+.chapter-ten-dialogue p {
+  min-height: 2.8em;
+  margin: 4px 0 15px;
+  white-space: pre-line;
+  font-size: clamp(1rem, 2.1vw, 1.18rem);
+  line-height: 1.75;
+}
+
+.chapter-ten-dialogue .dialogue-next {
+  margin-left: auto;
+}
+
+.reality-transition,
+.eyes-closed,
+.open-eyes-card,
+.chapter-ten-completion,
+.ending-placeholder {
+  min-height: min(66vh, 620px);
+  border-radius: 30px;
+}
+
+.reality-transition {
+  display: grid;
+  place-content: center;
+  gap: 20px;
+  overflow: hidden;
+  color: #715a8f;
+  text-align: center;
+  background: radial-gradient(circle, #fff 5%, #f2eaff 42%, #bbe7ff 100%);
+  animation: reality-flash 1.2s ease-in-out both;
+}
+
+.waypoint-orbit {
+  font-size: 5rem;
+  animation: waypoint-spin 1.2s ease-in-out infinite;
+}
+
+.final-ritual-card,
+.open-eyes-card,
+.chapter-ten-completion {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 16px;
+  padding: 38px;
+  border: 4px solid #fff4d6;
+  color: #573426;
+  text-align: center;
+  background: linear-gradient(145deg, #fff8dc, #ffd9ce);
+  box-shadow: 0 16px 40px rgba(101, 59, 54, 0.2), inset 0 0 0 2px #deaa73;
+}
+
+.final-ritual-card > span,
+.final-kicker {
+  color: #bd6f51;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.final-ritual-card ol {
+  margin: 0;
+  padding-left: 1.5em;
+  text-align: left;
+  line-height: 1.9;
+}
+
+.ritual-chat {
+  width: min(100%, 520px);
+  padding: 14px 18px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.72);
+  text-align: left;
+}
+
+.ritual-chat p {
+  margin: 7px 0;
+}
+
+.eyes-closed {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 12px;
+  color: #fff;
+  background: radial-gradient(circle, #242238, #090912 70%);
+}
+
+.eyes-closed strong {
+  font-size: clamp(5rem, 20vw, 10rem);
+  animation: countdown-beat 1s ease-out both;
+}
+
+.eyes-closed small {
+  opacity: 0.7;
+  letter-spacing: 0.2em;
+}
+
+.open-eyes-card span {
+  font-size: 4rem;
+  color: #ffb939;
+  animation: countdown-beat 1.2s ease-in-out infinite;
+}
+
+.chapter-ten-completion {
+  background: linear-gradient(145deg, #eaffdb, #fff3b8 52%, #ffd5c5);
+}
+
+.chapter-ten-completion .checkin-complete {
+  font-size: clamp(1.15rem, 3vw, 1.55rem);
+}
+
+.ending-placeholder {
+  display: grid;
+  place-content: center;
+  padding: 24px;
+}
+
+@keyframes chapter-ten-pop {
+  from { opacity: 0; transform: translateY(10px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes reality-flash {
+  0% { opacity: 1; filter: brightness(1); }
+  48% { opacity: 1; filter: brightness(1.15); }
+  72% { opacity: 1; filter: brightness(2.5); }
+  100% { opacity: 0; filter: brightness(3); }
+}
+
+@keyframes waypoint-spin {
+  0% { transform: scale(0.8) rotate(0deg); opacity: 0.55; }
+  50% { transform: scale(1.2) rotate(180deg); opacity: 1; }
+  100% { transform: scale(0.8) rotate(360deg); opacity: 0.55; }
+}
+
+@keyframes countdown-beat {
+  0% { opacity: 0; transform: scale(1.55); }
+  25% { opacity: 1; }
+  100% { opacity: 0.22; transform: scale(0.88); }
+}
+
 /* Phone-only sizing: desktop proportions above stay unchanged. */
 @media (max-width: 699px) {
   .items-grid {
@@ -4149,4 +4367,11 @@ main {
   .map-location-card small { font-size: .66rem; }
   .otherworld-message { margin-top: 52px; padding: 66px 20px 24px; }
   .message-avatar, .message-avatar-placeholder { left: 18px; width: 96px; height: 96px; }
+
+  .chapter-ten-story { gap: 10px; }
+  .chapter-ten-visual { height: min(39vh, 330px); min-height: 245px; border-radius: 20px; }
+  .chapter-ten-portrait { right: -5%; width: 57%; height: 88%; }
+  .chapter-ten-dialogue { min-height: 205px; padding: 29px 17px 19px; border-radius: 18px; }
+  .final-ritual-card, .open-eyes-card, .chapter-ten-completion { padding: 26px 18px; border-radius: 20px; }
+  .reality-transition, .eyes-closed, .open-eyes-card, .chapter-ten-completion, .ending-placeholder { min-height: min(62dvh, 520px); border-radius: 20px; }
 }

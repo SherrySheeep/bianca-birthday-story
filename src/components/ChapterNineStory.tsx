@@ -128,7 +128,7 @@ export function ChapterNineStory({ onComplete, paused = false }: Props) {
         <div className="map-gesture-hint">放大后可拖动地图</div>
         {selected && <div className="map-location-card"><button className="map-card-close" onClick={() => setSelectedId(null)}>×</button><b>{selected.name}</b><small>{explored.includes(selected.id) ? "这里的回响已经收集完毕" : "似乎有微弱的异界气息"}</small><button disabled={explored.includes(selected.id)} onClick={() => startLocation(selected)}>{explored.includes(selected.id) ? "已探索" : "探索"}</button></div>}
       </div>
-      {allExplored && <button className="sticker-button return-wall" onClick={() => { setLineIndex(0); setPhase("ending"); }}>回去找菲林斯</button>}
+      {allExplored && <button className="sticker-button return-wall" onClick={onComplete}>回去找菲林斯</button>}
     </div>}
 
     {phase === "location" && active && <>
