@@ -3818,10 +3818,12 @@ main {
 .mondstadt-map-page { width: min(100%, 880px); margin: 0 auto; display: grid; gap: 14px; }
 .map-progress { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border: 2px solid #344660; border-radius: 999px; background: #fffaf0; box-shadow: 3px 4px 0 #344660; }
 .map-progress span { color: #c64e47; font-size: 1.2rem; font-weight: 950; }
-.mondstadt-map-frame { position: relative; --map-icon-size: 66px; --map-icon-gap: 2px; --map-icon-border: 3px; width: 100%; aspect-ratio: 4 / 3; min-height: 470px; overflow: hidden; border: 3px solid #344660; border-radius: 28px; background: #cde5d4; box-shadow: 7px 8px 0 #34466047; }
+.mondstadt-map-frame { position: relative; --map-icon-size: 38px; --map-icon-gap: 1px; --map-icon-border: 3px; width: 100%; aspect-ratio: 4 / 3; min-height: 470px; overflow: hidden; border: 3px solid #344660; border-radius: 28px; background: #cde5d4; box-shadow: 7px 8px 0 #34466047; }
 .mondstadt-map-image, .map-image-placeholder { position: absolute; inset: 0; width: 100%; height: 100%; }
 .mondstadt-map-image { z-index: 1; object-fit: cover; object-position: center; }
 .map-image-placeholder { display: grid; place-items: center; align-content: center; background: radial-gradient(circle at 50% 45%, #eaf1c9, #b9d9c8); color: #52715a; font-weight: 900; text-align: center; }
+.map-canvas { position: absolute; z-index: 2; inset: 0; transform-origin: center; touch-action: none; cursor: grab; transition: transform .18s ease-out; }
+.map-canvas:active { cursor: grabbing; }
 .map-hotspot { position: absolute; z-index: 3; width: calc(var(--map-icon-size) + var(--map-icon-gap) * 2 + var(--map-icon-border) * 2); height: calc(var(--map-icon-size) + var(--map-icon-gap) * 2 + var(--map-icon-border) * 2); transform: translate(-50%, -50%); padding: var(--map-icon-gap); border: var(--map-icon-border) solid #fffaf0; border-radius: 50%; background: #ffc86c; box-shadow: 0 0 0 2px #344660, 3px 5px 0 #344660; cursor: pointer; transition: .18s; }
 .map-hotspot:hover, .map-hotspot:focus-visible { transform: translate(-50%, -54%) scale(1.06); }
 .map-hotspot img { position: absolute; left: 50%; top: 50%; width: var(--map-icon-size); height: var(--map-icon-size); border-radius: 50%; object-fit: cover; transform: translate(-50%, -50%); }
@@ -3830,6 +3832,13 @@ main {
 .map-hotspot small { position: absolute; left: 50%; top: calc(100% + 6px); width: max-content; max-width: 112px; transform: translateX(-50%); padding: 3px 6px; border: 1px solid #344660; border-radius: 7px; background: #fffaf0e8; font-size: .6rem; font-weight: 900; }
 .map-hotspot.explored { background: #9bcf91; filter: saturate(.7); }
 .map-hotspot.explored:after { content: "✓"; position: absolute; right: -5px; top: -5px; display: grid; place-items: center; width: 24px; height: 24px; border: 2px solid #fff; border-radius: 50%; background: #4e9b61; color: #fff; font-weight: 950; }
+.map-hotspot.selected { opacity: 1 !important; filter: none !important; box-shadow: 0 0 0 2px #344660, 0 0 0 6px #ffe46e, 3px 5px 0 #344660; }
+.map-zoom-controls { position: absolute; z-index: 10; left: 10px; bottom: 10px; display: none; align-items: center; gap: 4px; padding: 5px; border: 2px solid #344660; border-radius: 999px; background: #fffaf0e8; box-shadow: 2px 3px 0 #344660; backdrop-filter: blur(5px); }
+.map-zoom-controls button { min-width: 31px; height: 31px; border: 1px solid #344660; border-radius: 999px; background: #ffcf67; font-weight: 950; cursor: pointer; }
+.map-zoom-controls button:last-child { padding: 0 8px; font-size: .64rem; }
+.map-zoom-controls button:disabled { opacity: .35; }
+.map-zoom-controls b { min-width: 42px; font-size: .65rem; text-align: center; }
+.map-gesture-hint { position: absolute; z-index: 9; left: 50%; bottom: 11px; display: none; transform: translateX(-50%); padding: 6px 10px; border-radius: 999px; background: #344660c7; color: #fff; font-size: .6rem; font-weight: 800; pointer-events: none; }
 .map-location-card { position: absolute; z-index: 8; top: 15px; right: 15px; width: min(250px, 46%); padding: 19px 15px 15px; border: 2px solid #344660; border-radius: 17px; background: #fffaf0ed; box-shadow: 4px 5px 0 #344660; backdrop-filter: blur(5px); }
 .map-location-card b, .map-location-card small { display: block; }
 .map-location-card small { margin: 6px 0 12px; line-height: 1.4; }
@@ -4126,9 +4135,16 @@ main {
   .chapter-nine-visual { height: min(39vh, 330px); min-height: 245px; border-radius: 20px; }
   .chapter-nine-portrait { right: -5%; width: 57%; height: 88%; }
   .chapter-nine-dialogue, .chapter-nine-completion { min-height: 205px; padding: 29px 17px 19px; border-radius: 18px; }
-  .mondstadt-map-frame { --map-icon-size: 25px; min-height: 0; aspect-ratio: auto; border-radius: 20px; }
+  .mondstadt-map-frame { --map-icon-size: 15px; min-height: 0; aspect-ratio: auto; border-radius: 20px; }
+  .map-canvas { position: relative; inset: auto; width: 100%; }
   .mondstadt-map-image { position: relative; inset: auto; display: block; width: 100%; height: auto; object-fit: contain; object-position: center; }
-  .map-hotspot small { max-width: 86px; font-size: .52rem; }
+  .map-hotspot { transition: opacity .2s, filter .2s, transform .18s; }
+  .map-hotspot small { display: none; max-width: 86px; font-size: .52rem; }
+  .map-canvas.show-labels .map-hotspot small { display: block; }
+  .map-canvas.is-crowded .map-hotspot { opacity: .32; filter: saturate(.25) brightness(1.18); }
+  .map-canvas.is-crowded .map-hotspot.selected { opacity: 1; filter: none; }
+  .map-zoom-controls { display: flex; }
+  .map-gesture-hint { display: block; }
   .map-location-card { top: 8px; right: 8px; width: min(210px, 57%); padding: 18px 11px 11px; }
   .map-location-card small { font-size: .66rem; }
   .otherworld-message { margin-top: 52px; padding: 66px 20px 24px; }

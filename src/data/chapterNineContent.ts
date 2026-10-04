@@ -39,7 +39,7 @@ const npc = (file: string, alt: string): ChapterNinePortrait => ({ folder: "npcs
 
 export const chapterNineLocations: ChapterNineLocation[] = [
   {
-    id: "knights", name: "西风骑士团", icon: "xifengqishituan.png", scene: "xifengqishituan1.png", position: { left: 31, top: 24 },
+    id: "knights", name: "西风骑士团", icon: "xifengqishituan.png", scene: "xifengqishituan1.png", position: { left: 40, top: 62 },
     lines: [
       { speaker: "Bianca", text: "原来骑士团里面长这样。比想象中安静多了。" },
       { speaker: "凯亚", text: "这不是那位刚拿到飞行执照的旅行者吗？", portrait: npc("kaiya1.png", "凯亚") },
@@ -52,7 +52,7 @@ export const chapterNineLocations: ChapterNineLocation[] = [
     message: { title: "异世界的信息", body: "愿你每次出发都带着好奇，也总能平安找到回来的路。", signature: "来自现实世界的一封小纸条", avatar: "touxiang1.png" },
   },
   {
-    id: "cathedral", name: "西风大教堂", icon: "xifengdajiaotang.png", scene: "xifengdajiaotang1.png", position: { left: 52, top: 13 },
+    id: "cathedral", name: "西风大教堂", icon: "xifengdajiaotang.png", scene: "xifengdajiaotang1.png", position: { left: 19.5, top: 27.5 },
     lines: [
       { speaker: "Bianca", text: "这里好安静……感觉说话都会不自觉放轻。" },
       { speaker: "Bianca", text: "彩窗投下来的光，好像把时间也照慢了一点。" },
@@ -62,7 +62,7 @@ export const chapterNineLocations: ChapterNineLocation[] = [
     message: { title: "异世界的信息", body: "愿生活偶尔慢下来，让你听见自己真正喜欢的声音。", signature: "一束很远的光", avatar: "touxiang2.png" },
   },
   {
-    id: "guild", name: "冒险家协会", icon: "maoxianjiaxiehui.png", scene: "maoxianjiaxiehui1.png", position: { left: 73, top: 30 },
+    id: "guild", name: "冒险家协会", icon: "maoxianjiaxiehui.png", scene: "maoxianjiaxiehui1.png", position: { left: 54, top: 77.5 },
     lines: [
       { speaker: "Bianca", text: "这个委托栏也太满了吧。找猫、送信、清理史莱姆……" },
       { speaker: "Bianca", text: "等等，这张“未知来源委托”的对象为什么写着 Bianca？" },
@@ -72,7 +72,7 @@ export const chapterNineLocations: ChapterNineLocation[] = [
     message: { title: "异世界的信息", body: "今天也许没有攻略，但你一直都有把混乱走成故事的本事。", signature: "匿名委托人", avatar: "touxiang3.png" },
   },
   {
-    id: "hotel", name: "歌德大酒店", icon: "gededajiudian.png", scene: "gededajiudian1.png", position: { left: 78, top: 55 },
+    id: "hotel", name: "歌德大酒店", icon: "gededajiudian.png", scene: "gededajiudian1.png", position: { left: 54, top: 47 },
     lines: [
       { speaker: "Bianca", text: "钟离？你怎么也在这里？" },
       { speaker: "钟离", text: "旅途中适当歇息，也是必要之事。", portrait: existing("chapter-seven/Zhongli2.png", "钟离") },
@@ -96,7 +96,7 @@ export const chapterNineLocations: ChapterNineLocation[] = [
     message: { title: "异世界的信息", body: "风不会催你，朋友也不会。按自己的节奏，慢慢走就好。", signature: "顺风寄来的话", avatar: "touxiang5.png" },
   },
   {
-    id: "souvenir", name: "荣光之风", icon: "rongguangzhifeng.png", scene: "rongguangzhifeng1.png", position: { left: 24, top: 57 },
+    id: "souvenir", name: "荣光之风", icon: "rongguangzhifeng.png", scene: "rongguangzhifeng1.png", position: { left: 68.5, top: 57 },
     lines: [
       { speaker: "Bianca", text: "纪念品店……这种地方最危险了。" },
       { speaker: "Bianca", text: "很容易买一堆完全没必要、但是非常可爱的东西。" },
@@ -106,7 +106,7 @@ export const chapterNineLocations: ChapterNineLocation[] = [
     message: { title: "异世界的信息", body: "可以买没必要的小东西，也可以做没必要但开心的事。快乐本来就很有必要。", signature: "钱包尚未退出群聊", avatar: "touxiang6.png" },
   },
   {
-    id: "training", name: "骑士团训练场", icon: "qishituanxunlianchang.png", scene: "qishituanxunlianchang1.png", position: { left: 17, top: 78 },
+    id: "training", name: "骑士团训练场", icon: "qishituanxunlianchang.png", scene: "qishituanxunlianchang1.png", position: { left: 34, top: 55 },
     lines: [
       { speaker: "安柏", text: "Bianca！要不要顺便再练一次飞行？", portrait: existing("chapter-five/Anbo4.png", "安柏") },
       { speaker: "Bianca", text: "不要。" },
@@ -118,7 +118,7 @@ export const chapterNineLocations: ChapterNineLocation[] = [
     message: { title: "异世界的信息", body: "成长不一定要很伟大。有时候，只是比上次少摔一点点。", signature: "来自训练场的掌声", avatar: "touxiang7.png" },
   },
   {
-    id: "lab", name: "魔法实验室", icon: "mofashiyanshi.png", scene: "mofashiyanshi1.png", position: { left: 66, top: 77 },
+    id: "lab", name: "魔法实验室", icon: "mofashiyanshi.png", scene: "mofashiyanshi1.png", position: { left: 61, top: 74.5 },
     lines: [
       { speaker: "Bianca", text: "这里一看就很容易出事。" },
       { speaker: "Bianca", text: "这个装置的读数一直在跳，旁边的元素灯也在闪。" },
