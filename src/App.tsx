@@ -11,10 +11,9 @@ import { Airport, ChinaFun, Cover, FinalCard, FlightBooking, Flying, Jokes, Memo
 const TOTAL=15;
 export default function App(){
   const [preloadComplete,setPreloadComplete]=useState(false);
-  const [chapter,setChapter]=useState(()=>Math.min(Number(localStorage.getItem('bianca-progress')||0),TOTAL));
+  const [chapter,setChapter]=useState(0);
   const [debugMode,setDebugMode]=useState(()=>new URLSearchParams(window.location.search).get('debug')==='1'||new URLSearchParams(window.location.search).get('debugSecurity')==='1');
   const [paused,setPaused]=useState(false);
-  useEffect(()=>localStorage.setItem('bianca-progress',String(chapter)),[chapter]);
   useEffect(()=>{
     const url=new URL(window.location.href);
     if(debugMode) url.searchParams.set('debug','1'); else {url.searchParams.delete('debug');url.searchParams.delete('debugSecurity');}
