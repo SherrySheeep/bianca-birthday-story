@@ -3803,6 +3803,53 @@ main {
   to { transform: translateY(0); opacity: 1; }
 }
 
+/* Chapter 9: free exploration around Mondstadt */
+.chapter-nine-story { align-content: start; gap: 13px; overflow-x: hidden; background: linear-gradient(155deg, #fff3ca, #cde8df 62%, #c6dff0); }
+.chapter-nine-visual { position: relative; width: min(100%, 820px); height: min(50vh, 440px); min-height: 315px; margin: 0 auto; overflow: hidden; border: 3px solid #344660; border-radius: 28px; background: #d7eadc; box-shadow: 7px 8px 0 #34466047; }
+.chapter-nine-visual > img:not(.chapter-nine-portrait) { position: absolute; z-index: 1; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.location-image-placeholder { position: absolute; z-index: 0; inset: 0; display: grid; place-items: center; align-content: center; background: #d7eadc; color: #52715a; font-weight: 900; text-align: center; }
+.chapter-nine-portrait { position: absolute; z-index: 4; right: 1%; bottom: 0; width: 47%; height: 90%; object-fit: contain; object-position: right bottom; filter: drop-shadow(4px 6px 0 #ffffffb8); animation: portrait-pop .25s ease-out; }
+.chapter-nine-dialogue, .chapter-nine-completion { position: relative; z-index: 7; width: min(100%, 820px); margin: 0 auto; padding: 30px 24px 22px; border: 3px solid #344660; border-radius: 22px; background: #fffaf0; box-shadow: 5px 6px 0 #34466047; }
+.chapter-nine-dialogue { min-height: 190px; animation: dialogue-in .2s ease-out; }
+.chapter-nine-dialogue p { min-height: 62px; margin: 7px 0 18px; font-size: clamp(1rem, 3.7vw, 1.16rem); font-weight: 700; line-height: 1.72; }
+.chapter-nine-task { width: min(100%, 520px); margin: auto; padding: 30px; border: 3px solid #3e604f; border-radius: 24px; background: linear-gradient(145deg, #fff8d8, #d7efcf); text-align: center; box-shadow: 7px 8px 0 #3e604f55; }
+.chapter-nine-task > span { display: inline-block; padding: 5px 11px; border: 2px dashed #c65f52; color: #b74e43; font-weight: 900; transform: rotate(-2deg); }
+.chapter-nine-task h3 { margin: 18px 0 5px; font-size: 1.8rem; }
+.mondstadt-map-page { width: min(100%, 880px); margin: 0 auto; display: grid; gap: 14px; }
+.map-progress { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border: 2px solid #344660; border-radius: 999px; background: #fffaf0; box-shadow: 3px 4px 0 #344660; }
+.map-progress span { color: #c64e47; font-size: 1.2rem; font-weight: 950; }
+.mondstadt-map-frame { position: relative; width: 100%; aspect-ratio: 4 / 3; min-height: 470px; overflow: hidden; border: 3px solid #344660; border-radius: 28px; background: #cde5d4; box-shadow: 7px 8px 0 #34466047; }
+.mondstadt-map-image, .map-image-placeholder { position: absolute; inset: 0; width: 100%; height: 100%; }
+.mondstadt-map-image { z-index: 1; object-fit: cover; object-position: center; }
+.map-image-placeholder { display: grid; place-items: center; align-content: center; background: radial-gradient(circle at 50% 45%, #eaf1c9, #b9d9c8); color: #52715a; font-weight: 900; text-align: center; }
+.map-hotspot { position: absolute; z-index: 3; width: 76px; height: 76px; transform: translate(-50%, -50%); padding: 4px; border: 3px solid #fffaf0; border-radius: 50%; background: #ffc86c; box-shadow: 0 0 0 2px #344660, 3px 5px 0 #344660; cursor: pointer; transition: .18s; }
+.map-hotspot:hover, .map-hotspot:focus-visible { transform: translate(-50%, -54%) scale(1.06); }
+.map-hotspot img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+.map-hotspot > span { position: absolute; inset: 0; display: grid; place-items: center; font-weight: 950; font-size: 1.2rem; }
+.map-hotspot img:not([hidden]) + span { opacity: 0; }
+.map-hotspot small { position: absolute; left: 50%; top: calc(100% + 6px); width: max-content; max-width: 112px; transform: translateX(-50%); padding: 3px 6px; border: 1px solid #344660; border-radius: 7px; background: #fffaf0e8; font-size: .6rem; font-weight: 900; }
+.map-hotspot.explored { background: #9bcf91; filter: saturate(.7); }
+.map-hotspot.explored:after { content: "✓"; position: absolute; right: -5px; top: -5px; display: grid; place-items: center; width: 24px; height: 24px; border: 2px solid #fff; border-radius: 50%; background: #4e9b61; color: #fff; font-weight: 950; }
+.map-location-card { position: absolute; z-index: 8; top: 15px; right: 15px; width: min(250px, 46%); padding: 19px 15px 15px; border: 2px solid #344660; border-radius: 17px; background: #fffaf0ed; box-shadow: 4px 5px 0 #344660; backdrop-filter: blur(5px); }
+.map-location-card b, .map-location-card small { display: block; }
+.map-location-card small { margin: 6px 0 12px; line-height: 1.4; }
+.map-location-card > button:last-child { width: 100%; border: 2px solid #344660; border-radius: 999px; padding: 8px; background: #ffcf67; font-weight: 900; cursor: pointer; }
+.map-location-card > button:disabled { background: #d4d5d2; color: #747775; cursor: not-allowed; }
+.map-card-close { position: absolute; top: 3px; right: 5px; border: 0; background: transparent; font-size: 1.3rem; cursor: pointer; }
+.return-wall { margin: 4px auto 0; }
+.otherworld-message { position: relative; width: min(100%, 590px); margin: 40px auto 0; padding: 65px 34px 30px; border: 3px solid #574b58; border-radius: 12px 25px 15px 20px; background: linear-gradient(155deg, #fffaf0, #fff1c7); box-shadow: 11px 13px 0 #574b5850; text-align: center; transform: rotate(-.4deg); }
+.otherworld-message:before { content: ""; position: absolute; inset: 10px; border: 2px dashed #dba99a; border-radius: 10px 20px 12px 18px; pointer-events: none; }
+.message-tape { position: absolute; z-index: 4; top: -18px; left: 42px; width: 100px; height: 31px; background: #8dc8d5aa; transform: rotate(-6deg); }
+.message-avatar, .message-avatar-placeholder { position: absolute; z-index: 3; left: 25px; top: -48px; width: 105px; height: 105px; border: 7px solid #fff; border-radius: 18px; background: #ffcbd2; box-shadow: 4px 5px 0 #574b58; object-fit: cover; transform: rotate(-5deg); }
+.message-avatar-placeholder { display: grid; place-items: center; color: #8a5362; font-size: .7rem; font-weight: 900; }
+.otherworld-message > span { display: inline-block; color: #b45a79; font-weight: 900; }
+.otherworld-message h3 { margin: 13px 0; font-family: "Ma Shan Zheng"; font-size: 2rem; }
+.otherworld-message p { position: relative; margin: 15px auto; max-width: 450px; font-size: 1.12rem; font-weight: 700; line-height: 1.9; }
+.otherworld-message > small { position: relative; display: block; margin: 12px 0 22px; }
+.chapter-nine-completion { display: grid; justify-items: center; gap: 11px; text-align: center; background: linear-gradient(145deg, #fff8da, #d6f1e2); }
+.chapter-nine-completion p { margin: 4px 0; font-size: 1.08rem; font-weight: 800; }
+.chapter-nine-completion .dialogue-next { float: none; }
+
 /* Phone-only sizing: desktop proportions above stay unchanged. */
 @media (max-width: 699px) {
   .items-grid {
@@ -4074,4 +4121,16 @@ main {
   .battle-skills button { min-width: 0; flex: 1; min-height: 67px; padding: 5px; font-size: .72rem; }
   .battle-status-toast { top: 45%; width: 70%; font-size: .62rem; }
   .battle-overlay > div { padding: 19px 16px; }
+
+  .chapter-nine-story { gap: 10px; }
+  .chapter-nine-visual { height: min(39vh, 330px); min-height: 245px; border-radius: 20px; }
+  .chapter-nine-portrait { right: -5%; width: 57%; height: 88%; }
+  .chapter-nine-dialogue, .chapter-nine-completion { min-height: 205px; padding: 29px 17px 19px; border-radius: 18px; }
+  .mondstadt-map-frame { min-height: 540px; aspect-ratio: 3 / 4; border-radius: 20px; }
+  .map-hotspot { width: 62px; height: 62px; }
+  .map-hotspot small { max-width: 86px; font-size: .52rem; }
+  .map-location-card { top: 8px; right: 8px; width: min(210px, 57%); padding: 18px 11px 11px; }
+  .map-location-card small { font-size: .66rem; }
+  .otherworld-message { margin-top: 52px; padding: 66px 20px 24px; }
+  .message-avatar, .message-avatar-placeholder { left: 18px; width: 96px; height: 96px; }
 }
