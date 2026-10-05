@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
 import { loadingMessages } from "../data/loadingMessages";
-import { initialImageQueue, preloadAssets, startBackgroundImagePreload } from "../lib/imagePreloader";
+import { imagePreloadQueue, preloadAssets } from "../lib/imagePreloader";
 
 type Props = { onStart: () => void };
 
 export function LoadingScreen({ onStart }: Props) {
   const [loaded, setLoaded] = useState(0);
   const [messageIndex, setMessageIndex] = useState(() => Math.floor(Math.random() * loadingMessages.length));
-  const total = initialImageQueue.length;
+  const total = imagePreloadQueue.length;
   const ready = total === 0 || loaded >= total;
   const progress = total === 0 ? 100 : Math.round((loaded / total) * 100);
 
   useEffect(() => {
     let active = true;
-    preloadAssets(initialImageQueue, (completed) => {
+    preloadAssets(imagePreloadQueue, (completed) => {
       if (active) setLoaded(completed);
     });
     return () => { active = false; };
@@ -25,10 +25,6 @@ export function LoadingScreen({ onStart }: Props) {
       setMessageIndex((current) => (current + 1) % loadingMessages.length);
     }, 1750);
     return () => window.clearInterval(timer);
-  }, [ready]);
-
-  useEffect(() => {
-    if (ready) startBackgroundImagePreload();
   }, [ready]);
 
   return <main className="loading-screen">

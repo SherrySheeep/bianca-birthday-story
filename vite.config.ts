@@ -7,10 +7,6 @@ const IMAGE_PATTERN = /\.(png|jpe?g|webp|avif)$/i;
 const virtualImageManifest = 'virtual:public-image-manifest';
 const resolvedVirtualImageManifest = `\0${virtualImageManifest}`;
 
-function belongsToInitialJourney(path: string) {
-  return !/\/(?:chapter-[^/]+|airport-[^/]+|packing-items)\//i.test(path);
-}
-
 function collectPublicImages(directory: string, root = directory) {
   const images: Array<{ path: string; bytes: number }> = [];
   const walk = (current: string) => {
@@ -46,13 +42,9 @@ function publicImageManifestPlugin() {
       const images = collectPublicImages(publicDir).map((image) => ({
         url: `${base}${image.path}`,
         bytes: image.bytes,
-        priority: belongsToInitialJourney(`/${image.path}`),
       }));
       const totalMb = images.reduce((sum, image) => sum + image.bytes, 0) / 1024 / 1024;
-      const initialImages = images.filter((image) => image.priority);
-      const initialMb = initialImages.reduce((sum, image) => sum + image.bytes, 0) / 1024 / 1024;
       console.info(`[preload] 自动扫描到 ${images.length} 张图片，共 ${totalMb.toFixed(2)} MB`);
-      console.info(`[preload] 首屏队列 ${initialImages.length} 张 / ${initialMb.toFixed(2)} MB，其余进入后台队列`);
       return `export default ${JSON.stringify(images)};`;
     },
   };
