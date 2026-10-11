@@ -188,7 +188,7 @@ export function ChapterEightStory({ onComplete, paused = false, debugAction = nu
 
   const runEnemyTurn = async (afterPlayer: Enemy[], nextRound: number, usedSupport?: Support) => {
     if (afterPlayer.every((enemy) => enemy.hp <= 0)) {
-      setEnemies(afterPlayer); setPhase("battleWon"); setLineIndex(0); setActionLocked(false); setActingSkill(null); return;
+      setEnemies(afterPlayer); setPhase("fakeVictory"); setLineIndex(0); setActionLocked(false); setActingSkill(null); return;
     }
 
     let updated = afterPlayer.map((enemy) => enemy.burning > 0 && enemy.hp > 0
@@ -200,7 +200,7 @@ export function ChapterEightStory({ onComplete, paused = false, debugAction = nu
       await playEnemyImpact(afterPlayer, updated, burningIds, "fire", true);
     }
     if (updated.every((enemy) => enemy.hp <= 0)) {
-      setPhase("battleWon"); setLineIndex(0); setActionLocked(false); setActingSkill(null); setBattleDialogue(null); return;
+      setPhase("fakeVictory"); setLineIndex(0); setActionLocked(false); setActingSkill(null); setBattleDialogue(null); return;
     }
 
     let incoming = 0;
@@ -344,7 +344,6 @@ export function ChapterEightStory({ onComplete, paused = false, debugAction = nu
     }
     if (activeSupport) setSupportCooldowns((current) => ({ ...current, [activeSupport]: supportCooldownLength[activeSupport] }));
 
-    if (tutorialStep >= 3) next = next.map((enemy) => ({ ...enemy, shield: 0, hp: 0 }));
     await playEnemyImpact(enemies, next, kind === "normal" ? [target] : livingIds, kind === "normal" ? (activeSupport === "amber" ? "fire" : activeSupport === "venti" ? "wind" : "normal") : kind === "skill" ? "cold" : "ultimate-hard", kind !== "normal");
 
     if (activeSupport === "zhongli") {
@@ -364,7 +363,6 @@ export function ChapterEightStory({ onComplete, paused = false, debugAction = nu
     if (tutorial) {
       setTutorialStep((value) => value + 1);
       if (tutorialStep === 2) { setPhase("preRitual"); setLineIndex(0); setActionLocked(false); return; }
-      if (tutorialStep >= 3) { setPhase("fakeVictory"); setActionLocked(false); return; }
     }
 
     const nextRound = round + 1;
