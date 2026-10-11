@@ -9,11 +9,14 @@ import { LoadingScreen } from './components/LoadingScreen';
 import { Airport, ChinaFun, Cover, FinalCard, FlightBooking, Flying, Jokes, Memories, Messages, Packing, Room } from './sections/StorySections';
 
 const TOTAL=15;
+type ChapterEightDebugAction = { type: 'enterBattle' | 'skipBattle'; key: number } | null;
 export default function App(){
   const [preloadComplete,setPreloadComplete]=useState(false);
   const [chapter,setChapter]=useState(0);
   const [debugMode,setDebugMode]=useState(()=>new URLSearchParams(window.location.search).get('debug')==='1'||new URLSearchParams(window.location.search).get('debugSecurity')==='1');
   const [paused,setPaused]=useState(false);
+  const [chapterEightDebugAction,setChapterEightDebugAction]=useState<ChapterEightDebugAction>(null);
+  useEffect(()=>setChapterEightDebugAction(null),[chapter]);
   useEffect(()=>{
     const url=new URL(window.location.href);
     if(debugMode) url.searchParams.set('debug','1'); else {url.searchParams.delete('debug');url.searchParams.delete('debugSecurity');}
@@ -32,8 +35,8 @@ export default function App(){
     >
       <img src={`${import.meta.env.BASE_URL}ui/debugger.png`} alt="" />
     </button>
-    {debugMode&&<div className="debug-controls"><button onClick={()=>setPaused(value=>!value)}>{paused?'继续':'暂停'}</button><button onClick={advance}>下一章</button></div>}
+    {debugMode&&<div className="debug-controls">{chapter===8&&<><button onClick={()=>setChapterEightDebugAction({type:'enterBattle',key:Date.now()})}>直接进入战斗</button><button onClick={()=>setChapterEightDebugAction({type:'skipBattle',key:Date.now()})}>跳过战斗</button></>}<button onClick={()=>setPaused(value=>!value)}>{paused?'继续':'暂停'}</button><button onClick={advance}>下一章</button></div>}
     {chapter>0&&<><button className="chapter-back" onClick={goBack}>回到过去</button><ProgressBadge current={chapter} total={TOTAL}/><button className="restart" onClick={()=>setChapter(0)}>从头再来</button></>}
-    {chapter===0&&<Cover onDone={advance}/>} {chapter===1&&<Room onDone={advance}/>} {chapter===2&&<FlightBooking onDone={advance}/>} {chapter===3&&<Packing onDone={advance}/>} {chapter===4&&<Airport onDone={advance} debugMode={debugMode} paused={paused}/>} {chapter===5&&<Flying onDone={advance} paused={paused}/>} {chapter===6&&<ChapterSixStory onComplete={advance} paused={paused}/>} {chapter===7&&<ChapterSevenStory onComplete={advance} paused={paused}/>} {chapter===8&&<ChapterEightStory onComplete={advance} paused={paused}/>} {chapter===9&&<ChapterNineStory onComplete={advance} paused={paused}/>} {chapter===10&&<ChapterTenStory onComplete={advance} paused={paused}/>} {chapter===11&&<ChinaFun onDone={advance}/>} {chapter===12&&<Memories onDone={advance}/>} {chapter===13&&<Jokes onDone={advance}/>} {chapter===14&&<Messages onDone={advance}/>} {chapter===15&&<FinalCard/>}
+    {chapter===0&&<Cover onDone={advance}/>} {chapter===1&&<Room onDone={advance}/>} {chapter===2&&<FlightBooking onDone={advance}/>} {chapter===3&&<Packing onDone={advance}/>} {chapter===4&&<Airport onDone={advance} debugMode={debugMode} paused={paused}/>} {chapter===5&&<Flying onDone={advance} paused={paused}/>} {chapter===6&&<ChapterSixStory onComplete={advance} paused={paused}/>} {chapter===7&&<ChapterSevenStory onComplete={advance} paused={paused}/>} {chapter===8&&<ChapterEightStory onComplete={advance} paused={paused} debugAction={chapterEightDebugAction}/>} {chapter===9&&<ChapterNineStory onComplete={advance} paused={paused}/>} {chapter===10&&<ChapterTenStory onComplete={advance} paused={paused}/>} {chapter===11&&<ChinaFun onDone={advance}/>} {chapter===12&&<Memories onDone={advance}/>} {chapter===13&&<Jokes onDone={advance}/>} {chapter===14&&<Messages onDone={advance}/>} {chapter===15&&<FinalCard/>}
   </main>
 }

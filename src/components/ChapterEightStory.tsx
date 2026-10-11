@@ -4,7 +4,11 @@ import { abyssTutorialSteps, type AbyssAction } from "../data/chapterEightBattle
 import { SectionHeader } from "./UI";
 import { UnswBattle } from "./UnswBattle";
 
-type Props = { onComplete: () => void; paused?: boolean };
+type Props = {
+  onComplete: () => void;
+  paused?: boolean;
+  debugAction?: { type: "enterBattle" | "skipBattle"; key: number } | null;
+};
 type Phase = "story" | "battleIntro" | "ritual" | "ritualAfter" | "battle" | "battleWon" | "fakeVictory" | "unswBoss" | "defeat" | "victory" | "complete";
 type EnemyId = "blue" | "red" | "purple";
 type Support = "amber" | "venti" | "zhongli";
@@ -54,7 +58,7 @@ function StoryFrame({ line }: { line: ChapterEightLine }) {
   );
 }
 
-export function ChapterEightStory({ onComplete, paused = false }: Props) {
+export function ChapterEightStory({ onComplete, paused = false, debugAction = null }: Props) {
   const [phase, setPhase] = useState<Phase>("story");
   const [lineIndex, setLineIndex] = useState(0);
   const [hp, setHp] = useState(180);
@@ -93,6 +97,20 @@ export function ChapterEightStory({ onComplete, paused = false }: Props) {
   }, [delayed, enemies]);
 
   useEffect(() => () => window.clearTimeout(clickTimer.current), []);
+
+  useEffect(() => {
+    if (!debugAction) return;
+    setOverlay(null);
+    setLineIndex(0);
+    if (debugAction.type === "skipBattle") {
+      setPhase("victory");
+      return;
+    }
+    setHp(180); setEnergy(0); setEnemies(initialEnemies()); setTarget("red"); setSupport("amber");
+    setRound(0); setSkillCooldown(0); setBattleLog("开发者模式：已直接进入深渊法师教程战。");
+    setDelayed(false); setDamagePops([]); setPlayerDamage(null); setTipVisible(false); setTutorialStep(0);
+    setPhase("battle");
+  }, [debugAction]);
 
   useEffect(() => {
     if (phase !== "fakeVictory" || paused) return;
