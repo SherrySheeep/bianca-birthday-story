@@ -9,14 +9,16 @@ type Props = {
 };
 type Stage = "opening" | "mission" | "preExam" | "rules" | "readyReply" | "game" | "retry" | "passed" | "success" | "reward" | "after" | "completed";
 const lanes = [25, 50, 75];
-const TOTAL_RINGS = 8;
-const PASSING_SCORE = 5;
+// 飞行考试需要成功穿过的风圈数量；想改变考试长度，只需要修改这里。
+const REQUIRED_RING_HITS = 20;
 const ringDurations = [2400, 2400, 2200, 2200, 2000, 1800, 1800, 1650];
 // 气流阶段的三个主要调节参数：触发风圈数、最大碰撞次数、相对风圈速度。
 const AIRFLOW_TRIGGER_HITS = 4;
 const MAX_AIRFLOW_HITS = 3;
 const AIRFLOW_SPEED_MULTIPLIER = 0.86;
 const AIRFLOW_COLLISION_POINT = 0.58;
+const RING_SPAWN_CHANCE = 0.78;
+const AIRFLOW_SPAWN_CHANCE = 0.58;
 const asset = (name: string) => `${import.meta.env.BASE_URL}chapter-six/${name}`;
 const amberAsset = (portrait: number) => `${import.meta.env.BASE_URL}chapter-five/Anbo${portrait}.png`;
 
@@ -28,6 +30,7 @@ export function ChapterSixStory({ onComplete, paused = false, debugAction = null
   const [round, setRound] = useState(0);
   const [ringLane, setRingLane] = useState(1);
   const [ringKey, setRingKey] = useState(0);
+  const [showRing, setShowRing] = useState(true);
   const [hits, setHits] = useState(0);
   const hitsRef = useRef(0);
   const previousRingLane = useRef(1);
@@ -41,6 +44,7 @@ export function ChapterSixStory({ onComplete, paused = false, debugAction = null
   const airflowHitsRef = useRef(0);
   const [pilotHit, setPilotHit] = useState(false);
   const [crashed, setCrashed] = useState(false);
+  const crashedRef = useRef(false);
   const [failedByAirflow, setFailedByAirflow] = useState(false);
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [amberLoaded, setAmberLoaded] = useState(false);
@@ -57,16 +61,16 @@ export function ChapterSixStory({ onComplete, paused = false, debugAction = null
     if (!debugAction) return;
     setLineIndex(0);
     if (debugAction.type === "skipExam") {
-      setHits(TOTAL_RINGS); hitsRef.current = TOTAL_RINGS;
+      setHits(REQUIRED_RING_HITS); hitsRef.current = REQUIRED_RING_HITS;
       setAirflowHits(0); airflowHitsRef.current = 0;
-      setPerfect(false); setPilotHit(false); setCrashed(false); setFailedByAirflow(false);
+      setPerfect(false); setPilotHit(false); setCrashed(false); crashedRef.current = false; setFailedByAirflow(false);
       setStage("passed");
       return;
     }
     setLane(1); laneRef.current = 1;
     setRound(0); setHits(0); hitsRef.current = 0; previousRingLane.current = 1;
-    setPerfect(false); setAirflowStarted(false); setAirflowWarning(false); setShowAirflow(false);
-    setAirflowHits(0); airflowHitsRef.current = 0; setPilotHit(false); setCrashed(false); setFailedByAirflow(false);
+    setPerfect(false); setShowRing(true); setAirflowStarted(false); setAirflowWarning(false); setShowAirflow(false);
+    setAirflowHits(0); airflowHitsRef.current = 0; setPilotHit(false); setCrashed(false); crashedRef.current = false; setFailedByAirflow(false);
     setStage("game");
   }, [debugAction]);
 
@@ -101,19 +105,7 @@ export function ChapterSixStory({ onComplete, paused = false, debugAction = null
   useEffect(() => {
     if (stage !== "game" || paused) return;
     const protectedAttempt = failedAttempts >= 2;
-    const passingScore = protectedAttempt ? 4 : PASSING_SCORE;
-    if (round >= TOTAL_RINGS) {
-      const timer = window.setTimeout(() => {
-        setLineIndex(0);
-        if (hitsRef.current >= passingScore) {
-          setStage("passed");
-        } else {
-          setFailedAttempts((value) => value + 1);
-          setStage("retry");
-        }
-      }, 350);
-      return () => window.clearTimeout(timer);
-    }
+    if (hitsRef.current >= REQUIRED_RING_HITS) return;
     const forceLaneChange = round === 2 || round === 5;
     const choices = [0, 1, 2].filter((value) =>
       Math.abs(value - previousRingLane.current) <= 1 &&
@@ -122,16 +114,22 @@ export function ChapterSixStory({ onComplete, paused = false, debugAction = null
     const nextLane = choices[Math.floor(Math.random() * choices.length)] ?? 1;
     previousRingLane.current = nextLane;
     setRingLane(nextLane);
-    setRingKey((value) => value + 1);
     setPerfect(false);
-    const duration = Math.round(ringDurations[round] * (protectedAttempt ? 1.12 : 1));
-    const airflowActive = airflowStarted || hitsRef.current >= AIRFLOW_TRIGGER_HITS;
+    const baseDuration = ringDurations[Math.min(round, ringDurations.length - 1)];
+    const duration = Math.round(baseDuration * (protectedAttempt ? 1.12 : 1));
+    const secondStage = airflowStarted || hitsRef.current >= AIRFLOW_TRIGGER_HITS;
+    let spawnRing = !secondStage || Math.random() < RING_SPAWN_CHANCE;
+    const spawnAirflow = secondStage && Math.random() < AIRFLOW_SPAWN_CHANCE;
+    if (!spawnRing && !spawnAirflow) spawnRing = true;
+    setShowRing(spawnRing);
+    if (spawnRing) setRingKey((value) => value + 1);
     let airflowCollision: number | undefined;
     let airflowImpactReset: number | undefined;
     let crashTimer: number | undefined;
-    if (airflowActive) {
+    let passTimer: number | undefined;
+    if (spawnAirflow) {
       if (!airflowStarted) setAirflowStarted(true);
-      const obstacleChoices = [0, 1, 2].filter((value) => value !== nextLane);
+      const obstacleChoices = spawnRing ? [0, 1, 2].filter((value) => value !== nextLane) : [0, 1, 2];
       const nextAirflowLane = obstacleChoices[Math.floor(Math.random() * obstacleChoices.length)] ?? 0;
       setAirflowLane(nextAirflowLane);
       setAirflowKey((value) => value + 1);
@@ -145,6 +143,7 @@ export function ChapterSixStory({ onComplete, paused = false, debugAction = null
         airflowImpactReset = window.setTimeout(() => setPilotHit(false), 520);
         if (nextHits >= MAX_AIRFLOW_HITS) {
           setCrashed(true);
+          crashedRef.current = true;
           setFailedByAirflow(true);
           crashTimer = window.setTimeout(() => {
             setFailedAttempts((value) => value + 1);
@@ -156,18 +155,28 @@ export function ChapterSixStory({ onComplete, paused = false, debugAction = null
       setShowAirflow(false);
     }
     const collision = window.setTimeout(() => {
-      if (laneRef.current === nextLane) {
-        hitsRef.current += 1;
-        setHits(hitsRef.current);
+      if (spawnRing && laneRef.current === nextLane) {
+        const nextHits = hitsRef.current + 1;
+        hitsRef.current = nextHits;
+        setHits(nextHits);
         setPerfect(true);
+        if (nextHits >= REQUIRED_RING_HITS) {
+          passTimer = window.setTimeout(() => {
+            setLineIndex(0);
+            setStage("passed");
+          }, 180);
+        }
       }
     }, Math.round(duration * 0.8));
-    const next = window.setTimeout(() => setRound((value) => value + 1), duration);
+    const next = window.setTimeout(() => {
+      if (!crashedRef.current) setRound((value) => value + 1);
+    }, duration);
     return () => {
       window.clearTimeout(collision); window.clearTimeout(next);
       if (airflowCollision) window.clearTimeout(airflowCollision);
       if (airflowImpactReset) window.clearTimeout(airflowImpactReset);
       if (crashTimer) window.clearTimeout(crashTimer);
+      if (passTimer) window.clearTimeout(passTimer);
     };
   }, [stage, round, paused, failedAttempts]);
 
@@ -175,8 +184,8 @@ export function ChapterSixStory({ onComplete, paused = false, debugAction = null
     setLane(1); laneRef.current = 1;
     setRound(0); setHits(0); hitsRef.current = 0;
     previousRingLane.current = 1;
-    setPerfect(false); setAirflowStarted(false); setAirflowWarning(false); setShowAirflow(false);
-    setAirflowHits(0); airflowHitsRef.current = 0; setPilotHit(false); setCrashed(false); setFailedByAirflow(false);
+    setPerfect(false); setShowRing(true); setAirflowStarted(false); setAirflowWarning(false); setShowAirflow(false);
+    setAirflowHits(0); airflowHitsRef.current = 0; setPilotHit(false); setCrashed(false); crashedRef.current = false; setFailedByAirflow(false);
     setStage("game");
   };
 
@@ -230,9 +239,9 @@ export function ChapterSixStory({ onComplete, paused = false, debugAction = null
       {stage === "game" && (
         <div className="flight-game">
           <img className="flight-game-bg" src={asset("feixing2.png")} alt="飞行考试天空" onError={(event) => { event.currentTarget.hidden = true; }} />
-          <div className="flight-game-hud"><b>飞行考试</b><span>通过：{hits} / {TOTAL_RINGS}</span><small>气流碰撞：{airflowHits} / {MAX_AIRFLOW_HITS}</small></div>
-          {round < TOTAL_RINGS && <img key={ringKey} className="wind-ring" style={{ left: `${lanes[ringLane]}%`, animationDuration: `${Math.round(ringDurations[round] * (failedAttempts >= 2 ? 1.12 : 1))}ms` }} src={asset("fengquan1.png")} alt="风圈" onError={(event) => { event.currentTarget.hidden = true; }} />}
-          {showAirflow && round < TOTAL_RINGS && <img key={airflowKey} className="airflow-obstacle" style={{ left: `${lanes[airflowLane]}%`, animationDuration: `${Math.round(ringDurations[round] * (failedAttempts >= 2 ? 1.12 : 1) * AIRFLOW_SPEED_MULTIPLIER)}ms` }} src={asset("qiliu1.png")} alt="需要躲避的气流" onError={(event) => { event.currentTarget.hidden = true; }} />}
+          <div className="flight-game-hud"><b>飞行考试</b><span>已通过 {hits} 个风圈</span><small>气流碰撞：{airflowHits} / {MAX_AIRFLOW_HITS}</small></div>
+          {showRing && <img key={ringKey} className="wind-ring" style={{ left: `${lanes[ringLane]}%`, animationDuration: `${Math.round(ringDurations[Math.min(round, ringDurations.length - 1)] * (failedAttempts >= 2 ? 1.12 : 1))}ms` }} src={asset("fengquan1.png")} alt="风圈" onError={(event) => { event.currentTarget.hidden = true; }} />}
+          {showAirflow && <img key={airflowKey} className="airflow-obstacle" style={{ left: `${lanes[airflowLane]}%`, animationDuration: `${Math.round(ringDurations[Math.min(round, ringDurations.length - 1)] * (failedAttempts >= 2 ? 1.12 : 1) * AIRFLOW_SPEED_MULTIPLIER)}ms` }} src={asset("qiliu1.png")} alt="需要躲避的气流" onError={(event) => { event.currentTarget.hidden = true; }} />}
           {airflowWarning && <div className="amber-flight-warning"><img src={asset("LilAnbo1.png")} alt="安柏" onError={(event) => { event.currentTarget.hidden = true; }} /><span>注意前方气流！</span></div>}
           <img className={`flight-pilot ${pilotHit ? "is-hit" : ""} ${crashed ? "is-falling" : ""}`} style={{ left: `${lanes[lane]}%` }} src={asset("pilot1.png")} alt="正在使用风之翼的 Bianca" onError={(event) => { event.currentTarget.hidden = true; }} />
           {perfect && <div className="perfect-pop">漂亮！</div>}
@@ -240,9 +249,9 @@ export function ChapterSixStory({ onComplete, paused = false, debugAction = null
         </div>
       )}
 
-      {stage === "retry" && <div className="chapter-six-result chapter-six-failed"><img src={amberAsset(3)} alt="友好的安柏" /><div><h3>飞行考试未通过</h3><b>{failedByAirflow ? `气流碰撞：${airflowHits} / ${MAX_AIRFLOW_HITS}` : `通过风圈：${hits} / ${TOTAL_RINGS}`}</b><p><strong>安柏：</strong>{failedByAirflow ? "刚才那阵气流太突然了！\n记得先躲开，再找下一个风圈！" : "差一点点！\n已经比刚才从天上掉下来的时候好多啦！"}</p><p><strong>Bianca：</strong>……这个比较标准是不是有点奇怪。</p><p><strong>安柏：</strong>再来一次吧！这次一定可以！</p><button className="dialogue-next" onClick={startGame}>重新挑战</button></div></div>}
+      {stage === "retry" && <div className="chapter-six-result chapter-six-failed"><img src={amberAsset(3)} alt="友好的安柏" /><div><h3>飞行考试未通过</h3><b>{failedByAirflow ? `气流碰撞：${airflowHits} / ${MAX_AIRFLOW_HITS}` : `已通过 ${hits} 个风圈`}</b><p><strong>安柏：</strong>{failedByAirflow ? "刚才那阵气流太突然了！\n记得先躲开，再找下一个风圈！" : "差一点点！\n已经比刚才从天上掉下来的时候好多啦！"}</p><p><strong>Bianca：</strong>……这个比较标准是不是有点奇怪。</p><p><strong>安柏：</strong>再来一次吧！这次一定可以！</p><button className="dialogue-next" onClick={startGame}>重新挑战</button></div></div>}
 
-      {stage === "passed" && <div className="chapter-six-result chapter-six-passed"><img src={amberAsset(3)} alt="开心的安柏" /><div><h3>飞行考试通过！</h3><b>通过风圈：{hits} / {TOTAL_RINGS}</b><button className="dialogue-next" onClick={() => { setLineIndex(0); setStage("success"); }}>继续</button></div></div>}
+      {stage === "passed" && <div className="chapter-six-result chapter-six-passed"><img src={amberAsset(3)} alt="开心的安柏" /><div><h3>飞行考试通过！</h3><b>共通过 {hits} 个风圈</b><button className="dialogue-next" onClick={() => { setLineIndex(0); setStage("success"); }}>继续</button></div></div>}
 
       {stage === "reward" && <div className="flight-licence"><img src={asset("pilot1.png")} alt="Bianca 飞行徽章" /><span>✓ 飞行考试通过</span><h3>获得：蒙德飞行执照</h3><b>持有人：Bianca</b><p>B老师成功拿到了来到异世界后的第一张证件。</p><small>虽然她现在最想要的，是一张回悉尼的机票。</small><button className="dialogue-next" onClick={() => { setLineIndex(0); setStage("after"); }}>继续</button></div>}
 
