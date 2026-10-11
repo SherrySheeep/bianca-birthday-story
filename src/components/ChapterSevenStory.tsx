@@ -6,6 +6,7 @@ import {
   type ChapterSevenScene,
 } from "../data/chapterSevenDialogue";
 import { SectionHeader } from "./UI";
+import "../styles/chapter-seven-choice-state.css";
 
 type Props = { onComplete: () => void; paused?: boolean };
 
@@ -33,6 +34,7 @@ export function ChapterSevenStory({ onComplete, paused = false }: Props) {
   const [backgroundLoaded, setBackgroundLoaded] = useState(false);
   const [portraitLoaded, setPortraitLoaded] = useState(false);
   const [choiceResponse, setChoiceResponse] = useState<ChapterSevenChoice | null>(null);
+  const [selectedChoices, setSelectedChoices] = useState<Record<number, string[]>>({});
   const clickLocked = useRef(false);
   const clickTimer = useRef<number | undefined>(undefined);
   const currentLine = chapterSevenDialogue[Math.min(lineIndex, chapterSevenDialogue.length - 1)];
@@ -57,7 +59,23 @@ export function ChapterSevenStory({ onComplete, paused = false }: Props) {
 
   const chooseResponse = (choice: ChapterSevenChoice) => {
     if (paused || clickLocked.current) return;
+    if (selectedChoices[lineIndex]?.includes(choice.label)) return;
+    setSelectedChoices((choices) => ({
+      ...choices,
+      [lineIndex]: [...(choices[lineIndex] ?? []), choice.label],
+    }));
     setChoiceResponse(choice);
+  };
+
+  const continueAfterChoice = () => {
+    const viewedCount = selectedChoices[lineIndex]?.length ?? 0;
+    const totalCount = currentLine.choices?.length ?? 0;
+
+    if (viewedCount >= totalCount) {
+      advance();
+    } else {
+      setChoiceResponse(null);
+    }
   };
 
   const displayedSpeaker = choiceResponse?.responseSpeaker ?? currentLine.speaker;
@@ -102,7 +120,12 @@ export function ChapterSevenStory({ onComplete, paused = false }: Props) {
             {currentLine.choices && !choiceResponse && (
               <div className="dialogue-options" aria-label="Bianca 的回答选项">
                 {currentLine.choices.map((choice) => (
-                  <button key={choice.label} type="button" onClick={() => chooseResponse(choice)}>
+                  <button
+                    key={choice.label}
+                    type="button"
+                    disabled={selectedChoices[lineIndex]?.includes(choice.label)}
+                    onClick={() => chooseResponse(choice)}
+                  >
                     {choice.label}
                   </button>
                 ))}
@@ -112,7 +135,7 @@ export function ChapterSevenStory({ onComplete, paused = false }: Props) {
             {choiceResponse && (
               <button
                 className="dialogue-next"
-                onClick={advance}
+                onClick={continueAfterChoice}
               >
                 继续
               </button>
