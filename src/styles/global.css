@@ -3795,7 +3795,7 @@ main {
   position: absolute;
   z-index: 3;
   inset: 4% 2% 0;
-  transform: translateY(-7%);
+  transform: translateY(-20%);
 }
 .abyss-story-mage { position: absolute; width: 34%; height: 76%; object-fit: contain; object-position: center bottom; opacity: .68; transition: .2s; filter: drop-shadow(0 0 8px #ffffff55); }
 .abyss-story-mage.speaking { opacity: 1; transform: scale(1.06) translateY(-4px); filter: drop-shadow(0 0 14px #fff5a5); }
@@ -3851,6 +3851,73 @@ main {
 .battle-skills button { min-width: 94px; min-height: 58px; border: 2px solid #b8d8ed; border-radius: 16px; background: #263757e8; color: #fff; font-weight: 900; cursor: pointer; }
 .battle-skills button.ultimate { background: #744c87e8; border-color: #f1c8ff; }
 .battle-skills button:disabled { opacity: .42; cursor: not-allowed; }
+.battle-skills button.ultimate.is-ready:not(:disabled) { border-color: #fff184; box-shadow: 0 0 0 2px #e69cff, 0 0 22px #fff184aa; animation: ultimate-ready 1.15s ease-in-out infinite; }
+.enemy-bars em, .bianca-battle em { transition: width .42s cubic-bezier(.2,.75,.25,1); }
+.battle-enemy.is-hit > img, .bianca-battle.is-hit > img { animation: combat-hit .36s ease-out both; }
+.battle-enemy.shield-break > img { animation: shield-break-hit .52s ease-out both; }
+.battle-enemy.shield-break::after { content: ""; position: absolute; z-index: 9; inset: 18% 9% 8%; background: repeating-conic-gradient(from 18deg, transparent 0 11deg, #8ee8ff 12deg 14deg, transparent 15deg 35deg); clip-path: polygon(50% 0, 58% 39%, 100% 48%, 62% 57%, 71% 100%, 50% 65%, 28% 100%, 39% 57%, 0 48%, 42% 39%); animation: shield-fragments .58s ease-out both; pointer-events: none; }
+.break-label { position: absolute; z-index: 13; left: 50%; top: 42%; transform: translate(-50%,-50%) rotate(-5deg); color: #fff; font-size: clamp(.8rem,2.4vw,1.35rem); font-weight: 1000; letter-spacing: .08em; text-shadow: 0 2px 0 #287b9e, 0 0 12px #8ee8ff; animation: break-pop .65s ease-out both; }
+.embarrassed-mark { position: absolute; z-index: 12; top: 13%; left: 50%; transform: translateX(-50%); padding: 3px 10px 6px; border: 1px solid #34384d; border-radius: 999px; background: #fffaf0; color: #34384d; font-weight: 1000; animation: embarrassed-wobble .8s ease-in-out infinite alternate; }
+.burn-particles { position: absolute; z-index: 11; inset: 30% 17% 6%; pointer-events: none; }
+.burn-particles i { position: absolute; bottom: 0; width: 9px; height: 18px; border-radius: 60% 40% 60% 40%; background: linear-gradient(#fff69a, #ff8b28 55%, #e84b35); filter: drop-shadow(0 0 5px #ff7a35); animation: burn-rise .9s ease-in infinite; }
+.burn-particles i:nth-child(1) { left: 18%; animation-delay: -.35s; }
+.burn-particles i:nth-child(2) { left: 52%; height: 13px; animation-delay: -.65s; }
+.burn-particles i:nth-child(3) { right: 12%; animation-delay: -.15s; }
+.bianca-battle.has-geo-shield::before { content: ""; position: absolute; z-index: 8; left: -3%; bottom: 0; width: 64%; height: 96%; border: 3px solid #f5d36a; border-radius: 48% 52% 44% 56%; background: linear-gradient(135deg,#fff4a81a,#d99c2428); clip-path: polygon(50% 0,92% 24%,98% 70%,68% 100%,31% 100%,2% 70%,8% 24%); box-shadow: inset 0 0 18px #ffe79088,0 0 12px #e9b93f88; pointer-events: none; animation: geo-shield-pulse 1.5s ease-in-out infinite alternate; }
+.bianca-shield em { background: #77d9ff !important; }
+.support-panel button { position: relative; }
+.support-panel button small { display: block; margin-top: 2px; color: inherit; font-size: .53rem; }
+.support-panel button.cooling { filter: grayscale(.82); opacity: .55; }
+.battle-shout { position: absolute; z-index: 24; left: 50%; top: 48%; width: min(54%,430px); transform: translateX(-50%); padding: 9px 13px; border: 2px solid #353b56; border-radius: 14px; background: #fffaf0ee; color: #353549; box-shadow: 4px 5px 0 #111827aa; pointer-events: none; animation: battle-shout-in .2s ease-out both; }
+.battle-shout b { display: inline-block; margin-right: 7px; color: #b85255; font-size: .72rem; }
+.battle-shout em { display: inline-block; color: #6a4a8f; font-size: .68rem; font-style: normal; font-weight: 950; }
+.battle-shout p { margin: 4px 0 0; font-size: .8rem; font-weight: 850; line-height: 1.35; }
+.combat-float { position: absolute; z-index: 40; font-size: clamp(1rem,3.2vw,1.65rem); font-weight: 1000; pointer-events: none; animation: combat-number .82s ease-out both; }
+.combat-float-hp { color: #ff6c66; text-shadow: 0 2px 0 #5a2228,0 0 8px #fff; }
+.combat-float-shield, .combat-float-shieldGain { color: #65d7ff; text-shadow: 0 2px 0 #174d70,0 0 8px #fff; }
+.combat-float-blue { left: 18%; top: 25%; }.combat-float-red { left: 46%; top: 20%; }.combat-float-purple { left: 72%; top: 25%; }.combat-float-bianca { left: 23%; top: 62%; }
+.chapter-eight-fx { position: absolute; z-index: 18; inset: 0; overflow: hidden; pointer-events: none; }
+.chapter-eight-fx i { position: absolute; display: block; }
+.fx-normal::before { content: ""; position: absolute; left: 30%; top: 59%; width: 42%; height: 5px; border-radius: 999px; background: linear-gradient(90deg,#fff0,#fff7b8,#fff); box-shadow: 0 0 12px #fff1a6; transform: rotate(-24deg); animation: projectile-line .45s ease-in both; }
+.fx-fire i { left: calc(35% + var(--n,0) * 6%); top: 42%; width: 8px; height: 18px; border-radius: 60% 40%; background: linear-gradient(#fff59d,#ff7437); box-shadow: 0 0 9px #ff713a; animation: fire-spark .55s ease-out both; }
+.fx-fire i:nth-child(2){left:44%;animation-delay:.05s}.fx-fire i:nth-child(3){left:53%;animation-delay:.1s}.fx-fire i:nth-child(4){left:62%;animation-delay:.15s}.fx-fire i:nth-child(5){left:70%;animation-delay:.2s}
+.fx-wind::before,.fx-wind::after { content:""; position:absolute; left:25%; top:24%; width:55%; height:35%; border:5px solid #85e6cf; border-left-color:transparent; border-radius:50%; filter:drop-shadow(0 0 8px #6cebd0); animation: wind-arc .6s ease-out both; }
+.fx-wind::after { animation-delay:.12s; transform:rotate(18deg) scale(.8); }
+.fx-geo::before { content:""; position:absolute; left:9%; bottom:21%; width:27%; height:34%; border:3px solid #f7d56a; clip-path:polygon(50% 0,100% 30%,88% 100%,12% 100%,0 30%); box-shadow:inset 0 0 18px #f5c24b; animation:geo-flash .65s ease-out both; }
+.fx-cold::before { content:"……"; position:absolute; left:12%; right:15%; top:18%; color:#fff; font-size:2rem; font-weight:1000; letter-spacing:18vw; text-align:center; text-shadow:0 2px 0 #28304a; animation:cold-wave .75s ease-out both; }
+.fx-ultimate-soft::before { content:""; position:absolute; inset:20% 12% 31%; border-radius:50%; background:radial-gradient(circle,#fff8d777,transparent 68%); animation:soft-pulse .68s ease-out both; }
+.fx-ultimate-hard::before { content:""; position:absolute; inset:7%; background:repeating-conic-gradient(from 0deg,transparent 0 18deg,#fff6a755 20deg 21deg,transparent 22deg 40deg); animation:hard-impact .52s ease-out both; }
+.fx-paralysis i { left:28%; top:53%; width:4px; height:22px; background:#bf7cff; box-shadow:0 0 9px #9e54ff; transform:skew(-24deg); animation:electric-arc .45s ease-out both; }.fx-paralysis i:nth-child(2){left:35%;top:60%;animation-delay:.08s}.fx-paralysis i:nth-child(3){left:20%;top:66%;animation-delay:.14s}
+.order-avatar.enemy-delayed { box-shadow:0 0 10px #90e3d2; }
+
+@keyframes combat-hit { 0%,100%{transform:translateX(0) scale(1);filter:brightness(1)}25%{transform:translateX(-7px) scale(1.04);filter:brightness(1.8)}55%{transform:translateX(6px) scale(1.02)} }
+@keyframes shield-break-hit { 0%,100%{transform:translateX(0)}20%{transform:translateX(-10px) scale(1.06);filter:brightness(2)}45%{transform:translateX(9px)}70%{transform:translateX(-5px)} }
+@keyframes shield-fragments { from{opacity:1;transform:scale(.72) rotate(0)}to{opacity:0;transform:scale(1.38) rotate(18deg)} }
+@keyframes break-pop { 0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}35%{opacity:1;transform:translate(-50%,-50%) scale(1.25)}100%{opacity:0;transform:translate(-50%,-85%) scale(1)} }
+@keyframes embarrassed-wobble { to{transform:translateX(-50%) rotate(4deg)} }
+@keyframes burn-rise { to{opacity:0;transform:translateY(-38px) scale(.45)} }
+@keyframes geo-shield-pulse { to{filter:brightness(1.18);transform:scale(1.018)} }
+@keyframes battle-shout-in { from{opacity:0;transform:translate(-50%,8px) scale(.97)} }
+@keyframes combat-number { 0%{opacity:0;transform:translateY(12px) scale(.65)}25%{opacity:1;transform:translateY(-3px) scale(1.18)}100%{opacity:0;transform:translateY(-42px) scale(1)} }
+@keyframes projectile-line { from{opacity:0;transform:translate(-30px,24px) rotate(-24deg) scaleX(.2)}to{opacity:1;transform:translate(40px,-18px) rotate(-24deg) scaleX(1)} }
+@keyframes fire-spark { from{opacity:0;transform:translate(-70px,55px) scale(.4)}to{opacity:0;transform:translate(35px,-25px) scale(1.2)} }
+@keyframes wind-arc { from{opacity:0;transform:scale(.5) rotate(-15deg)}50%{opacity:1}to{opacity:0;transform:scale(1.25) rotate(18deg)} }
+@keyframes geo-flash { 0%{opacity:0;transform:scale(.75)}35%{opacity:1}100%{opacity:0;transform:scale(1.12)} }
+@keyframes cold-wave { from{opacity:0;transform:translateY(15px)}40%{opacity:1}to{opacity:0;transform:translateY(-12px)} }
+@keyframes soft-pulse { from{opacity:0;transform:scale(.6)}45%{opacity:1}to{opacity:0;transform:scale(1.2)} }
+@keyframes hard-impact { 0%{opacity:0;transform:scale(.65)}30%{opacity:1;filter:brightness(2)}100%{opacity:0;transform:scale(1.15) rotate(8deg)} }
+@keyframes electric-arc { 0%,100%{opacity:0}30%,70%{opacity:1;transform:translate(7px,-8px) skew(-24deg)} }
+@keyframes ultimate-ready { 50%{transform:translateY(-2px);filter:brightness(1.14)} }
+
+@media (max-width: 699px) {
+  .battle-shout { top: 45%; width: 68%; padding: 7px 9px; }
+  .battle-shout p { font-size: .7rem; }
+  .combat-float { font-size: 1.05rem; }
+  .combat-float-blue { left: 12%; }.combat-float-red { left: 40%; }.combat-float-purple { left: 66%; }.combat-float-bianca { left: 22%; top: 59%; }
+  .break-label { font-size: .75rem; }
+  .embarrassed-mark { top: 9%; padding: 2px 7px 4px; font-size: .7rem; }
+  .support-panel button small { font-size: .46rem; }
+}
 .battle-skills small { display: block; margin-top: 3px; font-size: .6rem; }
 .battle-skills button.tutorial-highlight {
   opacity: 1;
