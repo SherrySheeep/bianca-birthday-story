@@ -6,3 +6,11 @@ fengquan1.png    风圈贴纸
 pilot1.png       Bianca 风之翼玩家形象
 
 安柏图片继续读取 public/chapter-five/Anbo1.png 至 Anbo4.png。
+新增飞行考试素材也放在本文件夹：
+- qiliu1.png：气流障碍
+- LilAnbo1.png：安柏实时提示的小头像
+
+气流参数位于 src/components/ChapterSixStory.tsx 顶部：
+- AIRFLOW_TRIGGER_HITS：通过几个风圈后出现气流
+- AIRFLOW_SPEED_MULTIPLIER：气流相对风圈的动画时长倍率；越小越快
+- MAX_AIRFLOW_HITS：最大允许碰撞次数
