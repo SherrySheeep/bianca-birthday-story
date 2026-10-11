@@ -139,12 +139,7 @@ export const chapterEightBattleIntro: ChapterEightLine[] = [
   battle("Bianca", "不是，这个为什么都能当终结技啊？！"),
   battle("作者大大", "因为威力最大。"),
   battle("Bianca", "到底哪里威力最大了？！"),
-  battle("作者大大", "不过你现在确实没有元素力。"),
-  battle("作者大大", "所以，请认真念出一句话。"),
-  battle("作者大大", "“以疯狂星期四的名义，请赐予我打败深渊法师的力量！”"),
-  battle("Bianca", "我拒绝。"),
-  battle("作者大大", "不念不能继续。"),
-  battle("Bianca", "……"),
+  battle("安柏", "先从最基础的开始！", "chapter-five/Anbo3.png"),
 ];
 
 export const chapterEightRitualAfter: ChapterEightLine[] = [
