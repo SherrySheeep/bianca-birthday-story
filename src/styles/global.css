@@ -3791,7 +3791,12 @@ main {
 .chapter-eight-visual { position: relative; width: min(100%, 820px); height: min(50vh, 440px); min-height: 320px; margin: 0 auto; overflow: hidden; border: 3px solid #30364d; border-radius: 28px; background: #273149; box-shadow: 7px 8px 0 #30364d47; }
 .chapter-eight-background { position: absolute; z-index: 1; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; object-position: center; }
 .chapter-eight-portrait { position: absolute; z-index: 5; right: 0; bottom: 0; width: 47%; height: 91%; object-fit: contain; object-position: right bottom; filter: drop-shadow(4px 6px 0 #ffffffb8); animation: portrait-pop .25s ease-out; }
-.abyss-story-composition { position: absolute; z-index: 3; inset: 4% 2% 0; }
+.abyss-story-composition {
+  position: absolute;
+  z-index: 3;
+  inset: 4% 2% 0;
+  transform: translateY(-7%);
+}
 .abyss-story-mage { position: absolute; width: 34%; height: 76%; object-fit: contain; object-position: center bottom; opacity: .68; transition: .2s; filter: drop-shadow(0 0 8px #ffffff55); }
 .abyss-story-mage.speaking { opacity: 1; transform: scale(1.06) translateY(-4px); filter: drop-shadow(0 0 14px #fff5a5); }
 .abyss-story-mage.story-blue { z-index: 4; left: 4%; bottom: 0; }
