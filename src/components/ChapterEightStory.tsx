@@ -33,9 +33,17 @@ const jokes = [
 ];
 
 function damageEnemy(enemy: Enemy, hpDamage: number, shieldDamage: number): Enemy {
-  const shieldHit = Math.min(enemy.shield, shieldDamage);
-  const spill = Math.max(0, shieldDamage - enemy.shield) * DAMAGE_RULES.shieldOverflowToHpRatio;
-  return { ...enemy, shield: enemy.shield - shieldHit, hp: Math.max(0, enemy.hp - hpDamage - spill) };
+  if (enemy.shield > 0) {
+    const shieldHit = Math.min(enemy.shield, shieldDamage);
+    const overflowDamage = Math.max(0, shieldDamage - enemy.shield) * DAMAGE_RULES.shieldOverflowToHpRatio;
+    return {
+      ...enemy,
+      shield: enemy.shield - shieldHit,
+      hp: Math.max(0, enemy.hp - overflowDamage),
+    };
+  }
+
+  return { ...enemy, hp: Math.max(0, enemy.hp - hpDamage) };
 }
 
 const wait = (milliseconds: number) => new Promise<void>((resolve) => window.setTimeout(resolve, milliseconds));
@@ -384,7 +392,7 @@ export function ChapterEightStory({ onComplete, paused = false, debugAction = nu
     {(["battleIntro", "preRitual", "ritual", "ritualAfter", "battle", "battleWon", "fakeVictory", "defeat"] as Phase[]).includes(phase) && <div className="battle-eight-card">
       <img className="battle-eight-bg" src={asset("BattleBg1.png")} alt="回合制战斗场地" />
       <div className={`battle-order ${delayed || enemyDelays.length ? "is-delayed" : ""}`}><b>行动顺序</b>{actionOrder.map((entry, index) => <div className={`order-avatar ${index === 0 ? "active" : ""} ${enemyDelays.includes(entry.id as EnemyId) ? "enemy-delayed" : ""}`} key={entry.id}><img src={asset(entry.image)} alt={entry.label} onError={(event) => { event.currentTarget.hidden = true; }} /><span>{entry.label}</span></div>)}</div>
-      <div className="battle-enemies">{enemies.map((enemy) => <button key={enemy.id} className={`battle-enemy enemy-${enemy.id} ${target === enemy.id ? "selected" : ""} ${enemy.hp <= 0 ? "defeated" : ""} ${hitEnemies.includes(enemy.id) ? "is-hit" : ""} ${breakEnemies.includes(enemy.id) ? "shield-break" : ""} ${enemy.burning ? "is-burning" : ""} ${enemy.embarrassed ? "is-embarrassed" : ""}`} onClick={() => setTarget(enemy.id)} disabled={enemy.hp <= 0 || actionLocked}><div className="enemy-bars"><b>{enemy.name}</b><i><em style={{ width: `${enemy.hp / enemy.maxHp * 100}%` }} /></i><i className="shield"><em style={{ width: `${enemy.shield / enemy.maxShield * 100}%` }} /></i></div><img src={asset(enemy.image)} alt={enemy.name} />{enemy.embarrassed && <span className="embarrassed-mark">……</span>}{enemy.burning > 0 && <span className="burn-particles"><i /><i /><i /></span>}{breakEnemies.includes(enemy.id) && <span className="break-label">BREAK!</span>}</button>)}</div>
+      <div className="battle-enemies">{enemies.map((enemy) => <button key={enemy.id} className={`battle-enemy enemy-${enemy.id} ${target === enemy.id ? "selected" : ""} ${enemy.hp <= 0 ? "defeated" : ""} ${hitEnemies.includes(enemy.id) ? "is-hit" : ""} ${breakEnemies.includes(enemy.id) ? "shield-break" : ""} ${enemy.burning ? "is-burning" : ""} ${enemy.embarrassed ? "is-embarrassed" : ""}`} onClick={() => setTarget(enemy.id)} disabled={enemy.hp <= 0 || actionLocked}><div className="enemy-bars"><b>{enemy.name}</b><i><em style={{ width: `${enemy.hp / enemy.maxHp * 100}%` }} /></i><i className="shield"><em style={{ width: `${enemy.shield / enemy.maxShield * 100}%` }} /></i></div><img src={asset(enemy.image)} alt={enemy.name} />{enemy.embarrassed && <span className="embarrassed-mark">……</span>}{enemy.burning > 0 && <span className="burn-particles"><i /><i /><i /></span>}{breakEnemies.includes(enemy.id) && <span className="break-label">破盾！</span>}</button>)}</div>
       <div className="battle-mystery" title="神秘物品">?</div>
       <div className={`bianca-battle ${playerHit ? "is-hit" : ""} ${geoShield > 0 ? "has-geo-shield" : ""}`}><img src={asset(actingSkill ? "BiancaBattle2.png" : "BiancaBattle1.png")} alt="战斗中的 Bianca" /><div><b>Bianca</b><i><em style={{ width: `${hp / BIANCA_STATS.maxHp * 100}%` }} /></i>{geoShield > 0 && <i className="bianca-shield"><em style={{ width: `${Math.min(100, geoShield / ELEMENT_CONFIG.zhongli.shieldAmount * 100)}%` }} /></i>}<small>HP {hp}/{BIANCA_STATS.maxHp}　护盾 {geoShield}　能量 {energy}/{ENERGY_CONFIG.maxEnergy}</small></div></div>
       {(supportUnlocked || phase === "ritualAfter") && <div className={`support-panel ${phase === "ritualAfter" ? "is-unlocking" : ""}`}><b>场外支援</b>{(["amber", "venti", "zhongli"] as Support[]).map((item) => { const unlockedNow = phase !== "ritualAfter" || (item === "amber" ? lineIndex >= 1 : item === "venti" ? lineIndex >= 2 : lineIndex >= 4); return <button key={item} className={`${support === item ? "active" : ""} ${supportCooldowns[item] ? "cooling" : ""} ${unlockedNow ? "support-lit" : "support-dormant"}`} onClick={() => setSupport(item)} disabled={!supportUnlocked || supportCooldowns[item] > 0 || actionLocked}>{item === "amber" ? "安柏·火" : item === "venti" ? "温迪·风" : "钟离·岩"}<small>{supportCooldowns[item] ? supportCooldowns[item] : "Ready"}</small></button>; })}</div>}

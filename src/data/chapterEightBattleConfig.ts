@@ -7,19 +7,19 @@ export const BIANCA_STATS = {
 } as const;
 
 export const BIANCA_SKILLS = {
-  basicAttack: { damage: 100, shieldDamage: 58 },
+  basicAttack: { damage: 20, shieldDamage: 18 },
   coldJoke: {
-    damage: 60,
-    shieldDamage: 30,
+    damage: 22,
+    shieldDamage: 19,
     actionDelay: 1,
     cooldown: 1,
   },
   softHardSoft: {
     // 三段伤害可分别修改。
     softHit1Damage: 20,
-    hardHitDamage: 70,
+    hardHitDamage: 25,
     softHit2Damage: 20,
-    shieldDamage: 78,
+    shieldDamage: 18,
     actionDelay: 1,
   },
 } as const;
@@ -48,7 +48,7 @@ export const ABYSS_MAGE_SKILLS = {
 
 export const ELEMENT_CONFIG = {
   // 仪式前伤害倍率：0.10 = 正常伤害的 10%。
-  tutorialDamageMultiplier: 0.10,
+  tutorialDamageMultiplier: 0.50,
   burn: { duration: 2, damagePerTick: 8 },
   amber: { cooldown: 2, fireVsIceShieldMultiplier: 2 },
   venti: { cooldown: 2, actionDelayAmount: 1, spreadDamage: 7 },
@@ -70,8 +70,8 @@ export const ENERGY_CONFIG = {
 } as const;
 
 export const DAMAGE_RULES = {
-  // 护盾伤害溢出后，转化为 HP 伤害的比例。
-  shieldOverflowToHpRatio: 0.45,
+  // 护盾伤害溢出后转化为 HP 伤害的比例；1 = 剩余伤害全部穿透到 HP。
+  shieldOverflowToHpRatio: 1,
   // 连续失败两次后的隐形减伤保护。
   retryAssistIncomingDamageMultiplier: 0.82,
 } as const;
