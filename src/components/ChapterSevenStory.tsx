@@ -6,7 +6,6 @@ import {
   type ChapterSevenScene,
 } from "../data/chapterSevenDialogue";
 import { SectionHeader } from "./UI";
-import "../styles/chapter-seven-choices.css";
 
 type Props = { onComplete: () => void; paused?: boolean };
 
@@ -101,11 +100,10 @@ export function ChapterSevenStory({ onComplete, paused = false }: Props) {
             <p>{displayedText}</p>
 
             {currentLine.choices && !choiceResponse && (
-              <div className="chapter-seven-options" aria-label="Bianca 的回答选项">
-                {currentLine.choices.map((choice, index) => (
+              <div className="dialogue-options" aria-label="Bianca 的回答选项">
+                {currentLine.choices.map((choice) => (
                   <button key={choice.label} type="button" onClick={() => chooseResponse(choice)}>
-                    <b>{String.fromCharCode(65 + index)}</b>
-                    <span>{choice.label}</span>
+                    {choice.label}
                   </button>
                 ))}
               </div>
@@ -114,9 +112,9 @@ export function ChapterSevenStory({ onComplete, paused = false }: Props) {
             {choiceResponse && (
               <button
                 className="dialogue-next"
-                onClick={() => choiceResponse.continues ? advance() : setChoiceResponse(null)}
+                onClick={advance}
               >
-                {choiceResponse.continues ? "继续" : "再想想"}
+                继续
               </button>
             )}
 
