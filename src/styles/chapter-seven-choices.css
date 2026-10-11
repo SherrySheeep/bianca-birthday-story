@@ -1,0 +1,55 @@
+.chapter-seven-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.chapter-seven-options button {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 52px;
+  padding: 9px 12px;
+  border: 2px solid #e79b5b;
+  border-radius: 15px;
+  background: #fffaf0;
+  color: #624137;
+  font: inherit;
+  line-height: 1.35;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 4px 0 rgba(187, 104, 55, 0.16);
+  transition: transform 160ms ease, background-color 160ms ease;
+}
+
+.chapter-seven-options button:hover,
+.chapter-seven-options button:focus-visible {
+  background: #fff0d2;
+  transform: translateY(-2px);
+}
+
+.chapter-seven-options b {
+  display: grid;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border-radius: 50%;
+  background: #f6aa62;
+  color: #fff;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 699px) {
+  .chapter-seven-options {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .chapter-seven-options button {
+    min-height: 46px;
+    padding: 8px 10px;
+    font-size: 0.92rem;
+  }
+}

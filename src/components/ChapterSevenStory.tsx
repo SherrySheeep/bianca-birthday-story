@@ -1,6 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { chapterSevenDialogue, type ChapterSevenLine, type ChapterSevenScene } from "../data/chapterSevenDialogue";
+import {
+  chapterSevenDialogue,
+  type ChapterSevenChoice,
+  type ChapterSevenLine,
+  type ChapterSevenScene,
+} from "../data/chapterSevenDialogue";
 import { SectionHeader } from "./UI";
+import "../styles/chapter-seven-choices.css";
 
 type Props = { onComplete: () => void; paused?: boolean };
 
@@ -27,6 +33,7 @@ export function ChapterSevenStory({ onComplete, paused = false }: Props) {
   const [completed, setCompleted] = useState(false);
   const [backgroundLoaded, setBackgroundLoaded] = useState(false);
   const [portraitLoaded, setPortraitLoaded] = useState(false);
+  const [choiceResponse, setChoiceResponse] = useState<ChapterSevenChoice | null>(null);
   const clickLocked = useRef(false);
   const clickTimer = useRef<number | undefined>(undefined);
   const currentLine = chapterSevenDialogue[Math.min(lineIndex, chapterSevenDialogue.length - 1)];
@@ -41,12 +48,21 @@ export function ChapterSevenStory({ onComplete, paused = false }: Props) {
     if (paused || clickLocked.current) return;
     clickLocked.current = true;
     clickTimer.current = window.setTimeout(() => { clickLocked.current = false; }, 220);
+    setChoiceResponse(null);
     if (lineIndex < chapterSevenDialogue.length - 1) {
       setLineIndex((value) => value + 1);
     } else {
       setCompleted(true);
     }
   };
+
+  const chooseResponse = (choice: ChapterSevenChoice) => {
+    if (paused || clickLocked.current) return;
+    setChoiceResponse(choice);
+  };
+
+  const displayedSpeaker = choiceResponse?.responseSpeaker ?? currentLine.speaker;
+  const displayedText = choiceResponse?.response ?? currentLine.text;
 
   return (
     <section className="scene chapter-seven-story">
@@ -80,10 +96,33 @@ export function ChapterSevenStory({ onComplete, paused = false }: Props) {
             )}
           </div>
 
-          <div className="chapter-seven-dialogue" key={lineIndex}>
-            <span className={`dialogue-speaker speaker-${currentLine.speaker}`}>{currentLine.speaker}</span>
-            <p>{currentLine.text}</p>
-            <button className="dialogue-next" onClick={advance}>继续</button>
+          <div className="chapter-seven-dialogue" key={`${lineIndex}-${choiceResponse?.label ?? "line"}`}>
+            <span className={`dialogue-speaker speaker-${displayedSpeaker}`}>{displayedSpeaker}</span>
+            <p>{displayedText}</p>
+
+            {currentLine.choices && !choiceResponse && (
+              <div className="chapter-seven-options" aria-label="Bianca 的回答选项">
+                {currentLine.choices.map((choice, index) => (
+                  <button key={choice.label} type="button" onClick={() => chooseResponse(choice)}>
+                    <b>{String.fromCharCode(65 + index)}</b>
+                    <span>{choice.label}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {choiceResponse && (
+              <button
+                className="dialogue-next"
+                onClick={() => choiceResponse.continues ? advance() : setChoiceResponse(null)}
+              >
+                {choiceResponse.continues ? "继续" : "再想想"}
+              </button>
+            )}
+
+            {!currentLine.choices && !choiceResponse && (
+              <button className="dialogue-next" onClick={advance}>继续</button>
+            )}
           </div>
         </>
       )}

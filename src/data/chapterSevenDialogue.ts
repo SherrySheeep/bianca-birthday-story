@@ -1,12 +1,19 @@
 export type ChapterSevenScene = "gate" | "walk" | "tavernOutside" | "tavernInside";
 export type ChapterSevenCharacter = "amberFriendly" | "amberUrgent" | "venti" | "zhongli";
+export type ChapterSevenChoice = {
+  label: string;
+  responseSpeaker: "安柏" | "旁白";
+  response: string;
+  continues?: boolean;
+};
 
 export type ChapterSevenLine = {
   scene: ChapterSevenScene;
-  speaker: "安柏" | "Bianca" | "？？？" | "温迪" | "钟离";
+  speaker: "安柏" | "Bianca" | "旁白" | "？？？" | "温迪" | "钟离";
   text: string;
   character?: ChapterSevenCharacter;
   portrait?: 1 | 2 | 3 | 4 | 5;
+  choices?: ChapterSevenChoice[];
 };
 
 const gate = (speaker: ChapterSevenLine["speaker"], text: string, character?: ChapterSevenCharacter, portrait?: ChapterSevenLine["portrait"]): ChapterSevenLine => ({ scene: "gate", speaker, text, character, portrait });
@@ -15,28 +22,29 @@ const outside = (speaker: ChapterSevenLine["speaker"], text: string, character?:
 const tavern = (speaker: ChapterSevenLine["speaker"], text: string, character?: ChapterSevenCharacter, portrait?: ChapterSevenLine["portrait"]): ChapterSevenLine => ({ scene: "tavernInside", speaker, text, character, portrait });
 
 export const chapterSevenDialogue: ChapterSevenLine[] = [
-  gate("安柏", "好啦！飞行考试也顺利通过了！", "amberFriendly", 3),
-  gate("安柏", "你今天应该也累了吧。", "amberFriendly", 3),
-  gate("安柏", "先休息一下吧！", "amberFriendly", 3),
-  gate("Bianca", "终于可以休息了……"),
-  gate("安柏", "蒙德城里很安全，你可以自己到处逛逛。", "amberFriendly", 3),
-  gate("安柏", "要是有什么事，来找我就好！", "amberFriendly", 3),
-  gate("Bianca", "好。"),
-  gate("安柏", "那我先走啦！回头见！", "amberFriendly", 4),
-  gate("Bianca", "……终于没有人拉着我往下一个地方跑了。"),
+  gate("安柏", "好啦，既然飞行考试也顺利通过了，我先去巡逻啦。", "amberFriendly", 3),
+  gate("安柏", "蒙德城很安全，你可以自己到处逛逛。", "amberFriendly", 3),
+  gate("安柏", "那我先走啦，回头见！", "amberFriendly", 4),
+  {
+    ...gate("Bianca", "好。"),
+    choices: [
+      { label: "终于没有人拉着我往下一个地方跑了", responseSpeaker: "安柏", response: "嘿！我听到的！" },
+      { label: "这里真的是蒙德吗？", responseSpeaker: "旁白", response: "嘿嘿，你猜。" },
+      { label: "我的行李……", responseSpeaker: "旁白", response: "行李飞走啦！" },
+      { label: "不会还真的像菲林斯说的那样，“被送到了正确的位置”吧？", responseSpeaker: "旁白", response: "命运的选择！", continues: true },
+    ],
+  },
 
-  walk("所以……这里真的叫蒙德。"),
-  walk("风车、骑士团、风之翼……"),
-  walk("怎么看都不像是什么主题乐园。"),
-  walk("我现在本来应该在去中国的飞机上来着。"),
-  walk("我的行李……"),
-  walk("不会还真的像菲林斯说的那样，"),
-  walk("“被送到了正确的位置”吧？"),
-  walk("不过话说回来……"),
-  walk("我为什么会掉到这里？"),
-  walk("那个菲林斯明显知道些什么。"),
+  walk("不过话说回来，我为什么会掉到这里？"),
   walk("算了。"),
-  walk("先看看这里有没有什么能问的人吧。"),
+  {
+    ...walk("先看看这里有没有什么能问的人吧。"),
+    choices: [
+      { label: "我要看风车！", responseSpeaker: "旁白", response: "前面的区域以后再来探索吧。" },
+      { label: "我要看骑士团！", responseSpeaker: "旁白", response: "建模师表示你饶了我吧。" },
+      { label: "我要看酒馆！", responseSpeaker: "旁白", response: "命运的选择！", continues: true },
+    ],
+  },
 
   outside("Bianca", "……酒馆？"),
   outside("Bianca", "要不要进去看看……"),
