@@ -2,7 +2,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { chapterSixAfter, chapterSixOpening, chapterSixPreExam, chapterSixRules, chapterSixSuccess, type ChapterSixLine } from "../data/chapterSixDialogue";
 import { SectionHeader } from "./UI";
 
-type Props = { onComplete: () => void; paused?: boolean };
+type Props = {
+  onComplete: () => void;
+  paused?: boolean;
+  debugAction?: { type: "enterExam" | "skipExam"; key: number } | null;
+};
 type Stage = "opening" | "mission" | "preExam" | "rules" | "readyReply" | "game" | "retry" | "passed" | "success" | "reward" | "after" | "completed";
 const lanes = [25, 50, 75];
 const TOTAL_RINGS = 8;
@@ -16,7 +20,7 @@ const AIRFLOW_COLLISION_POINT = 0.58;
 const asset = (name: string) => `${import.meta.env.BASE_URL}chapter-six/${name}`;
 const amberAsset = (portrait: number) => `${import.meta.env.BASE_URL}chapter-five/Anbo${portrait}.png`;
 
-export function ChapterSixStory({ onComplete, paused = false }: Props) {
+export function ChapterSixStory({ onComplete, paused = false, debugAction = null }: Props) {
   const [stage, setStage] = useState<Stage>("opening");
   const [lineIndex, setLineIndex] = useState(0);
   const [lane, setLane] = useState(1);
@@ -48,6 +52,23 @@ export function ChapterSixStory({ onComplete, paused = false }: Props) {
 
   useEffect(() => () => window.clearTimeout(inputTimer.current), []);
   useEffect(() => setAmberLoaded(false), [currentLine?.portrait]);
+
+  useEffect(() => {
+    if (!debugAction) return;
+    setLineIndex(0);
+    if (debugAction.type === "skipExam") {
+      setHits(TOTAL_RINGS); hitsRef.current = TOTAL_RINGS;
+      setAirflowHits(0); airflowHitsRef.current = 0;
+      setPerfect(false); setPilotHit(false); setCrashed(false); setFailedByAirflow(false);
+      setStage("passed");
+      return;
+    }
+    setLane(1); laneRef.current = 1;
+    setRound(0); setHits(0); hitsRef.current = 0; previousRingLane.current = 1;
+    setPerfect(false); setAirflowStarted(false); setAirflowWarning(false); setShowAirflow(false);
+    setAirflowHits(0); airflowHitsRef.current = 0; setPilotHit(false); setCrashed(false); setFailedByAirflow(false);
+    setStage("game");
+  }, [debugAction]);
 
   useEffect(() => {
     if (!airflowStarted) return;
