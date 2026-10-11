@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { chapterEightBattleIntro, chapterEightOpening, chapterEightRitualAfter, chapterEightVictory, type ChapterEightLine } from "../data/chapterEightDialogue";
+import { chapterEightBattleIntro, chapterEightOpening, chapterEightPreRitual, chapterEightRitualAfter, chapterEightVictory, type ChapterEightLine } from "../data/chapterEightDialogue";
 import { abyssTutorialSteps, type AbyssAction } from "../data/chapterEightBattleData";
-import { chapterEightBattleConfig, supportCooldownLength, type ChapterEightSupport } from "../data/chapterEightBattleConfig";
+import { ABYSS_MAGE_SKILLS, ABYSS_MAGE_STATS, BIANCA_SKILLS, BIANCA_STATS, DAMAGE_RULES, ELEMENT_CONFIG, ENERGY_CONFIG, chapterEightBattleConfig, supportCooldownLength, type ChapterEightSupport } from "../data/chapterEightBattleConfig";
 import { BattleEffectLayer, BattleShout, FloatingCombatText, type CombatEffect, type CombatText } from "./ChapterEightBattleEffects";
 import { SectionHeader } from "./UI";
 import { UnswBattle } from "./UnswBattle";
@@ -11,7 +11,7 @@ type Props = {
   paused?: boolean;
   debugAction?: { type: "enterBattle" | "skipBattle"; key: number } | null;
 };
-type Phase = "story" | "battleIntro" | "ritual" | "ritualAfter" | "battle" | "battleWon" | "fakeVictory" | "unswBoss" | "defeat" | "victory" | "complete";
+type Phase = "story" | "battleIntro" | "preRitual" | "ritual" | "ritualAfter" | "battle" | "battleWon" | "fakeVictory" | "unswBoss" | "defeat" | "victory" | "complete";
 type EnemyId = "blue" | "red" | "purple";
 type Support = ChapterEightSupport;
 type Enemy = { id: EnemyId; name: string; hp: number; maxHp: number; shield: number; maxShield: number; image: string; burning: number; embarrassed: boolean };
@@ -20,9 +20,9 @@ type BattleOverlay = { title: string; lines: string[] } | null;
 const asset = (name: string) => `${import.meta.env.BASE_URL}chapter-eight/${name}`;
 const publicAsset = (name: string) => `${import.meta.env.BASE_URL}${name}`;
 const initialEnemies = (): Enemy[] => [
-  { id: "blue", name: "蓝色深渊法师", hp: 100, maxHp: 100, shield: 70, maxShield: 70, image: "Blue1.png", burning: 0, embarrassed: false },
-  { id: "red", name: "红色深渊法师", hp: 120, maxHp: 120, shield: 55, maxShield: 55, image: "Red2.png", burning: 0, embarrassed: false },
-  { id: "purple", name: "紫色深渊法师", hp: 105, maxHp: 105, shield: 60, maxShield: 60, image: "Purple1.png", burning: 0, embarrassed: false },
+  { id: "blue", name: "蓝色深渊法师", hp: ABYSS_MAGE_STATS.blue.maxHp, maxHp: ABYSS_MAGE_STATS.blue.maxHp, shield: ABYSS_MAGE_STATS.blue.maxShield, maxShield: ABYSS_MAGE_STATS.blue.maxShield, image: "Blue1.png", burning: 0, embarrassed: false },
+  { id: "red", name: "红色深渊法师", hp: ABYSS_MAGE_STATS.red.maxHp, maxHp: ABYSS_MAGE_STATS.red.maxHp, shield: ABYSS_MAGE_STATS.red.maxShield, maxShield: ABYSS_MAGE_STATS.red.maxShield, image: "Red2.png", burning: 0, embarrassed: false },
+  { id: "purple", name: "紫色深渊法师", hp: ABYSS_MAGE_STATS.purple.maxHp, maxHp: ABYSS_MAGE_STATS.purple.maxHp, shield: ABYSS_MAGE_STATS.purple.maxShield, maxShield: ABYSS_MAGE_STATS.purple.maxShield, image: "Purple1.png", burning: 0, embarrassed: false },
 ];
 
 const jokes = [
@@ -34,7 +34,7 @@ const jokes = [
 
 function damageEnemy(enemy: Enemy, hpDamage: number, shieldDamage: number): Enemy {
   const shieldHit = Math.min(enemy.shield, shieldDamage);
-  const spill = Math.max(0, shieldDamage - enemy.shield) * 0.45;
+  const spill = Math.max(0, shieldDamage - enemy.shield) * DAMAGE_RULES.shieldOverflowToHpRatio;
   return { ...enemy, shield: enemy.shield - shieldHit, hp: Math.max(0, enemy.hp - hpDamage - spill) };
 }
 
@@ -64,8 +64,8 @@ function StoryFrame({ line }: { line: ChapterEightLine }) {
 export function ChapterEightStory({ onComplete, paused = false, debugAction = null }: Props) {
   const [phase, setPhase] = useState<Phase>("story");
   const [lineIndex, setLineIndex] = useState(0);
-  const [hp, setHp] = useState(180);
-  const [energy, setEnergy] = useState(0);
+  const [hp, setHp] = useState<number>(BIANCA_STATS.maxHp);
+  const [energy, setEnergy] = useState<number>(0);
   const [enemies, setEnemies] = useState<Enemy[]>(initialEnemies);
   const [target, setTarget] = useState<EnemyId>("red");
   const [support, setSupport] = useState<Support>("amber");
@@ -78,7 +78,7 @@ export function ChapterEightStory({ onComplete, paused = false, debugAction = nu
   const [seenResonance, setSeenResonance] = useState(false);
   const [tipVisible, setTipVisible] = useState(false);
   const [tutorialStep, setTutorialStep] = useState(0);
-  const [geoShield, setGeoShield] = useState(0);
+  const [geoShield, setGeoShield] = useState<number>(BIANCA_STATS.startingShield);
   const [supportCooldowns, setSupportCooldowns] = useState<Record<Support, number>>({ amber: 0, venti: 0, zhongli: 0 });
   const [actionLocked, setActionLocked] = useState(false);
   const [actingSkill, setActingSkill] = useState<AbyssAction | null>(null);
@@ -89,10 +89,11 @@ export function ChapterEightStory({ onComplete, paused = false, debugAction = nu
   const [playerHit, setPlayerHit] = useState(false);
   const [breakEnemies, setBreakEnemies] = useState<EnemyId[]>([]);
   const [enemyDelays, setEnemyDelays] = useState<EnemyId[]>([]);
+  const [supportUnlocked, setSupportUnlocked] = useState(false);
   const clickLock = useRef(false);
   const clickTimer = useRef<number | undefined>(undefined);
 
-  const lines = phase === "story" ? chapterEightOpening : phase === "battleIntro" ? chapterEightBattleIntro : phase === "ritualAfter" ? chapterEightRitualAfter : chapterEightVictory;
+  const lines = phase === "story" ? chapterEightOpening : phase === "battleIntro" ? chapterEightBattleIntro : phase === "preRitual" ? chapterEightPreRitual : phase === "ritualAfter" ? chapterEightRitualAfter : chapterEightVictory;
   const currentLine = lines[Math.min(lineIndex, lines.length - 1)];
   const aliveEnemies = useMemo(() => enemies.filter((enemy) => enemy.hp > 0), [enemies]);
   const actionOrder = useMemo(() => {
@@ -116,11 +117,12 @@ export function ChapterEightStory({ onComplete, paused = false, debugAction = nu
       setPhase("victory");
       return;
     }
-    setHp(180); setEnergy(0); setEnemies(initialEnemies()); setTarget("red"); setSupport("amber");
+    setHp(BIANCA_STATS.maxHp); setEnergy(0); setEnemies(initialEnemies()); setTarget("red"); setSupport("amber");
     setRound(0); setSkillCooldown(0); setBattleLog("开发者模式：已直接进入深渊法师教程战。");
     setDelayed(false); setTipVisible(false); setTutorialStep(0);
-    setGeoShield(0); setSupportCooldowns({ amber: 0, venti: 0, zhongli: 0 }); setActionLocked(false); setActingSkill(null);
+    setGeoShield(BIANCA_STATS.startingShield); setSupportCooldowns({ amber: 0, venti: 0, zhongli: 0 }); setActionLocked(false); setActingSkill(null);
     setBattleDialogue(null); setCombatTexts([]); setCombatEffect(null); setHitEnemies([]); setPlayerHit(false); setBreakEnemies([]); setEnemyDelays([]);
+    setSupportUnlocked(false);
     setPhase("battle");
   }, [debugAction]);
 
@@ -138,16 +140,18 @@ export function ChapterEightStory({ onComplete, paused = false, debugAction = nu
     setLineIndex(0);
     if (phase === "story") setPhase("battleIntro");
     if (phase === "battleIntro") setPhase("battle");
+    if (phase === "preRitual") setPhase("ritual");
     if (phase === "ritualAfter") setPhase("battle");
     if (phase === "victory") setPhase("complete");
   };
 
   const resetBattle = () => {
-    setHp(180); setEnergy(0); setEnemies(initialEnemies()); setTarget("red"); setSupport("amber");
+    setHp(BIANCA_STATS.maxHp); setEnergy(0); setEnemies(initialEnemies()); setTarget("red"); setSupport("amber");
     setRound(0); setSkillCooldown(0); setBattleLog("选择目标与场外支援，然后发动技能。");
     setOverlay(null); setDelayed(false); setTipVisible(false); setTutorialStep(0); setPhase("battle");
-    setGeoShield(0); setSupportCooldowns({ amber: 0, venti: 0, zhongli: 0 }); setActionLocked(false); setActingSkill(null);
+    setGeoShield(BIANCA_STATS.startingShield); setSupportCooldowns({ amber: 0, venti: 0, zhongli: 0 }); setActionLocked(false); setActingSkill(null);
     setBattleDialogue(null); setCombatTexts([]); setCombatEffect(null); setHitEnemies([]); setPlayerHit(false); setBreakEnemies([]); setEnemyDelays([]);
+    setSupportUnlocked(false);
   };
 
   const makeEnemyCombatTexts = (before: Enemy[], after: Enemy[], stagger = false): CombatText[] => {
@@ -197,22 +201,22 @@ export function ChapterEightStory({ onComplete, paused = false, debugAction = nu
     const beforeEnemySkills = updated;
     updated.forEach((enemy) => {
       if (enemy.hp <= 0) return;
-      if (enemy.id === "blue" && enemy.shield < 18 && nextRound % 2 === 0) {
-        updated = updated.map((item) => item.id === "blue" ? { ...item, shield: Math.min(item.maxShield, item.shield + 18) } : item);
+      if (enemy.id === "blue" && enemy.shield < ABYSS_MAGE_SKILLS.blue.frostShield.shieldGain && nextRound % 2 === 0) {
+        updated = updated.map((item) => item.id === "blue" ? { ...item, shield: Math.min(item.maxShield, item.shield + ABYSS_MAGE_SKILLS.blue.frostShield.shieldGain) } : item);
         enemyLine = { speaker: "蓝色深渊法师", text: "休想伤到我！", tag: "寒气护盾" };
       } else if (enemy.id === "red" && nextRound % 2 === 0) {
-        incoming += 16; enemyLine = { speaker: "红色深渊法师", text: "这下可躲不开了！", tag: "火焰爆发" };
+        incoming += ABYSS_MAGE_SKILLS.red.flameBurst.damage; enemyLine = { speaker: "红色深渊法师", text: "这下可躲不开了！", tag: "火焰爆发" };
       } else if (enemy.id === "purple" && nextRound % 2 === 1) {
-        incoming += 7; paralysis = true; enemyLine = { speaker: "紫色深渊法师", text: "别想那么快出手！", tag: "麻痹干扰" };
+        incoming += ABYSS_MAGE_SKILLS.purple.paralysisInterference.damage; paralysis = true; enemyLine = { speaker: "紫色深渊法师", text: "别想那么快出手！", tag: "麻痹干扰" };
       } else {
-        incoming += enemy.id === "blue" ? 8 : enemy.id === "red" ? 11 : 7;
+        incoming += enemy.id === "blue" ? ABYSS_MAGE_SKILLS.blue.iceShard.damage : enemy.id === "red" ? ABYSS_MAGE_SKILLS.red.fireball.damage : ABYSS_MAGE_SKILLS.purple.lightningStrike.damage;
       }
     });
 
     if (nextRound % 2 === 0) {
       const recipient = updated.find((enemy) => enemy.hp > 0);
       if (recipient) {
-        updated = updated.map((enemy) => enemy.id === recipient.id ? { ...enemy, shield: Math.min(enemy.maxShield, enemy.shield + 10) } : enemy);
+        updated = updated.map((enemy) => enemy.id === recipient.id ? { ...enemy, shield: Math.min(enemy.maxShield, enemy.shield + ABYSS_MAGE_SKILLS.resonance.shieldGain) } : enemy);
         if (!seenResonance) { setSeenResonance(true); enemyLine = { speaker: "Bianca", text: "它还会给自己加护盾？！", tag: "异界共鸣" }; }
       }
     }
@@ -223,7 +227,7 @@ export function ChapterEightStory({ onComplete, paused = false, debugAction = nu
     if (paralysis) setCombatEffect({ key: Date.now(), type: "paralysis", target: "bianca" });
     await wait(chapterEightBattleConfig.timing.dialogueLead);
 
-    const reduction = failures >= 2 ? 0.82 : 1;
+    const reduction = failures >= 2 ? DAMAGE_RULES.retryAssistIncomingDamageMultiplier : 1;
     const rawDamage = Math.round(incoming * reduction);
     const shieldDamage = Math.min(geoShield, rawDamage);
     const hpDamage = Math.max(0, rawDamage - shieldDamage);
@@ -233,7 +237,7 @@ export function ChapterEightStory({ onComplete, paused = false, debugAction = nu
       ...(shieldDamage ? [{ id: `${Date.now()}-bianca-shield`, target: "bianca" as const, value: shieldDamage, kind: "shield" as const }] : []),
       ...(hpDamage ? [{ id: `${Date.now()}-bianca-hp`, target: "bianca" as const, value: hpDamage, kind: "hp" as const }] : []),
     ];
-    setGeoShield(nextShield); setHp(nextHp); setCombatTexts(texts); setPlayerHit(rawDamage > 0); setEnergy((value) => Math.min(100, value + 12));
+    setGeoShield(nextShield); setHp(nextHp); setCombatTexts(texts); setPlayerHit(rawDamage > 0); setEnergy((value) => Math.min(ENERGY_CONFIG.maxEnergy, value + ENERGY_CONFIG.enemyTurnGain));
     if (paralysis) {
       if (geoShield > 0) {
         setGeoShield((value) => Math.max(0, value - chapterEightBattleConfig.geoShieldParalysisCost));
@@ -266,10 +270,10 @@ export function ChapterEightStory({ onComplete, paused = false, debugAction = nu
       return;
     }
     if (kind === "skill" && skillCooldown > 0) return;
-    if (kind === "ultimate" && energy < 100) return;
+    if (kind === "ultimate" && energy < ENERGY_CONFIG.ultimateCost) return;
 
     setActionLocked(true); setActingSkill(kind); setDelayed(false); setEnemyDelays([]);
-    const activeSupport = tutorialStep >= 3 && supportCooldowns[support] === 0 ? support : undefined;
+    const activeSupport = supportUnlocked && supportCooldowns[support] === 0 ? support : undefined;
     const livingIds = enemies.filter((enemy) => enemy.hp > 0).map((enemy) => enemy.id);
 
     if (kind === "normal") {
@@ -292,22 +296,24 @@ export function ChapterEightStory({ onComplete, paused = false, debugAction = nu
     await wait(chapterEightBattleConfig.timing.projectile);
 
     let next = enemies;
-    const isTutorial = Boolean(tutorial);
+    const isTutorial = !supportUnlocked;
+    const damageMultiplier = isTutorial ? ELEMENT_CONFIG.tutorialDamageMultiplier : 1;
     if (kind === "normal") {
       next = enemies.map((enemy) => {
         if (enemy.id !== target || enemy.hp <= 0) return enemy;
-        const shieldDamage = (isTutorial ? 48 : 58) * (activeSupport === "amber" && enemy.id === "blue" ? chapterEightBattleConfig.fireVsIceShieldMultiplier : 1);
-        return { ...damageEnemy(enemy, isTutorial ? 20 : 30, shieldDamage), burning: activeSupport === "amber" ? chapterEightBattleConfig.burnDuration : enemy.burning };
+        const shieldDamage = BIANCA_SKILLS.basicAttack.shieldDamage * damageMultiplier * (activeSupport === "amber" && enemy.id === "blue" ? ELEMENT_CONFIG.amber.fireVsIceShieldMultiplier : 1);
+        return { ...damageEnemy(enemy, BIANCA_SKILLS.basicAttack.damage * damageMultiplier, shieldDamage), burning: activeSupport === "amber" ? ELEMENT_CONFIG.burn.duration : enemy.burning };
       });
-      setEnergy((value) => Math.min(100, value + (isTutorial ? 30 : 25)));
+      setEnergy((value) => Math.min(ENERGY_CONFIG.maxEnergy, value + ENERGY_CONFIG.basicAttackGain));
     } else if (kind === "skill") {
       next = enemies.map((enemy) => enemy.hp > 0 ? {
-        ...damageEnemy(enemy, isTutorial ? 16 : 20, (isTutorial ? 24 : 30) * (activeSupport === "amber" && enemy.id === "blue" ? chapterEightBattleConfig.fireVsIceShieldMultiplier : 1)),
+        ...damageEnemy(enemy, BIANCA_SKILLS.coldJoke.damage * damageMultiplier, BIANCA_SKILLS.coldJoke.shieldDamage * damageMultiplier * (activeSupport === "amber" && enemy.id === "blue" ? ELEMENT_CONFIG.amber.fireVsIceShieldMultiplier : 1)),
         embarrassed: true,
       } : enemy);
-      setEnergy((value) => Math.min(100, value + (isTutorial ? 100 : 30))); setSkillCooldown(1);
+      setEnergy((value) => Math.min(ENERGY_CONFIG.maxEnergy, value + (isTutorial ? ENERGY_CONFIG.maxEnergy : ENERGY_CONFIG.coldJokeGain))); setSkillCooldown(BIANCA_SKILLS.coldJoke.cooldown);
     } else {
-      next = enemies.map((enemy) => enemy.hp > 0 ? damageEnemy(enemy, isTutorial ? 28 : 90, (isTutorial ? 32 : 78) * (activeSupport === "amber" && enemy.id === "blue" ? chapterEightBattleConfig.fireVsIceShieldMultiplier : 1)) : enemy);
+      const ultimateDamage = (BIANCA_SKILLS.softHardSoft.softHit1Damage + BIANCA_SKILLS.softHardSoft.hardHitDamage + BIANCA_SKILLS.softHardSoft.softHit2Damage) * damageMultiplier;
+      next = enemies.map((enemy) => enemy.hp > 0 ? damageEnemy(enemy, ultimateDamage, BIANCA_SKILLS.softHardSoft.shieldDamage * damageMultiplier * (activeSupport === "amber" && enemy.id === "blue" ? ELEMENT_CONFIG.amber.fireVsIceShieldMultiplier : 1)) : enemy);
       setEnergy(0);
     }
 
@@ -349,7 +355,7 @@ export function ChapterEightStory({ onComplete, paused = false, debugAction = nu
 
     if (tutorial) {
       setTutorialStep((value) => value + 1);
-      if (tutorialStep === 2) { setPhase("ritual"); setActionLocked(false); return; }
+      if (tutorialStep === 2) { setPhase("preRitual"); setLineIndex(0); setActionLocked(false); return; }
       if (tutorialStep >= 3) { setPhase("fakeVictory"); setActionLocked(false); return; }
     }
 
@@ -375,20 +381,20 @@ export function ChapterEightStory({ onComplete, paused = false, debugAction = nu
       </div>
     </>}
 
-    {(["battleIntro", "ritual", "ritualAfter", "battle", "battleWon", "fakeVictory", "defeat"] as Phase[]).includes(phase) && <div className="battle-eight-card">
+    {(["battleIntro", "preRitual", "ritual", "ritualAfter", "battle", "battleWon", "fakeVictory", "defeat"] as Phase[]).includes(phase) && <div className="battle-eight-card">
       <img className="battle-eight-bg" src={asset("BattleBg1.png")} alt="回合制战斗场地" />
       <div className={`battle-order ${delayed || enemyDelays.length ? "is-delayed" : ""}`}><b>行动顺序</b>{actionOrder.map((entry, index) => <div className={`order-avatar ${index === 0 ? "active" : ""} ${enemyDelays.includes(entry.id as EnemyId) ? "enemy-delayed" : ""}`} key={entry.id}><img src={asset(entry.image)} alt={entry.label} onError={(event) => { event.currentTarget.hidden = true; }} /><span>{entry.label}</span></div>)}</div>
       <div className="battle-enemies">{enemies.map((enemy) => <button key={enemy.id} className={`battle-enemy enemy-${enemy.id} ${target === enemy.id ? "selected" : ""} ${enemy.hp <= 0 ? "defeated" : ""} ${hitEnemies.includes(enemy.id) ? "is-hit" : ""} ${breakEnemies.includes(enemy.id) ? "shield-break" : ""} ${enemy.burning ? "is-burning" : ""} ${enemy.embarrassed ? "is-embarrassed" : ""}`} onClick={() => setTarget(enemy.id)} disabled={enemy.hp <= 0 || actionLocked}><div className="enemy-bars"><b>{enemy.name}</b><i><em style={{ width: `${enemy.hp / enemy.maxHp * 100}%` }} /></i><i className="shield"><em style={{ width: `${enemy.shield / enemy.maxShield * 100}%` }} /></i></div><img src={asset(enemy.image)} alt={enemy.name} />{enemy.embarrassed && <span className="embarrassed-mark">……</span>}{enemy.burning > 0 && <span className="burn-particles"><i /><i /><i /></span>}{breakEnemies.includes(enemy.id) && <span className="break-label">BREAK!</span>}</button>)}</div>
       <div className="battle-mystery" title="神秘物品">?</div>
-      <div className={`bianca-battle ${playerHit ? "is-hit" : ""} ${geoShield > 0 ? "has-geo-shield" : ""}`}><img src={asset(actingSkill ? "BiancaBattle2.png" : "BiancaBattle1.png")} alt="战斗中的 Bianca" /><div><b>Bianca</b><i><em style={{ width: `${hp / 180 * 100}%` }} /></i>{geoShield > 0 && <i className="bianca-shield"><em style={{ width: `${Math.min(100, geoShield / chapterEightBattleConfig.geoShieldAmount * 100)}%` }} /></i>}<small>HP {hp}/180　护盾 {geoShield}　能量 {energy}/100</small></div></div>
-      {tutorialStep >= 3 && <div className="support-panel"><b>场外支援</b>{(["amber", "venti", "zhongli"] as Support[]).map((item) => <button key={item} className={`${support === item ? "active" : ""} ${supportCooldowns[item] ? "cooling" : ""}`} onClick={() => setSupport(item)} disabled={supportCooldowns[item] > 0 || actionLocked}>{item === "amber" ? "安柏·火" : item === "venti" ? "温迪·风" : "钟离·岩"}<small>{supportCooldowns[item] ? supportCooldowns[item] : "Ready"}</small></button>)}</div>}
+      <div className={`bianca-battle ${playerHit ? "is-hit" : ""} ${geoShield > 0 ? "has-geo-shield" : ""}`}><img src={asset(actingSkill ? "BiancaBattle2.png" : "BiancaBattle1.png")} alt="战斗中的 Bianca" /><div><b>Bianca</b><i><em style={{ width: `${hp / BIANCA_STATS.maxHp * 100}%` }} /></i>{geoShield > 0 && <i className="bianca-shield"><em style={{ width: `${Math.min(100, geoShield / ELEMENT_CONFIG.zhongli.shieldAmount * 100)}%` }} /></i>}<small>HP {hp}/{BIANCA_STATS.maxHp}　护盾 {geoShield}　能量 {energy}/{ENERGY_CONFIG.maxEnergy}</small></div></div>
+      {(supportUnlocked || phase === "ritualAfter") && <div className={`support-panel ${phase === "ritualAfter" ? "is-unlocking" : ""}`}><b>场外支援</b>{(["amber", "venti", "zhongli"] as Support[]).map((item) => { const unlockedNow = phase !== "ritualAfter" || (item === "amber" ? lineIndex >= 1 : item === "venti" ? lineIndex >= 2 : lineIndex >= 4); return <button key={item} className={`${support === item ? "active" : ""} ${supportCooldowns[item] ? "cooling" : ""} ${unlockedNow ? "support-lit" : "support-dormant"}`} onClick={() => setSupport(item)} disabled={!supportUnlocked || supportCooldowns[item] > 0 || actionLocked}>{item === "amber" ? "安柏·火" : item === "venti" ? "温迪·风" : "钟离·岩"}<small>{supportCooldowns[item] ? supportCooldowns[item] : "Ready"}</small></button>; })}</div>}
       {phase === "battle" && !battleDialogue && <div className="battle-status-toast tutorial-toast"><b>{abyssTutorialSteps[tutorialStep]?.guide}：</b>{abyssTutorialSteps[tutorialStep]?.lines.join(" ") || battleLog}</div>}
-      <div className="battle-skills"><button className={phase === "battle" && abyssTutorialSteps[tutorialStep]?.expected === "normal" ? "tutorial-highlight" : ""} onClick={() => useAction("normal")} disabled={phase !== "battle" || actionLocked}>普通攻击<small>单体</small></button><button className={phase === "battle" && abyssTutorialSteps[tutorialStep]?.expected === "skill" ? "tutorial-highlight" : ""} onClick={() => useAction("skill")} disabled={phase !== "battle" || actionLocked || skillCooldown > 0}>冷笑话<small>{skillCooldown ? "冷却中" : "群体"}</small></button><button className={`ultimate ${energy >= 100 ? "is-ready" : ""} ${phase === "battle" && abyssTutorialSteps[tutorialStep]?.expected === "ultimate" ? "tutorial-highlight" : ""}`} onClick={() => useAction("ultimate")} disabled={phase !== "battle" || actionLocked || energy < 100}>软硬软拒绝<small>{energy}/100</small></button></div>
+      <div className="battle-skills"><button className={phase === "battle" && abyssTutorialSteps[tutorialStep]?.expected === "normal" ? "tutorial-highlight" : ""} onClick={() => useAction("normal")} disabled={phase !== "battle" || actionLocked}>普通攻击<small>单体</small></button><button className={phase === "battle" && abyssTutorialSteps[tutorialStep]?.expected === "skill" ? "tutorial-highlight" : ""} onClick={() => useAction("skill")} disabled={phase !== "battle" || actionLocked || skillCooldown > 0}>冷笑话<small>{skillCooldown ? "冷却中" : "群体"}</small></button><button className={`ultimate ${energy >= ENERGY_CONFIG.ultimateCost ? "is-ready" : ""} ${phase === "battle" && abyssTutorialSteps[tutorialStep]?.expected === "ultimate" ? "tutorial-highlight" : ""}`} onClick={() => useAction("ultimate")} disabled={phase !== "battle" || actionLocked || energy < ENERGY_CONFIG.ultimateCost}>软硬软拒绝<small>{energy}/{ENERGY_CONFIG.maxEnergy}</small></button></div>
       <BattleEffectLayer effect={combatEffect} />
       <FloatingCombatText items={combatTexts} />
       {battleDialogue && <BattleShout {...battleDialogue} />}
-      {(phase === "battleIntro" || phase === "ritualAfter") && <div className={`battle-dialogue-overlay ${currentLine.speaker === "作者大大" ? "author-note" : ""}`}><div><span className={`dialogue-speaker speaker-${currentLine.speaker}`}>{currentLine.speaker}</span><p>{currentLine.text}</p><button className="dialogue-next" onClick={advanceStory}>继续</button></div></div>}
-      {phase === "ritual" && <div className="battle-dialogue-overlay author-note"><div><span className="dialogue-speaker">作者大大</span><p><b>软｜Bianca：</b>那个……要不还是算了吧？</p><p><b>硬｜Bianca：</b>不行。</p><p><b>软｜Bianca：</b>谢谢理解。</p><p>现实中的 Bianca，请认真念出：</p><blockquote>“以疯狂星期四的名义，请赐予我打败深渊法师的力量！”</blockquote><button className="dialogue-next" onClick={() => { setLineIndex(0); setPhase("ritualAfter"); }}>我念完了</button></div></div>}
+      {(phase === "battleIntro" || phase === "preRitual" || phase === "ritualAfter") && <div className={`battle-dialogue-overlay ${currentLine.speaker === "作者大大" ? "author-note" : ""}`}><div><span className={`dialogue-speaker speaker-${currentLine.speaker}`}>{currentLine.speaker}</span><p>{currentLine.text}</p><button className="dialogue-next" onClick={advanceStory}>继续</button></div></div>}
+      {phase === "ritual" && <div className="battle-dialogue-overlay author-note"><div><span className="dialogue-speaker">作者大大</span><p>现实中的 Bianca，请认真念出：</p><blockquote>“以疯狂星期四的名义，<br />请赐予我打败深渊法师的力量！”</blockquote><button className="dialogue-next" onClick={() => { setSupportUnlocked(true); setLineIndex(0); setPhase("ritualAfter"); }}>我念完了</button></div></div>}
       {overlay && phase === "battle" && <div className="battle-overlay"><div><h3>{overlay.title}</h3>{overlay.lines.map((text, index) => <p key={index}>{text}</p>)}<button className="dialogue-next" onClick={() => setOverlay(null)}>继续战斗</button></div></div>}
       {phase === "battleWon" && <div className="battle-overlay"><div><h3>战斗胜利</h3><p>三只深渊法师的护盾终于全部熄灭了。</p><button className="dialogue-next" onClick={() => { setOverlay(null); setLineIndex(0); setPhase("victory"); }}>查看神秘物品</button></div></div>}
       {phase === "fakeVictory" && <div className="battle-overlay fake-victory"><div><h3>Battle Complete</h3><p>深渊法师已被击败。</p><p><b>Bianca：</b>终于……</p><p><b>安柏：</b>做得很好！</p><p><b>温迪：</b>看来结束了呢～</p></div></div>}

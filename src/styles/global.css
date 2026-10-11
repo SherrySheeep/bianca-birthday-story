@@ -3868,6 +3868,8 @@ main {
 .support-panel button { position: relative; }
 .support-panel button small { display: block; margin-top: 2px; color: inherit; font-size: .53rem; }
 .support-panel button.cooling { filter: grayscale(.82); opacity: .55; }
+.support-panel.is-unlocking button.support-dormant { filter: grayscale(1) brightness(.55); opacity: .35; box-shadow: none; }
+.support-panel.is-unlocking button.support-lit { opacity: 1; filter: none; border-color: #fff08a; box-shadow: 0 0 16px #fff08aaa; animation: support-light-up .55s ease-out both; }
 .battle-shout { position: absolute; z-index: 24; left: 50%; top: 48%; width: min(54%,430px); transform: translateX(-50%); padding: 9px 13px; border: 2px solid #353b56; border-radius: 14px; background: #fffaf0ee; color: #353549; box-shadow: 4px 5px 0 #111827aa; pointer-events: none; animation: battle-shout-in .2s ease-out both; }
 .battle-shout b { display: inline-block; margin-right: 7px; color: #b85255; font-size: .72rem; }
 .battle-shout em { display: inline-block; color: #6a4a8f; font-size: .68rem; font-style: normal; font-weight: 950; }
@@ -3908,6 +3910,7 @@ main {
 @keyframes hard-impact { 0%{opacity:0;transform:scale(.65)}30%{opacity:1;filter:brightness(2)}100%{opacity:0;transform:scale(1.15) rotate(8deg)} }
 @keyframes electric-arc { 0%,100%{opacity:0}30%,70%{opacity:1;transform:translate(7px,-8px) skew(-24deg)} }
 @keyframes ultimate-ready { 50%{transform:translateY(-2px);filter:brightness(1.14)} }
+@keyframes support-light-up { from{opacity:.3;filter:grayscale(1) brightness(.55);transform:scale(.82)}60%{transform:scale(1.1)}to{opacity:1;filter:none;transform:scale(1)} }
 
 @media (max-width: 699px) {
   .battle-shout { top: 45%; width: 68%; padding: 7px 9px; }
@@ -3970,7 +3973,7 @@ main {
 .phase-two-overlay h3 { color: #d6a900; font-size: 2.4rem; }
 .phase-two-overlay b { font-size: 1.4rem; letter-spacing: .2em; }
 .graduation-overlay h3 { color: #bd9300; letter-spacing: .08em; }
-.week-ten .unsw-boss > img { animation: unsw-week-ten .8s ease-in-out infinite alternate; }
+.week-ten .unsw-boss > img { animation: unsw-week-ten var(--unsw-phase-speed, .8s) ease-in-out infinite alternate; }
 
 @keyframes tutorial-skill-pulse {
   50% { transform: translateY(-3px) scale(1.045); box-shadow: 0 0 0 4px #fff07a, 0 0 30px 10px rgba(255, 210, 67, .86); }
