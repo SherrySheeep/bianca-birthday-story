@@ -3,8 +3,11 @@ import { chapterEightBattleIntro, chapterEightOpening, chapterEightPreRitual, ch
 import { abyssTutorialSteps, type AbyssAction } from "../data/chapterEightBattleData";
 import { ABYSS_MAGE_SKILLS, ABYSS_MAGE_STATS, BIANCA_SKILLS, BIANCA_STATS, DAMAGE_RULES, ELEMENT_CONFIG, ENERGY_CONFIG, chapterEightBattleConfig, supportCooldownLength, type ChapterEightSupport } from "../data/chapterEightBattleConfig";
 import { BattleEffectLayer, BattleShout, FloatingCombatText, type CombatEffect, type CombatText } from "./ChapterEightBattleEffects";
+import { CombatGuide } from "./CombatGuide";
 import { SectionHeader } from "./UI";
 import { UnswBattle } from "./UnswBattle";
+import { abyssCombatGuideEntries } from "../data/chapterEightCombatGuide";
+import { usePausableBattleWait } from "../hooks/usePausableBattleWait";
 
 type Props = {
   onComplete: () => void;
@@ -46,8 +49,6 @@ function damageEnemy(enemy: Enemy, hpDamage: number, shieldDamage: number): Enem
 
   return { ...enemy, hp: Math.max(0, enemy.hp - hpDamage) };
 }
-
-const wait = (milliseconds: number) => new Promise<void>((resolve) => window.setTimeout(resolve, milliseconds));
 
 function StoryFrame({ line }: { line: ChapterEightLine }) {
   const sceneImage = line.scene === "observe" ? "shenyuanfashimen1.png" : line.scene === "close" ? "shenyuanfashimen3.png" : "BattleBg1.png";
@@ -99,12 +100,15 @@ export function ChapterEightStory({ onComplete, paused = false, debugMode = fals
   const [breakEnemies, setBreakEnemies] = useState<EnemyId[]>([]);
   const [enemyDelays, setEnemyDelays] = useState<EnemyId[]>([]);
   const [supportUnlocked, setSupportUnlocked] = useState(false);
+  const [isCombatGuideOpen, setIsCombatGuideOpen] = useState(false);
   const clickLock = useRef(false);
   const clickTimer = useRef<number | undefined>(undefined);
 
   const lines = phase === "story" ? chapterEightOpening : phase === "battleIntro" ? chapterEightBattleIntro : phase === "preRitual" ? chapterEightPreRitual : phase === "ritualAfter" ? chapterEightRitualAfter : chapterEightVictory;
   const currentLine = lines[Math.min(lineIndex, lines.length - 1)];
   const aliveEnemies = useMemo(() => enemies.filter((enemy) => enemy.hp > 0), [enemies]);
+  const isBattlePaused = paused || isCombatGuideOpen;
+  const wait = usePausableBattleWait(isBattlePaused);
   const actionOrder = useMemo(() => {
     const enemyEntries = [
       { id: "blue", label: "蓝", image: "SYBlue1.png" },
@@ -149,13 +153,14 @@ export function ChapterEightStory({ onComplete, paused = false, debugMode = fals
   }, [debugAction]);
 
   useEffect(() => {
-    if (phase !== "fakeVictory" || paused) return;
-    const timer = window.setTimeout(() => setPhase("unswBoss"), 1400);
-    return () => window.clearTimeout(timer);
-  }, [phase, paused]);
+    if (phase !== "fakeVictory") return;
+    let cancelled = false;
+    void wait(1400).then(() => { if (!cancelled) setPhase("unswBoss"); });
+    return () => { cancelled = true; };
+  }, [phase, wait]);
 
   const advanceStory = () => {
-    if (paused || clickLock.current) return;
+    if (isBattlePaused || clickLock.current) return;
     clickLock.current = true;
     clickTimer.current = window.setTimeout(() => { clickLock.current = false; }, 220);
     if (lineIndex < lines.length - 1) { setLineIndex((value) => value + 1); return; }
@@ -290,7 +295,7 @@ export function ChapterEightStory({ onComplete, paused = false, debugMode = fals
   };
 
   const useAction = async (kind: AbyssAction) => {
-    if (paused || overlay || phase !== "battle" || actionLocked) return;
+    if (isBattlePaused || overlay || phase !== "battle" || actionLocked) return;
     const tutorial = abyssTutorialSteps[tutorialStep];
     if (tutorial && kind !== tutorial.expected) {
       setOverlay({ title: tutorial.guide, lines: [tutorial.wrong] });
@@ -427,7 +432,7 @@ export function ChapterEightStory({ onComplete, paused = false, debugMode = fals
       </div>
     </>}
 
-    {(["battleIntro", "preRitual", "ritual", "ritualAfter", "battle", "battleWon", "fakeVictory", "defeat"] as Phase[]).includes(phase) && <div className="battle-eight-card">
+    {(["battleIntro", "preRitual", "ritual", "ritualAfter", "battle", "battleWon", "fakeVictory", "defeat"] as Phase[]).includes(phase) && <div className={`battle-eight-card ${isCombatGuideOpen ? "combat-guide-paused" : ""}`}>
       <img className="battle-eight-bg" src={asset("BattleBg1.png")} alt="回合制战斗场地" />
       <div className={`battle-order ${delayed || enemyDelays.length ? "is-delayed" : ""}`}><b>行动顺序</b>{actionOrder.map((entry, index) => <div className={`order-avatar ${index === 0 ? "active" : ""} ${enemyDelays.includes(entry.id as EnemyId) ? "enemy-delayed" : ""}`} key={entry.id}><img src={asset(entry.image)} alt={entry.label} onError={(event) => { event.currentTarget.hidden = true; }} /><span>{entry.label}</span></div>)}</div>
       <div className="battle-enemies">{enemies.map((enemy) => <button key={enemy.id} className={`battle-enemy enemy-${enemy.id} ${target === enemy.id ? "selected" : ""} ${enemy.hp <= 0 ? "defeated" : ""} ${hitEnemies.includes(enemy.id) ? "is-hit" : ""} ${breakEnemies.includes(enemy.id) ? "shield-break" : ""} ${enemy.burning ? "is-burning" : ""} ${enemy.embarrassed ? "is-embarrassed" : ""}`} onClick={() => setTarget(enemy.id)} disabled={enemy.hp <= 0 || actionLocked}><div className="enemy-bars"><b>{enemy.name}</b><i><em style={{ width: `${enemy.hp / enemy.maxHp * 100}%` }} /></i><i className="shield"><em style={{ width: `${enemy.shield / enemy.maxShield * 100}%` }} /></i></div><img src={asset(enemy.image)} alt={enemy.name} />{enemy.embarrassed && <span className="embarrassed-mark">……</span>}{enemy.burning > 0 && <span className="burn-particles"><i /><i /><i /></span>}{breakEnemies.includes(enemy.id) && <span className="break-label">破盾！</span>}</button>)}</div>
@@ -440,6 +445,7 @@ export function ChapterEightStory({ onComplete, paused = false, debugMode = fals
       <BattleEffectLayer effect={combatEffect} />
       <FloatingCombatText items={combatTexts} />
       {battleDialogue && <BattleShout {...battleDialogue} />}
+      <CombatGuide entries={abyssCombatGuideEntries} open={isCombatGuideOpen} onOpenChange={setIsCombatGuideOpen} currentStats={{ bianca: `HP ${hp}/${BIANCA_STATS.maxHp} · 护盾 ${geoShield}`, ...Object.fromEntries(enemies.map((enemy) => [enemy.id, `HP ${enemy.hp}/${enemy.maxHp} · 护盾 ${enemy.shield}/${enemy.maxShield}`])) }} />
       {(phase === "battleIntro" || phase === "preRitual" || phase === "ritualAfter") && <div className={`battle-dialogue-overlay ${currentLine.speaker === "作者大大" ? "author-note" : ""}`}><div><span className={`dialogue-speaker speaker-${currentLine.speaker}`}>{currentLine.speaker}</span><p>{currentLine.text}</p><button className="dialogue-next" onClick={advanceStory}>继续</button></div></div>}
       {phase === "ritual" && <div className="battle-dialogue-overlay author-note"><div><span className="dialogue-speaker">作者大大</span><p>现实中的 Bianca，请认真念出：</p><blockquote>“以疯狂星期四的名义，<br />请赐予我打败深渊法师的力量！”</blockquote><button className="dialogue-next" onClick={() => { setSupportUnlocked(true); setLineIndex(0); setPhase("ritualAfter"); }}>我念完了</button></div></div>}
       {overlay && phase === "battle" && <div className="battle-overlay"><div><h3>{overlay.title}</h3>{overlay.lines.map((text, index) => <p key={index}>{text}</p>)}<button className="dialogue-next" onClick={() => setOverlay(null)}>继续战斗</button></div></div>}

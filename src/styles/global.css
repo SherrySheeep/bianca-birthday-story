@@ -3826,6 +3826,42 @@ main {
 .order-avatar span { position: absolute; right: 2px; bottom: 1px; min-width: 17px; padding: 1px 3px; border-radius: 6px; background: #151c2bdd; color: #fff; font-size: .6rem; font-weight: 900; }
 .order-avatar.active { border-color: #ffe36d; box-shadow: 0 0 12px #ffe36d99; transform: scale(1.06); }
 .battle-order.is-delayed .order-avatar { animation: order-shift .35s ease-out; }
+.combat-guide-trigger { position: absolute; z-index: 29; top: 14px; left: 12px; display: grid; place-items: center; gap: 2px; width: 58px; min-height: 58px; padding: 5px; border: 2px solid #6e5138; border-radius: 14px; color: #5c402d; background: #fff2bd; box-shadow: 3px 4px 0 #372c27aa; font-size: .55rem; font-weight: 950; cursor: pointer; transition: transform .16s, filter .16s; }
+.combat-guide-trigger:hover { transform: translateY(-2px) rotate(-2deg); filter: brightness(1.06); }
+.combat-guide-trigger:active { transform: translateY(2px); box-shadow: 1px 2px 0 #372c27aa; }
+.combat-guide-trigger img { display: block; width: 32px; height: 32px; object-fit: contain; }
+.combat-guide-backdrop { position: absolute; z-index: 90; inset: 0; display: grid; place-items: center; padding: 18px; background: rgba(25,24,35,.72); backdrop-filter: blur(3px); overscroll-behavior: contain; touch-action: none; }
+.combat-guide-book { position: relative; width: min(100%, 780px); height: min(92%, 650px); overflow: hidden; border: 4px solid #72513a; border-radius: 25px; color: #493427; background: linear-gradient(90deg,#f8e6b9 0 49.5%,#d5b77b 49.7% 50.3%,#fff0c7 50.5%); box-shadow: 0 18px 45px #08080dbb,inset 0 0 0 2px #fff8db; }
+.combat-guide-book::before { content:""; position:absolute; z-index:0; inset:0; opacity:.28; pointer-events:none; background: repeating-linear-gradient(0deg,transparent 0 27px,#98785122 28px 29px); }
+.combat-guide-book > header { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; height: 76px; padding: 12px 18px 9px 96px; border-bottom: 2px dashed #9a7653; }
+.combat-guide-book > header small { display:block; color:#a25848; font-size:.6rem; font-weight:950; letter-spacing:.18em; }
+.combat-guide-book > header h2 { margin:2px 0 0; font-family:"Ma Shan Zheng","Noto Sans SC",sans-serif; font-size:1.75rem; }
+.combat-guide-book > header > button { width:38px; height:38px; border:2px solid #72513a; border-radius:50%; color:#5d3f2e; background:#ffd97a; font-size:1.45rem; font-weight:950; line-height:1; cursor:pointer; }
+.combat-guide-layout { position: relative; z-index: 1; display:grid; grid-template-columns:82px minmax(0,1fr); height:calc(100% - 76px); }
+.combat-guide-tabs { display:flex; flex-direction:column; gap:8px; overflow-y:auto; padding:10px 9px; border-right:2px solid #9a7653; scrollbar-width:thin; }
+.combat-guide-tabs button { position:relative; flex:0 0 auto; width:62px; height:62px; padding:3px; border:2px solid #a6815f; border-radius:16px; background:#fff8df; box-shadow:2px 3px 0 #85654966; cursor:pointer; transition:.16s; }
+.combat-guide-tabs button.active { border-color:#e39148; transform:scale(1.06); box-shadow:0 0 0 3px #ffd875,0 0 14px #ef9d5a99; }
+.combat-guide-tabs img { width:100%; height:100%; border-radius:12px; object-fit:cover; }
+.combat-guide-tabs span { position:absolute; z-index:2; left:50%; bottom:-3px; width:max-content; max-width:76px; transform:translate(-50%,100%); opacity:0; padding:2px 5px; border-radius:6px; color:#fff; background:#493427; font-size:.52rem; pointer-events:none; }
+.combat-guide-tabs button:hover span,.combat-guide-tabs button:focus-visible span { opacity:1; }
+.combat-guide-page { min-width:0; overflow-y:auto; padding:18px 22px 28px; scrollbar-color:#bb8c5f transparent; overscroll-behavior:contain; touch-action:pan-y; }
+.combat-guide-title { display:flex; align-items:start; justify-content:space-between; gap:12px; margin-bottom:14px; }
+.combat-guide-title h3 { margin:0; color:#6b4430; font-size:1.55rem; }
+.combat-guide-title p { margin:3px 0 0; color:#9b6545; font-weight:850; }
+.combat-guide-title strong { max-width:48%; padding:6px 9px; border:1px solid #9c7652; border-radius:10px; background:#fff8dfb8; font-size:.68rem; text-align:right; }
+.combat-guide-table { overflow:hidden; border:2px solid #8c6849; border-radius:15px; background:#fff9e8b8; }
+.combat-guide-table-head,.combat-guide-row { display:grid; grid-template-columns:minmax(105px,28%) minmax(0,1fr); }
+.combat-guide-table-head { color:#fff8df; background:#8a6041; }
+.combat-guide-table-head b { padding:8px 10px; }
+.combat-guide-row { border-top:1px solid #b79572; }
+.combat-guide-row h4 { margin:0; padding:12px 10px; border-right:1px solid #b79572; color:#70472f; font-size:.88rem; }
+.combat-guide-row > div { min-width:0; padding:10px 12px; }
+.combat-guide-row p { margin:0; font-size:.76rem; font-weight:700; line-height:1.55; overflow-wrap:anywhere; }
+.combat-guide-row dl { display:flex; flex-wrap:wrap; gap:5px; margin:8px 0 0; }
+.combat-guide-row dl > div { display:flex; gap:4px; padding:3px 6px; border:1px solid #d0aa76; border-radius:999px; background:#fff1c7; font-size:.62rem; }
+.combat-guide-row dt { color:#956346; font-weight:850; }.combat-guide-row dd { margin:0; font-weight:950; }
+.combat-guide-note { margin-top:12px; padding:10px 12px; border:2px dashed #c17c58; border-radius:12px; color:#7b4938; background:#ffe1b0; font-size:.75rem; font-weight:800; line-height:1.55; }
+.combat-guide-paused .chapter-eight-fx *, .combat-guide-paused .battle-enemy img, .combat-guide-paused .bianca-battle img, .combat-guide-paused .combat-float, .combat-guide-paused .battle-shout, .combat-guide-paused .unsw-skill-pop, .combat-guide-paused.week-ten .unsw-boss > img { animation-play-state:paused !important; }
 .chapter-eight-debug-jumps { position: fixed; z-index: 100; top: 50%; right: 12px; display: grid; gap: 6px; transform: translateY(-50%); }
 .chapter-eight-debug-jumps button { min-width: 104px; padding: 7px 10px; border: 1px solid #5d493d; border-radius: 10px; color: #332820; background: rgba(255,241,176,.9); box-shadow: 2px 3px 0 rgba(50,40,32,.28); font-size: .68rem; font-weight: 900; cursor: pointer; }
 .battle-enemies { position: absolute; top: 9%; left: 7%; right: 13%; height: 40%; display: grid; grid-template-columns: repeat(3, 1fr); align-items: end; gap: 2%; }
@@ -4682,6 +4718,26 @@ main {
   .ritual-modal { padding: 17px 13px; }
   .battle-eight-card { height: min(82dvh, 680px); min-height: 590px; border-radius: 20px; }
   .battle-order { top: 8px; right: 7px; width: 58px; padding: 6px; }
+  .combat-guide-trigger { top:8px; left:7px; width:48px; min-height:48px; padding:3px; border-radius:12px; font-size:.48rem; }
+  .combat-guide-trigger img { width:26px; height:26px; }
+  .combat-guide-backdrop { padding:7px; }
+  .combat-guide-book { width:100%; height:94%; border-radius:19px; background:linear-gradient(90deg,#f8e6b9 0 62px,#d5b77b 63px 65px,#fff0c7 66px); }
+  .combat-guide-book > header { height:65px; padding:8px 10px 7px 76px; }
+  .combat-guide-book > header h2 { font-size:1.35rem; }
+  .combat-guide-book > header > button { width:34px; height:34px; }
+  .combat-guide-layout { grid-template-columns:62px minmax(0,1fr); height:calc(100% - 65px); }
+  .combat-guide-tabs { gap:7px; padding:8px 6px; overflow-x:hidden; }
+  .combat-guide-tabs button { width:48px; height:48px; border-radius:13px; }
+  .combat-guide-tabs span { display:none; }
+  .combat-guide-page { padding:13px 10px 22px; }
+  .combat-guide-title { display:block; }
+  .combat-guide-title h3 { font-size:1.25rem; }
+  .combat-guide-title strong { display:block; max-width:none; margin-top:6px; text-align:left; }
+  .combat-guide-table-head,.combat-guide-row { grid-template-columns:82px minmax(0,1fr); }
+  .combat-guide-table-head b,.combat-guide-row h4 { padding:8px 6px; font-size:.7rem; }
+  .combat-guide-row > div { padding:8px 7px; }
+  .combat-guide-row p { font-size:.66rem; }
+  .combat-guide-row dl > div { font-size:.54rem; }
   .chapter-eight-debug-jumps { right: 5px; gap: 4px; }
   .chapter-eight-debug-jumps button { min-width: 86px; padding: 6px 7px; font-size: .58rem; }
   .battle-order b { display: none; }
@@ -4706,7 +4762,7 @@ main {
   .unsw-skill-pop { top: 31%; right: 7%; font-size: 1rem; }
   .unsw-debug-damage { top: 14%; left: 4%; padding: 5px 7px; font-size: .58rem; }
   .unsw-bianca { bottom: 27%; width: 49%; height: 26%; }
-  .unsw-status { top: auto; bottom: 150px; left: 77%; width: 45%; max-height: none; transform: translateX(-50%); padding: 8px 14px; border-radius: 16px; overflow: hidden; white-space: normal; overflow-wrap: anywhere; }
+  .unsw-status { top: 330px; bottom: 150px; left: 77%; width: 45%; max-height: none; transform: translateX(-50%); padding: 8px 14px; border-radius: 16px; overflow: hidden; white-space: normal; overflow-wrap: anywhere; }
   .university-skills { left: 7px; right: 7px; bottom: 7px; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
   .university-skills button { min-height: 66px; padding: 4px 2px; font-size: .61rem; }
   .university-skills small { font-size: .48rem; }
