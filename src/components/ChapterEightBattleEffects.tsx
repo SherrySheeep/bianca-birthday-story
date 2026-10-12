@@ -34,8 +34,9 @@ export function BattleEffectLayer({ effect }: { effect: CombatEffect | null }) {
 }
 
 export function BattleShout({ speaker, text, tag }: { speaker: string; text: string; tag?: string }) {
+  const speakerClass = speaker === "Bianca" ? "battle-shout-bianca" : speaker === "UNSW" ? "battle-shout-unsw" : "battle-shout-other";
   return (
-    <div className="battle-shout" role="status" aria-live="polite">
+    <div className={`battle-shout ${speakerClass}`} role="status" aria-live="polite">
       <b>{speaker}</b>
       {tag && <em>【{tag}】</em>}
       <p>{text}</p>
