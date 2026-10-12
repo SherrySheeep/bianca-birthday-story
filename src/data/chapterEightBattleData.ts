@@ -14,7 +14,7 @@ export const abyssTutorialSteps: Array<{
 
 export type UniversitySkillId = "xlookup" | "deadline" | "extension" | "groupChat" | "consideration" | "graduation";
 export const universitySkills = [
-  { id: "xlookup", name: "XLOOKUP", description: "稳定单体伤害", damage: UNIVERSITY_SKILLS.xlookup.damage, energy: UNIVERSITY_SKILLS.xlookup.energyGain },
+  { id: "xlookup", name: "git push", description: "稳定单体伤害", damage: UNIVERSITY_SKILLS.xlookup.damage, energy: UNIVERSITY_SKILLS.xlookup.energyGain },
   { id: "deadline", name: "Deadline Rush", description: "高伤害，消耗自身 HP", damage: UNIVERSITY_SKILLS.deadline.damage, energy: UNIVERSITY_SKILLS.deadline.energyGain },
   { id: "extension", name: "Extension Request", description: "延后行动／打断展示", damage: UNIVERSITY_SKILLS.extension.damage, energy: UNIVERSITY_SKILLS.extension.energyGain },
   { id: "groupChat", name: "Group Chat 99+", description: "清除小组作业", damage: UNIVERSITY_SKILLS.groupChat.damage, energy: UNIVERSITY_SKILLS.groupChat.energyGain },

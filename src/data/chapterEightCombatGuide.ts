@@ -88,7 +88,7 @@ export const unswCombatGuideEntries: CombatGuideEntry[] = [
   {
     id: "bianca-unsw", name: "Bianca", icon: icon("BiancaIcon2.png"),
     skills: [
-      { name: "XLOOKUP", description: "稳定的基础攻击技能，对 UNSW 造成直接伤害。", stats: [{ label: "Damage", value: UNIVERSITY_SKILLS.xlookup.damage }] },
+      { name: "git push", description: "稳定的基础攻击技能，对 UNSW 造成直接伤害。", stats: [{ label: "Damage", value: UNIVERSITY_SKILLS.xlookup.damage }] },
       { name: "Deadline Rush", description: "以赶 Deadline 的爆发力造成高额伤害，但 Bianca 自己也会受到一定反噬伤害。", stats: [{ label: "Damage", value: UNIVERSITY_SKILLS.deadline.damage }, { label: "Self Damage", value: UNIVERSITY_SKILLS.deadline.selfDamage }] },
       { name: "Extension Request", description: "延后 UNSW 的下一次行动；如果 Presentation 正在准备，会直接取消本次准备。", stats: [{ label: "Damage", value: UNIVERSITY_SKILLS.extension.damage }, { label: "Action Delay", value: UNIVERSITY_SKILLS.extension.actionDelay }] },
       { name: "Group Chat 99+", description: "清除 Groupwork 带来的输出降低效果，并对 UNSW 造成伤害。", stats: [{ label: "Damage", value: UNIVERSITY_SKILLS.groupChat.damage }] },
