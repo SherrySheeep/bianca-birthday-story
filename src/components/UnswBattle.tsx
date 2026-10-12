@@ -202,7 +202,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
 
   return <div className={`battle-eight-card unsw-battle ${stage === "phase2" ? "week-ten" : ""} ${isCombatGuideOpen ? "combat-guide-paused" : ""}`} style={{ "--unsw-phase-speed": `${0.8 / UNSW_STATS.phase2SpeedMultiplier}s` } as CSSProperties}>
     <img className="battle-eight-bg" src={asset("BattleBg1.png")} alt="UNSW Boss 战场" />
-    <div className={`battle-order ${orderShifted ? "is-delayed" : ""}`}><b>行动顺序</b>{actionOrder.map((name, index) => <div className={`order-avatar ${index === 0 ? "active" : ""}`} key={name}><img src={name === "Bianca" ? asset("BiancaIcon.png") : bossAsset("UNSW1.png")} alt={name} /><span>{name === "Bianca" ? "B" : "U"}</span></div>)}</div>
+    <div className={`battle-order ${orderShifted ? "is-delayed" : ""}`}><b>行动顺序</b>{actionOrder.map((name, index) => <div className={`order-avatar ${index === 0 ? "active" : ""}`} key={name}><img src={name === "Bianca" ? asset("BiancaIcon.png") : bossAsset("UNSWIcon1.png")} alt={name} /><span>{name === "Bianca" ? "B" : "U"}</span></div>)}</div>
     <div className={`unsw-boss ${bossHit ? "is-hit" : ""}`}><img src={bossMood2 ? bossAsset("UNSW2.png") : bossAsset("UNSW1.png")} alt="UNSW" onError={(event) => { event.currentTarget.hidden = true; }} /></div>
     {debugMode && stage === "battle" && <button className="unsw-debug-damage" onClick={() => setBossHp((value) => Math.max(0, value - 50))}>血量 -50</button>}
     <div className="unsw-hp"><i><em style={{ width: `${bossHp / UNSW_MAX_HP * 100}%` }} /></i><span>HP {bossHp}/{UNSW_MAX_HP}</span></div>
