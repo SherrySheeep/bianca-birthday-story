@@ -3826,7 +3826,14 @@ main {
 .order-avatar span { position: absolute; right: 2px; bottom: 1px; min-width: 17px; padding: 1px 3px; border-radius: 6px; background: #151c2bdd; color: #fff; font-size: .6rem; font-weight: 900; }
 .order-avatar.active { border-color: #ffe36d; box-shadow: 0 0 12px #ffe36d99; transform: scale(1.06); }
 .battle-order.is-delayed .order-avatar { animation: order-shift .35s ease-out; }
+.chapter-eight-debug-jumps { position: fixed; z-index: 100; top: 50%; right: 12px; display: grid; gap: 6px; transform: translateY(-50%); }
+.chapter-eight-debug-jumps button { min-width: 104px; padding: 7px 10px; border: 1px solid #5d493d; border-radius: 10px; color: #332820; background: rgba(255,241,176,.9); box-shadow: 2px 3px 0 rgba(50,40,32,.28); font-size: .68rem; font-weight: 900; cursor: pointer; }
 .battle-enemies { position: absolute; top: 9%; left: 7%; right: 13%; height: 40%; display: grid; grid-template-columns: repeat(3, 1fr); align-items: end; gap: 2%; }
+.abyss-debug-grid { position: absolute; z-index: 30; top: 5%; left: 7%; right: 13%; display: grid; grid-template-columns: repeat(3,1fr); gap: 2%; pointer-events: none; }
+.abyss-debug-grid > div { display: grid; justify-items: center; gap: 3px; }
+.abyss-debug-grid button { min-width: 70px; padding: 4px 6px; border: 1px solid #fff; border-radius: 8px; color: #fff; font-size: .6rem; font-weight: 950; box-shadow: 1px 2px 0 #1118; cursor: pointer; pointer-events: auto; }
+.abyss-debug-grid button:first-child { background: #c94848; }
+.abyss-debug-grid button:last-child { background: #347fc1; }
 .battle-enemy { position: relative; height: 100%; padding: 0; border: 2px solid transparent; border-radius: 16px; background: transparent; color: #fff; cursor: pointer; }
 .battle-enemy.selected { border-color: #ffe77c; background: #fff3a914; box-shadow: 0 0 18px #ffe77c88; }
 .battle-enemy.defeated { opacity: .22; filter: grayscale(1); }
@@ -3956,16 +3963,17 @@ main {
 .unsw-boss { position: absolute; z-index: 5; top: 7%; left: 24%; right: 14%; height: 48%; text-align: center; }
 .unsw-boss > img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 12px 10px rgba(0,0,0,.42)); }
 .unsw-hp { position: absolute; z-index: 7; top: 7%; left: 50%; width: min(56%, 520px); padding: 9px 13px; border: 2px solid #ffd428; border-radius: 14px; color: #fff; background: rgba(8,8,8,.9); transform: translateX(-50%); }
-.unsw-hp b, .unsw-hp small, .unsw-hp span { display: block; }
+.unsw-hp b, .unsw-hp small, .unsw-hp span { display: block; font-size: 0.62rem; }
 .unsw-hp small { opacity: .72; font-size: .58rem; }
 .unsw-hp i { display: block; height: 10px; margin: 6px 0 3px; overflow: hidden; border: 1px solid #fff; border-radius: 999px; background: #393939; }
 .unsw-hp em { display: block; height: 100%; background: linear-gradient(90deg, #ffe768, #f4b900); transition: width .35s ease; }
 .unsw-nameplate { position: absolute; z-index: 7; top: 38%; right: 14%; width: min(29%, 240px); padding: 9px 11px; border: 2px solid #ffd428; border-radius: 14px; color: #fff; background: rgba(8,8,8,.9); box-shadow: 4px 5px 0 rgba(255,212,40,.28); text-align: left; }
 .unsw-nameplate b, .unsw-nameplate small { display: block; }
-.unsw-nameplate b { font-size: clamp(.9rem, 2vw, 1.15rem); }
+.unsw-nameplate b { font-size: clamp(.7rem, 2vw, 1.15rem); }
 .unsw-nameplate small { margin-top: 2px; opacity: .78; font-size: clamp(.52rem, 1.2vw, .7rem); line-height: 1.15; }
 .unsw-boss.is-hit > img { animation: combat-hit .36s ease-out both; }
 .unsw-skill-pop { position: absolute; z-index: 28; top: 34%; right: 10%; color: #ffd428; font-size: clamp(1.05rem,3vw,1.7rem); font-weight: 1000; letter-spacing: .05em; -webkit-text-stroke: 2px #111; paint-order: stroke fill; text-shadow: 0 4px 0 #111,0 7px 10px #0008; pointer-events: none; animation: unsw-skill-pop .9s ease-out both; }
+.unsw-debug-damage { position: absolute; z-index: 30; top: 17%; left: 8%; padding: 7px 10px; border: 2px solid #fff; border-radius: 10px; color: #fff; background: #c94848; box-shadow: 2px 3px 0 #1118; font-size: .7rem; font-weight: 950; cursor: pointer; }
 .unsw-bianca { bottom: 30%; height: 31%; }
 .unsw-status { bottom: 116px; border-color: #ffd428; color: #fff6c4; background: rgba(10,10,10,.9); }
 .university-skills { left: 12px; right: 12px; display: grid; grid-template-columns: repeat(3, 1fr); }
@@ -4674,9 +4682,13 @@ main {
   .ritual-modal { padding: 17px 13px; }
   .battle-eight-card { height: min(82dvh, 680px); min-height: 590px; border-radius: 20px; }
   .battle-order { top: 8px; right: 7px; width: 58px; padding: 6px; }
+  .chapter-eight-debug-jumps { right: 5px; gap: 4px; }
+  .chapter-eight-debug-jumps button { min-width: 86px; padding: 6px 7px; font-size: .58rem; }
   .battle-order b { display: none; }
   .order-avatar { width: 42px; height: 42px; border-radius: 10px; }
   .battle-enemies { top: 8%; left: 2%; right: 15%; height: 35%; gap: 0; }
+  .abyss-debug-grid { top: 4%; left: 2%; right: 15%; gap: 0; }
+  .abyss-debug-grid button { min-width: 54px; padding: 3px; font-size: .5rem; }
   .enemy-bars b { font-size: .5rem; }
   .battle-mystery { top: 34%; width: 58px; height: 58px; }
   .bianca-battle { left: 2%; bottom: 27%; width: 57%; height: 34%; }
@@ -4688,12 +4700,13 @@ main {
   .battle-skills button { min-width: 0; flex: 1; min-height: 67px; padding: 5px; font-size: .72rem; }
   .battle-status-toast { top: 45%; width: 70%; font-size: .62rem; }
   .battle-overlay > div { padding: 19px 16px; }
-  .unsw-boss { top: 10%; left: 12%; right: 14%; height: 43%; }
-  .unsw-hp { top: 6%; left: 45%; width: 65%; padding: 6px 8px; }
-  .unsw-nameplate { top: 34%; right: 13%; width: 42%; padding: 6px 8px; }
+  .unsw-boss { top: 12.2%; left: 12%; right: 14%; height: 43%; }
+  .unsw-hp { top: 3.5%; left: 45%; width: min(80%, 400px); padding: 6px 8px; }
+  .unsw-nameplate { top: 39.5%; right: 1%; width: 57%; padding: 6px 8px; }
   .unsw-skill-pop { top: 31%; right: 7%; font-size: 1rem; }
-  .unsw-bianca { bottom: 34%; width: 49%; height: 26%; }
-  .unsw-status { top: auto; bottom: 151px; width: calc(100% - 74px); max-height: 48px; overflow-y: auto; }
+  .unsw-debug-damage { top: 14%; left: 4%; padding: 5px 7px; font-size: .58rem; }
+  .unsw-bianca { bottom: 27%; width: 49%; height: 26%; }
+  .unsw-status { top: 325px; bottom: 150px; left: 77%; width: 45%; transform: translateX(-50%); padding: 8px 14px; border-radius: 16px; overflow-y: auto; }
   .university-skills { left: 7px; right: 7px; bottom: 7px; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
   .university-skills button { min-height: 66px; padding: 4px 2px; font-size: .61rem; }
   .university-skills small { font-size: .48rem; }

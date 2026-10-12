@@ -3,7 +3,7 @@ import { BIANCA_BOSS_MAX_HP, UNSW_MAX_HP, universitySkills, unswBossSkills, type
 import { BATTLE_TIMING, ENERGY_CONFIG, UNSW_SKILLS, UNSW_STATS, UNIVERSITY_SKILLS } from "../data/chapterEightBattleConfig";
 import { BattleEffectLayer, BattleShout, FloatingCombatText, type CombatEffect, type CombatText } from "./ChapterEightBattleEffects";
 
-type Props = { paused?: boolean; onVictory: () => void };
+type Props = { paused?: boolean; debugMode?: boolean; startAtPhase2?: boolean; onVictory: () => void };
 type Stage = "entrance" | "awakening" | "battle" | "phase2" | "defeat" | "bossDefeat";
 
 const asset = (name: string) => `${import.meta.env.BASE_URL}chapter-eight/${name}`;
@@ -36,8 +36,8 @@ function randomVariant(id: BossSkillId) {
   return variants[Math.floor(Math.random() * variants.length)];
 }
 
-export function UnswBattle({ paused = false, onVictory }: Props) {
-  const [stage, setStage] = useState<Stage>("entrance");
+export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = false, onVictory }: Props) {
+  const [stage, setStage] = useState<Stage>(startAtPhase2 ? "phase2" : "entrance");
   const [storyIndex, setStoryIndex] = useState(0);
   const [bossHp, setBossHp] = useState<number>(UNSW_MAX_HP);
   const [hp, setHp] = useState<number>(BIANCA_BOSS_MAX_HP);
@@ -47,7 +47,7 @@ export function UnswBattle({ paused = false, onVictory }: Props) {
   const [groupProject, setGroupProject] = useState(false);
   const [presentationPreparing, setPresentationPreparing] = useState(false);
   const [considerationCooldown, setConsiderationCooldown] = useState(0);
-  const [phase2, setPhase2] = useState(false);
+  const [phase2, setPhase2] = useState(startAtPhase2);
   const [rubricUsed, setRubricUsed] = useState(false);
   const [courseFeeUsed, setCourseFeeUsed] = useState(false);
   const [pendingBossSkill, setPendingBossSkill] = useState<BossSkillId | null>(null);
@@ -197,6 +197,7 @@ export function UnswBattle({ paused = false, onVictory }: Props) {
     <img className="battle-eight-bg" src={asset("BattleBg1.png")} alt="UNSW Boss 战场" />
     <div className={`battle-order ${orderShifted ? "is-delayed" : ""}`}><b>行动顺序</b>{actionOrder.map((name, index) => <div className={`order-avatar ${index === 0 ? "active" : ""}`} key={name}><img src={name === "Bianca" ? asset("BiancaIcon.png") : bossAsset("UNSW1.png")} alt={name} /><span>{name === "Bianca" ? "B" : "U"}</span></div>)}</div>
     <div className={`unsw-boss ${bossHit ? "is-hit" : ""}`}><img src={bossMood2 ? bossAsset("UNSW2.png") : bossAsset("UNSW1.png")} alt="UNSW" onError={(event) => { event.currentTarget.hidden = true; }} /></div>
+    {debugMode && stage === "battle" && <button className="unsw-debug-damage" onClick={() => setBossHp((value) => Math.max(0, value - 50))}>血量 -50</button>}
     <div className="unsw-hp"><i><em style={{ width: `${bossHp / UNSW_MAX_HP * 100}%` }} /></i><span>HP {bossHp}/{UNSW_MAX_HP}</span></div>
     <div className="unsw-nameplate"><b>UNSW</b><small>The University of New South Wales</small></div>
     <div className={`bianca-battle unsw-bianca ${playerHitFx ? "is-hit" : ""}`}><img src={asset(actingSkill ? "BiancaBattle2.png" : "BiancaBattle1.png")} alt="战斗中的 Bianca" /><div><b>Bianca</b><i><em style={{ width: `${hp / BIANCA_BOSS_MAX_HP * 100}%` }} /></i><small>HP {hp}/{BIANCA_BOSS_MAX_HP}　能量 {energy}/{ENERGY_CONFIG.maxEnergy}</small></div></div>

@@ -9,7 +9,8 @@ import { UnswBattle } from "./UnswBattle";
 type Props = {
   onComplete: () => void;
   paused?: boolean;
-  debugAction?: { type: "enterBattle" | "skipBattle"; key: number } | null;
+  debugMode?: boolean;
+  debugAction?: { type: "enterBattle" | "skipTutorial" | "skipMobs" | "skipPhase1" | "skipPhase2"; key: number } | null;
 };
 type Phase = "story" | "battleIntro" | "preRitual" | "ritual" | "ritualAfter" | "battle" | "battleWon" | "fakeVictory" | "unswBoss" | "defeat" | "victory" | "complete";
 type EnemyId = "blue" | "red" | "purple";
@@ -69,7 +70,7 @@ function StoryFrame({ line }: { line: ChapterEightLine }) {
   );
 }
 
-export function ChapterEightStory({ onComplete, paused = false, debugAction = null }: Props) {
+export function ChapterEightStory({ onComplete, paused = false, debugMode = false, debugAction = null }: Props) {
   const [phase, setPhase] = useState<Phase>("story");
   const [lineIndex, setLineIndex] = useState(0);
   const [hp, setHp] = useState<number>(BIANCA_STATS.maxHp);
@@ -128,8 +129,12 @@ export function ChapterEightStory({ onComplete, paused = false, debugAction = nu
     if (!debugAction) return;
     setOverlay(null);
     setLineIndex(0);
-    if (debugAction.type === "skipBattle") {
+    if (debugAction.type === "skipPhase2") {
       setPhase("victory");
+      return;
+    }
+    if (debugAction.type === "skipMobs" || debugAction.type === "skipPhase1") {
+      setPhase("unswBoss");
       return;
     }
     setHp(BIANCA_STATS.maxHp); setEnergy(0); setEnemies(initialEnemies()); setTarget("red"); setSupport("amber");
@@ -137,7 +142,9 @@ export function ChapterEightStory({ onComplete, paused = false, debugAction = nu
     setDelayed(false); setTipVisible(false); setTutorialStep(0);
     setGeoShield(BIANCA_STATS.startingShield); setSupportCooldowns({ amber: 0, venti: 0, zhongli: 0 }); setActionLocked(false); setActingSkill(null);
     setBattleDialogue(null); setCombatTexts([]); setCombatEffect(null); setHitEnemies([]); setPlayerHit(false); setBreakEnemies([]); setEnemyDelays([]);
-    setSupportUnlocked(false);
+    const skipTutorial = debugAction.type === "skipTutorial";
+    setTutorialStep(skipTutorial ? abyssTutorialSteps.length : 0);
+    setSupportUnlocked(skipTutorial);
     setPhase("battle");
   }, [debugAction]);
 
@@ -424,6 +431,7 @@ export function ChapterEightStory({ onComplete, paused = false, debugAction = nu
       <img className="battle-eight-bg" src={asset("BattleBg1.png")} alt="回合制战斗场地" />
       <div className={`battle-order ${delayed || enemyDelays.length ? "is-delayed" : ""}`}><b>行动顺序</b>{actionOrder.map((entry, index) => <div className={`order-avatar ${index === 0 ? "active" : ""} ${enemyDelays.includes(entry.id as EnemyId) ? "enemy-delayed" : ""}`} key={entry.id}><img src={asset(entry.image)} alt={entry.label} onError={(event) => { event.currentTarget.hidden = true; }} /><span>{entry.label}</span></div>)}</div>
       <div className="battle-enemies">{enemies.map((enemy) => <button key={enemy.id} className={`battle-enemy enemy-${enemy.id} ${target === enemy.id ? "selected" : ""} ${enemy.hp <= 0 ? "defeated" : ""} ${hitEnemies.includes(enemy.id) ? "is-hit" : ""} ${breakEnemies.includes(enemy.id) ? "shield-break" : ""} ${enemy.burning ? "is-burning" : ""} ${enemy.embarrassed ? "is-embarrassed" : ""}`} onClick={() => setTarget(enemy.id)} disabled={enemy.hp <= 0 || actionLocked}><div className="enemy-bars"><b>{enemy.name}</b><i><em style={{ width: `${enemy.hp / enemy.maxHp * 100}%` }} /></i><i className="shield"><em style={{ width: `${enemy.shield / enemy.maxShield * 100}%` }} /></i></div><img src={asset(enemy.image)} alt={enemy.name} />{enemy.embarrassed && <span className="embarrassed-mark">……</span>}{enemy.burning > 0 && <span className="burn-particles"><i /><i /><i /></span>}{breakEnemies.includes(enemy.id) && <span className="break-label">破盾！</span>}</button>)}</div>
+      {debugMode && phase === "battle" && <div className="abyss-debug-grid">{enemies.map((enemy) => <div key={enemy.id}><button onClick={() => setEnemies((current) => current.map((item) => item.id === enemy.id ? { ...item, hp: Math.max(0, item.hp - 10) } : item))}>血量 -10</button><button onClick={() => setEnemies((current) => current.map((item) => item.id === enemy.id ? { ...item, shield: Math.max(0, item.shield - 10) } : item))}>护盾 -10</button></div>)}</div>}
       <div className="battle-mystery" title="神秘物品">?</div>
       <div className={`bianca-battle ${playerHit ? "is-hit" : ""} ${geoShield > 0 ? "has-geo-shield" : ""}`}><img src={asset(actingSkill ? "BiancaBattle2.png" : "BiancaBattle1.png")} alt="战斗中的 Bianca" /><div><b>Bianca</b><i><em style={{ width: `${hp / BIANCA_STATS.maxHp * 100}%` }} /></i>{geoShield > 0 && <i className="bianca-shield"><em style={{ width: `${Math.min(100, geoShield / ELEMENT_CONFIG.zhongli.shieldAmount * 100)}%` }} /></i>}<small>HP {hp}/{BIANCA_STATS.maxHp}　护盾 {geoShield}　能量 {energy}/{ENERGY_CONFIG.maxEnergy}</small></div></div>
       {(supportUnlocked || phase === "ritualAfter") && <div className={`support-panel ${phase === "ritualAfter" ? "is-unlocking" : ""}`}><b>场外支援</b>{(["amber", "venti", "zhongli"] as Support[]).map((item) => { const unlockedNow = phase !== "ritualAfter" || (item === "amber" ? lineIndex >= 1 : item === "venti" ? lineIndex >= 2 : lineIndex >= 4); return <button key={item} className={`${support === item ? "active" : ""} ${supportCooldowns[item] ? "cooling" : ""} ${unlockedNow ? "support-lit" : "support-dormant"}`} onClick={() => setSupport(item)} disabled={!supportUnlocked || supportCooldowns[item] > 0 || actionLocked}>{item === "amber" ? "安柏·火" : item === "venti" ? "温迪·风" : "钟离·岩"}<small>{supportCooldowns[item] ? supportCooldowns[item] : "Ready"}</small></button>; })}</div>}
@@ -440,7 +448,7 @@ export function ChapterEightStory({ onComplete, paused = false, debugAction = nu
       {phase === "defeat" && <div className="battle-overlay"><div><h3>战斗失败</h3><p><b>Bianca：</b>……三打一是不是有点过分了？</p><p className="author-copy"><b>作者大大：</b>要不再来一次？</p>{tipVisible && <p className="battle-tip">小提示：先用对应支援击破护盾；能量满后立刻使用终结技。</p>}<div className="defeat-actions"><button className="dialogue-next" onClick={resetBattle}>重新挑战</button><button onClick={() => setTipVisible(true)}>查看小提示</button></div></div></div>}
     </div>}
 
-    {phase === "unswBoss" && <UnswBattle paused={paused} onVictory={() => { setLineIndex(0); setPhase("victory"); }} />}
+    {phase === "unswBoss" && <UnswBattle key={debugAction?.type === "skipPhase1" ? debugAction.key : "unsw-battle"} paused={paused} debugMode={debugMode} startAtPhase2={debugAction?.type === "skipPhase1"} onVictory={() => { setLineIndex(0); setPhase("victory"); }} />}
 
     {phase === "complete" && <div className="chapter-eight-completion"><div className="checkin-complete">✓ 第八章完成</div><div className="mystery-item-icon">???</div><p>B老师终于找到了那个不属于提瓦特的东西。</p><small>至于它到底是什么……似乎还不到揭晓的时候。</small><button className="dialogue-next return-airport" onClick={onComplete}>返回旅程</button></div>}
   </section>;
