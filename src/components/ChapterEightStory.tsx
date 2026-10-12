@@ -186,7 +186,7 @@ export function ChapterEightStory({ onComplete, paused = false, debugAction = nu
     setHitEnemies([]); setBreakEnemies([]); setCombatTexts([]); setCombatEffect(null);
   };
 
-  const runEnemyTurn = async (afterPlayer: Enemy[], nextRound: number, usedSupport?: Support) => {
+  const runEnemyTurn = async (afterPlayer: Enemy[], nextRound: number, usedSupport?: Support, shieldAfterPlayer = geoShield) => {
     if (afterPlayer.every((enemy) => enemy.hp <= 0)) {
       setEnemies(afterPlayer); setPhase("fakeVictory"); setLineIndex(0); setActionLocked(false); setActingSkill(null); return;
     }
@@ -237,9 +237,9 @@ export function ChapterEightStory({ onComplete, paused = false, debugAction = nu
 
     const reduction = failures >= 2 ? DAMAGE_RULES.retryAssistIncomingDamageMultiplier : 1;
     const rawDamage = Math.round(incoming * reduction);
-    const shieldDamage = Math.min(geoShield, rawDamage);
+    const shieldDamage = Math.min(shieldAfterPlayer, rawDamage);
     const hpDamage = Math.max(0, rawDamage - shieldDamage);
-    const nextShield = geoShield - shieldDamage;
+    const nextShield = shieldAfterPlayer - shieldDamage;
     const nextHp = Math.max(0, hp - hpDamage);
     const texts: CombatText[] = [
       ...(shieldDamage ? [{ id: `${Date.now()}-bianca-shield`, target: "bianca" as const, value: shieldDamage, kind: "shield" as const }] : []),
@@ -247,8 +247,7 @@ export function ChapterEightStory({ onComplete, paused = false, debugAction = nu
     ];
     setGeoShield(nextShield); setHp(nextHp); setCombatTexts(texts); setPlayerHit(rawDamage > 0); setEnergy((value) => Math.min(ENERGY_CONFIG.maxEnergy, value + ENERGY_CONFIG.enemyTurnGain));
     if (paralysis) {
-      if (geoShield > 0) {
-        setGeoShield((value) => Math.max(0, value - chapterEightBattleConfig.geoShieldParalysisCost));
+      if (shieldAfterPlayer > 0 && ELEMENT_CONFIG.zhongli.blocksParalysisDelay) {
         setBattleDialogue({ speaker: "状态", text: "岩盾挡住了麻痹干扰。", tag: "麻痹抵抗" });
       } else {
         setDelayed(true);
@@ -297,13 +296,11 @@ export function ChapterEightStory({ onComplete, paused = false, debugAction = nu
     } else {
       setBattleDialogue({ speaker: "Bianca", text: "那个……要不还是算了吧？", tag: "软" });
       setCombatEffect({ key: Date.now(), type: "ultimate-soft", target: "all" });
-      await wait(chapterEightBattleConfig.timing.dialogueLine);
-      setBattleDialogue({ speaker: "Bianca", text: "不行。", tag: "硬" });
-      setCombatEffect({ key: Date.now(), type: "ultimate-hard", target: "all" });
     }
     await wait(chapterEightBattleConfig.timing.projectile);
 
     let next = enemies;
+    let impactAlreadyPlayed = false;
     const isTutorial = !supportUnlocked;
     const damageMultiplier = isTutorial ? ELEMENT_CONFIG.tutorialDamageMultiplier : 1;
     if (kind === "normal") {
@@ -320,8 +317,27 @@ export function ChapterEightStory({ onComplete, paused = false, debugAction = nu
       } : enemy);
       setEnergy((value) => Math.min(ENERGY_CONFIG.maxEnergy, value + (isTutorial ? ENERGY_CONFIG.maxEnergy : ENERGY_CONFIG.coldJokeGain))); setSkillCooldown(BIANCA_SKILLS.coldJoke.cooldown);
     } else {
-      const ultimateDamage = (BIANCA_SKILLS.softHardSoft.softHit1Damage + BIANCA_SKILLS.softHardSoft.hardHitDamage + BIANCA_SKILLS.softHardSoft.softHit2Damage) * damageMultiplier;
-      next = enemies.map((enemy) => enemy.hp > 0 ? damageEnemy(enemy, ultimateDamage, BIANCA_SKILLS.softHardSoft.shieldDamage * damageMultiplier * (activeSupport === "amber" && enemy.id === "blue" ? ELEMENT_CONFIG.amber.fireVsIceShieldMultiplier : 1)) : enemy);
+      const applyUltimateStage = (before: Enemy[], hpDamage: number, shieldDamage: number) => before.map((enemy) => {
+        if (enemy.hp <= 0) return enemy;
+        const fireMultiplier = activeSupport === "amber" && enemy.id === "blue" ? ELEMENT_CONFIG.amber.fireVsIceShieldMultiplier : 1;
+        return damageEnemy(enemy, hpDamage * damageMultiplier, shieldDamage * damageMultiplier * fireMultiplier);
+      });
+
+      const afterSoftOne = applyUltimateStage(enemies, BIANCA_SKILLS.softHardSoft.softHit1Damage, BIANCA_SKILLS.softHardSoft.softHit1ShieldDamage);
+      await playEnemyImpact(enemies, afterSoftOne, livingIds, "ultimate-soft", true);
+
+      setBattleDialogue({ speaker: "Bianca", text: "不行。", tag: "硬" });
+      setCombatEffect({ key: Date.now(), type: "ultimate-hard", target: "all" });
+      await wait(chapterEightBattleConfig.timing.projectile);
+      const afterHard = applyUltimateStage(afterSoftOne, BIANCA_SKILLS.softHardSoft.hardHitDamage, BIANCA_SKILLS.softHardSoft.hardHitShieldDamage);
+      await playEnemyImpact(afterSoftOne, afterHard, livingIds, "ultimate-hard", true);
+
+      setBattleDialogue({ speaker: "Bianca", text: "谢谢理解。", tag: "软" });
+      setCombatEffect({ key: Date.now(), type: "ultimate-soft", target: "all" });
+      await wait(chapterEightBattleConfig.timing.projectile);
+      next = applyUltimateStage(afterHard, BIANCA_SKILLS.softHardSoft.softHit2Damage, BIANCA_SKILLS.softHardSoft.softHit2ShieldDamage);
+      await playEnemyImpact(afterHard, next, livingIds, "ultimate-soft", true);
+      impactAlreadyPlayed = true;
       setEnergy(0);
     }
 
@@ -344,7 +360,9 @@ export function ChapterEightStory({ onComplete, paused = false, debugAction = nu
     }
     if (activeSupport) setSupportCooldowns((current) => ({ ...current, [activeSupport]: supportCooldownLength[activeSupport] }));
 
-    await playEnemyImpact(enemies, next, kind === "normal" ? [target] : livingIds, kind === "normal" ? (activeSupport === "amber" ? "fire" : activeSupport === "venti" ? "wind" : "normal") : kind === "skill" ? "cold" : "ultimate-hard", kind !== "normal");
+    if (!impactAlreadyPlayed) {
+      await playEnemyImpact(enemies, next, kind === "normal" ? [target] : livingIds, kind === "normal" ? (activeSupport === "amber" ? "fire" : activeSupport === "venti" ? "wind" : "normal") : "cold", kind !== "normal");
+    }
 
     if (activeSupport === "zhongli") {
       setCombatEffect({ key: Date.now(), type: "geo", target: "bianca" });
@@ -353,11 +371,6 @@ export function ChapterEightStory({ onComplete, paused = false, debugAction = nu
       setCombatTexts([]); setCombatEffect(null);
     }
 
-    if (kind === "ultimate") {
-      setBattleDialogue({ speaker: "Bianca", text: "谢谢理解。", tag: "软" });
-      setCombatEffect({ key: Date.now(), type: "ultimate-soft", target: "all" });
-      await wait(chapterEightBattleConfig.timing.dialogueLine);
-    }
     setBattleDialogue(null); setCombatEffect(null); setActingSkill(null);
 
     if (tutorial) {
@@ -367,7 +380,8 @@ export function ChapterEightStory({ onComplete, paused = false, debugAction = nu
 
     const nextRound = round + 1;
     setRound(nextRound); setSkillCooldown((value) => kind === "skill" ? value : Math.max(0, value - 1));
-    await runEnemyTurn(next, nextRound, activeSupport);
+    const shieldAfterPlayer = activeSupport === "zhongli" ? geoShield + ELEMENT_CONFIG.zhongli.shieldAmount : geoShield;
+    await runEnemyTurn(next, nextRound, activeSupport, shieldAfterPlayer);
   };
 
   const isStoryPhase = ["story", "victory"].includes(phase);

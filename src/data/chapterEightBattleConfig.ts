@@ -16,10 +16,12 @@ export const BIANCA_SKILLS = {
   },
   softHardSoft: {
     // 三段伤害可分别修改。
-    softHit1Damage: 20,
-    hardHitDamage: 25,
-    softHit2Damage: 20,
-    shieldDamage: 18,
+    softHit1Damage: 8,
+    softHit1ShieldDamage: 5,
+    hardHitDamage: 10,
+    hardHitShieldDamage: 8,
+    softHit2Damage: 8,
+    softHit2ShieldDamage: 5,
     actionDelay: 1,
   },
 } as const;
