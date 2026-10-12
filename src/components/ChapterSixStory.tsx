@@ -10,7 +10,7 @@ type Props = {
 type Stage = "opening" | "mission" | "preExam" | "rules" | "readyReply" | "game" | "retry" | "passed" | "success" | "reward" | "after" | "completed";
 const lanes = [25, 50, 75];
 // 飞行考试需要成功穿过的风圈数量；想改变考试长度，只需要修改这里。
-const REQUIRED_RING_HITS = 20;
+const REQUIRED_RING_HITS = 16;
 const ringDurations = [2400, 2400, 2200, 2200, 2000, 1800, 1800, 1650];
 // 气流阶段的三个主要调节参数：触发风圈数、最大碰撞次数、相对风圈速度。
 const AIRFLOW_TRIGGER_HITS = 4;

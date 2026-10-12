@@ -27,7 +27,7 @@ export const chapterFiveDialogue: Record<string, ChapterFiveNode> = {
   choiceA: line("安柏", "什么？！那你刚才到底是怎么飞起来的？！", 2, "noLicence"),
   choiceB: line("安柏", "啊？！连怎么飞起来的都不知道？！", 2, "noLicence"),
   choiceC: line("安柏", "当然可以啊！你不会连飞行执照都没有吧？！", 2, "noLicence"),
-  noLicence: line("安柏", "什么？！没有飞行执照就敢乱飞！", 2, "biancaExplain"),
+  noLicence: line("安柏", "没有飞行执照就敢乱飞！", 2, "biancaExplain"),
   biancaExplain: line("Bianca", "不是，我其实——", 2, "amberChampion"),
   amberChampion: line("安柏", "正好！我可是蒙德城的飞行冠军！走走走，我带你去参加飞行考试！", 4, "biancaProtest"),
   biancaProtest: line("Bianca", "等一下！我还没说我要——", 4, "draggedAway"),
