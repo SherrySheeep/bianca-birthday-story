@@ -163,14 +163,17 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
 
   async function executeBossSkill(id: BossSkillId) {
     let damage = unswBossSkills[id].damage;
+    let statusText = `UNSW：${unswBossSkills[id].name} 对 Bianca 造成 ${damage} 点伤害。`;
     if (id === "presentation") {
-      if (!presentationPreparing) { setPresentationPreparing(true); damage = 0; setStatus("UNSW：PRESENTATION 正在蓄力；可用 Extension Request 延期。"); }
-      else { damage = phase2 ? UNSW_SKILLS.presentation.phase2Damage : UNSW_SKILLS.presentation.damage; setPresentationPreparing(false); setStatus("UNSW：Presentation 正式开始。没有讲稿，也没有退路。"); }
+      if (!presentationPreparing) { setPresentationPreparing(true); damage = 0; statusText = "UNSW：PRESENTATION 正在蓄力；可用 Extension Request 延期。"; }
+      else { damage = phase2 ? UNSW_SKILLS.presentation.phase2Damage : UNSW_SKILLS.presentation.damage; setPresentationPreparing(false); statusText = `UNSW：Presentation 正式开始，对 Bianca 造成 ${damage} 点伤害。没有讲稿，也没有退路。`; }
     }
-    if (id === "assignment") { setPressure((value) => value + 1); damage += pressure * UNSW_SKILLS.assignment.pressureBonusPerStack; }
-    if (id === "groupwork") { setGroupProject(true); setStatus("UNSW：给 Bianca 施加 Group Project；下一次攻击伤害降低。"); }
-    if (id === "rubric") { setRubricUsed(true); setEnergy((value) => Math.max(0, value - UNSW_SKILLS.rubric.energyLoss)); }
-    if (id === "courseFee") { setCourseFeeUsed(true); setStatus("UNSW：COURSE FEE　-$1,248\nBianca：你打架为什么还能收钱啊？！"); }
+    if (id === "assignment") { setPressure((value) => value + 1); damage += pressure * UNSW_SKILLS.assignment.pressureBonusPerStack; statusText = `UNSW：${unswBossSkills[id].name} 对 Bianca 造成 ${damage} 点伤害，并增加 1 层 Deadline Pressure。`; }
+    if (id === "groupwork") { setGroupProject(true); statusText = `UNSW：给 Bianca 施加 Group Project，并造成 ${damage} 点伤害；Bianca 下一次攻击伤害降低。`; }
+    if (id === "rubric") { setRubricUsed(true); setEnergy((value) => Math.max(0, value - UNSW_SKILLS.rubric.energyLoss)); statusText = `UNSW：${unswBossSkills[id].name} 造成 ${damage} 点伤害，并扣除 Bianca ${UNSW_SKILLS.rubric.energyLoss} 点能量。`; }
+    if (id === "courseFee") { setCourseFeeUsed(true); statusText = `UNSW：COURSE FEE　-$1,248，并造成 ${damage} 点伤害。\nBianca：你打架为什么还能收钱啊？！`; }
+    if (id === "finalExam") statusText = `UNSW：${unswBossSkills[id].name} 对 Bianca 造成 ${damage} 点伤害。期末周正式开始。`;
+    setStatus(statusText);
     setSkillNamePop(unswBossSkills[id].name);
     setCombatEffect({ key: Date.now(), type: id === "finalExam" ? "ultimate-hard" : "normal", target: "bianca" });
     await wait(BATTLE_TIMING.projectile);
@@ -205,7 +208,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     <FloatingCombatText items={combatTexts} />
     {battleDialogue && <BattleShout speaker={battleDialogue.speaker} text={battleDialogue.text} tag={battleDialogue.tag} />}
     {skillNamePop && <strong className="unsw-skill-pop">{skillNamePop}</strong>}
-    {stage === "battle" && <><div className="battle-status-toast unsw-status">{status}{groupProject ? "　｜Group Project" : ""}{pressure ? `　｜Pressure ×${pressure}` : ""}</div><div className="battle-skills university-skills">{visibleSkills.map((skill) => <button key={skill.id} className={skill.id === "graduation" ? "ultimate" : ""} disabled={actionLocked || (skill.id === "graduation" && energy < UNIVERSITY_SKILLS.graduation.energyCost) || (skill.id === "consideration" && considerationCooldown > 0)} onClick={() => useSkill(skill.id)}>{skill.name}<small>{skill.id === "graduation" ? `${energy}/${ENERGY_CONFIG.maxEnergy}` : skill.id === "consideration" && considerationCooldown ? `冷却 ${considerationCooldown}` : skill.description}</small></button>)}</div></>}
+    {stage === "battle" && <><div className="battle-status-toast unsw-status">{status}{pressure ? `　｜Pressure ×${pressure}` : ""}</div><div className="battle-skills university-skills">{visibleSkills.map((skill) => <button key={skill.id} className={skill.id === "graduation" ? "ultimate" : ""} disabled={actionLocked || (skill.id === "graduation" && energy < UNIVERSITY_SKILLS.graduation.energyCost) || (skill.id === "consideration" && considerationCooldown > 0)} onClick={() => useSkill(skill.id)}>{skill.name}<small>{skill.id === "graduation" ? `${energy}/${ENERGY_CONFIG.maxEnergy}` : skill.id === "consideration" && considerationCooldown ? `冷却 ${considerationCooldown}` : skill.description}</small></button>)}</div></>}
 
     {(stage === "entrance" || stage === "awakening") && <div className="battle-overlay unsw-story-overlay"><div><span className="dialogue-speaker">{currentStory[0]}</span><p>{currentStory[1]}</p><button className="dialogue-next" onClick={advanceStory}>继续</button></div></div>}
     {stage === "phase2" && <div className="battle-overlay phase-two-overlay"><div><img src={bossAsset("UNSW2.png")} alt="大笑的 UNSW" onError={(event) => { event.currentTarget.hidden = true; }} /><h3>PHASE 2</h3><b>WEEK 10</b><p>UNSW：哈哈哈哈哈哈！</p><p>你以为快结束了？现在才 Week 10！</p><button className="dialogue-next" onClick={() => setStage("battle")}>继续战斗</button></div></div>}

@@ -3975,7 +3975,7 @@ main {
 .unsw-skill-pop { position: absolute; z-index: 28; top: 34%; right: 10%; color: #ffd428; font-size: clamp(1.05rem,3vw,1.7rem); font-weight: 1000; letter-spacing: .05em; -webkit-text-stroke: 2px #111; paint-order: stroke fill; text-shadow: 0 4px 0 #111,0 7px 10px #0008; pointer-events: none; animation: unsw-skill-pop .9s ease-out both; }
 .unsw-debug-damage { position: absolute; z-index: 30; top: 17%; left: 8%; padding: 7px 10px; border: 2px solid #fff; border-radius: 10px; color: #fff; background: #c94848; box-shadow: 2px 3px 0 #1118; font-size: .7rem; font-weight: 950; cursor: pointer; }
 .unsw-bianca { bottom: 30%; height: 31%; }
-.unsw-status { bottom: 116px; border-color: #ffd428; color: #fff6c4; background: rgba(10,10,10,.9); }
+.unsw-status { bottom: 116px; border-color: #ffd428; color: #fff6c4; background: rgba(10,10,10,.9); overflow: hidden; white-space: normal; overflow-wrap: anywhere; }
 .university-skills { left: 12px; right: 12px; display: grid; grid-template-columns: repeat(3, 1fr); }
 .university-skills button { min-width: 0; min-height: 54px; border-color: #ffd428; background: rgba(17,17,17,.94); }
 .university-skills button.ultimate { color: #191200; border-color: #fff; background: linear-gradient(135deg, #ffd428, #fff08e); }
@@ -4687,7 +4687,7 @@ main {
   .battle-order b { display: none; }
   .order-avatar { width: 42px; height: 42px; border-radius: 10px; }
   .battle-enemies { top: 8%; left: 2%; right: 15%; height: 35%; gap: 0; }
-  .abyss-debug-grid { top: 4%; left: 2%; right: 15%; gap: 0; }
+  .abyss-debug-grid { top: 1%; left: 2%; right: 15%; gap: 0; }
   .abyss-debug-grid button { min-width: 54px; padding: 3px; font-size: .5rem; }
   .enemy-bars b { font-size: .5rem; }
   .battle-mystery { top: 34%; width: 58px; height: 58px; }
@@ -4706,7 +4706,7 @@ main {
   .unsw-skill-pop { top: 31%; right: 7%; font-size: 1rem; }
   .unsw-debug-damage { top: 14%; left: 4%; padding: 5px 7px; font-size: .58rem; }
   .unsw-bianca { bottom: 27%; width: 49%; height: 26%; }
-  .unsw-status { top: 325px; bottom: 150px; left: 77%; width: 45%; transform: translateX(-50%); padding: 8px 14px; border-radius: 16px; overflow-y: auto; }
+  .unsw-status { top: auto; bottom: 150px; left: 77%; width: 45%; max-height: none; transform: translateX(-50%); padding: 8px 14px; border-radius: 16px; overflow: hidden; white-space: normal; overflow-wrap: anywhere; }
   .university-skills { left: 7px; right: 7px; bottom: 7px; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
   .university-skills button { min-height: 66px; padding: 4px 2px; font-size: .61rem; }
   .university-skills small { font-size: .48rem; }
