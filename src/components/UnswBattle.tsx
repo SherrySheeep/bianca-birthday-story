@@ -196,7 +196,9 @@ export function UnswBattle({ paused = false, onVictory }: Props) {
   return <div className={`battle-eight-card unsw-battle ${stage === "phase2" ? "week-ten" : ""}`} style={{ "--unsw-phase-speed": `${0.8 / UNSW_STATS.phase2SpeedMultiplier}s` } as CSSProperties}>
     <img className="battle-eight-bg" src={asset("BattleBg1.png")} alt="UNSW Boss 战场" />
     <div className={`battle-order ${orderShifted ? "is-delayed" : ""}`}><b>行动顺序</b>{actionOrder.map((name, index) => <div className={`order-avatar ${index === 0 ? "active" : ""}`} key={name}><img src={name === "Bianca" ? asset("BiancaIcon.png") : bossAsset("UNSW1.png")} alt={name} /><span>{name === "Bianca" ? "B" : "U"}</span></div>)}</div>
-    <div className={`unsw-boss ${bossHit ? "is-hit" : ""}`}><div className="unsw-hp"><i><em style={{ width: `${bossHp / UNSW_MAX_HP * 100}%` }} /></i><span>HP {bossHp}/{UNSW_MAX_HP}</span></div><img src={bossMood2 ? bossAsset("UNSW2.png") : bossAsset("UNSW1.png")} alt="UNSW" onError={(event) => { event.currentTarget.hidden = true; }} /><div className="unsw-nameplate"><b>UNSW</b><small>The University of New South Wales</small></div></div>
+    <div className={`unsw-boss ${bossHit ? "is-hit" : ""}`}><img src={bossMood2 ? bossAsset("UNSW2.png") : bossAsset("UNSW1.png")} alt="UNSW" onError={(event) => { event.currentTarget.hidden = true; }} /></div>
+    <div className="unsw-hp"><i><em style={{ width: `${bossHp / UNSW_MAX_HP * 100}%` }} /></i><span>HP {bossHp}/{UNSW_MAX_HP}</span></div>
+    <div className="unsw-nameplate"><b>UNSW</b><small>The University of New South Wales</small></div>
     <div className={`bianca-battle unsw-bianca ${playerHitFx ? "is-hit" : ""}`}><img src={asset(actingSkill ? "BiancaBattle2.png" : "BiancaBattle1.png")} alt="战斗中的 Bianca" /><div><b>Bianca</b><i><em style={{ width: `${hp / BIANCA_BOSS_MAX_HP * 100}%` }} /></i><small>HP {hp}/{BIANCA_BOSS_MAX_HP}　能量 {energy}/{ENERGY_CONFIG.maxEnergy}</small></div></div>
     <BattleEffectLayer effect={combatEffect} />
     <FloatingCombatText items={combatTexts} />

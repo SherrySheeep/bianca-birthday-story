@@ -3955,12 +3955,12 @@ main {
 }
 .unsw-boss { position: absolute; z-index: 5; top: 7%; left: 24%; right: 14%; height: 48%; text-align: center; }
 .unsw-boss > img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 12px 10px rgba(0,0,0,.42)); }
-.unsw-hp { position: absolute; z-index: 3; top: 0; left: 50%; width: min(92%, 520px); padding: 9px 13px; border: 2px solid #ffd428; border-radius: 14px; color: #fff; background: rgba(8,8,8,.9); transform: translateX(-50%); }
+.unsw-hp { position: absolute; z-index: 7; top: 7%; left: 50%; width: min(56%, 520px); padding: 9px 13px; border: 2px solid #ffd428; border-radius: 14px; color: #fff; background: rgba(8,8,8,.9); transform: translateX(-50%); }
 .unsw-hp b, .unsw-hp small, .unsw-hp span { display: block; }
 .unsw-hp small { opacity: .72; font-size: .58rem; }
 .unsw-hp i { display: block; height: 10px; margin: 6px 0 3px; overflow: hidden; border: 1px solid #fff; border-radius: 999px; background: #393939; }
 .unsw-hp em { display: block; height: 100%; background: linear-gradient(90deg, #ffe768, #f4b900); transition: width .35s ease; }
-.unsw-nameplate { position: absolute; z-index: 7; right: -2%; bottom: 2%; width: min(48%, 240px); padding: 9px 11px; border: 2px solid #ffd428; border-radius: 14px; color: #fff; background: rgba(8,8,8,.9); box-shadow: 4px 5px 0 rgba(255,212,40,.28); text-align: left; }
+.unsw-nameplate { position: absolute; z-index: 7; top: 38%; right: 14%; width: min(29%, 240px); padding: 9px 11px; border: 2px solid #ffd428; border-radius: 14px; color: #fff; background: rgba(8,8,8,.9); box-shadow: 4px 5px 0 rgba(255,212,40,.28); text-align: left; }
 .unsw-nameplate b, .unsw-nameplate small { display: block; }
 .unsw-nameplate b { font-size: clamp(.9rem, 2vw, 1.15rem); }
 .unsw-nameplate small { margin-top: 2px; opacity: .78; font-size: clamp(.52rem, 1.2vw, .7rem); line-height: 1.15; }
@@ -4688,9 +4688,9 @@ main {
   .battle-skills button { min-width: 0; flex: 1; min-height: 67px; padding: 5px; font-size: .72rem; }
   .battle-status-toast { top: 45%; width: 70%; font-size: .62rem; }
   .battle-overlay > div { padding: 19px 16px; }
-  .unsw-boss { top: 6%; left: 12%; right: 14%; height: 43%; }
-  .unsw-hp { width: 96%; padding: 6px 8px; }
-  .unsw-nameplate { right: -4%; bottom: 0; width: 57%; padding: 6px 8px; }
+  .unsw-boss { top: 10%; left: 12%; right: 14%; height: 43%; }
+  .unsw-hp { top: 6%; left: 45%; width: 65%; padding: 6px 8px; }
+  .unsw-nameplate { top: 34%; right: 13%; width: 42%; padding: 6px 8px; }
   .unsw-skill-pop { top: 31%; right: 7%; font-size: 1rem; }
   .unsw-bianca { bottom: 34%; width: 49%; height: 26%; }
   .unsw-status { top: auto; bottom: 151px; width: calc(100% - 74px); max-height: 48px; overflow-y: auto; }
