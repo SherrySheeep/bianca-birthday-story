@@ -4059,7 +4059,7 @@ main {
 .university-skills button.ultimate { color: #191200; border-color: #fff; background: linear-gradient(135deg, #ffd428, #fff08e); }
 .boss-precast { background: rgba(15,12,0,.83); }
 .boss-precast > div, .phase-two-overlay > div, .graduation-overlay > div, .unsw-story-overlay > div { position: relative; border-color: #ffd428; background: #fffdf0; box-shadow: 8px 9px 0 #e0b900; }
-.unsw-story-overlay .dialogue-speaker { top: -32px; background: #ff8f7d; }
+.unsw-story-overlay .dialogue-speaker { top: -20px; }
 .boss-precast img, .phase-two-overlay img { float: right; width: 42%; max-height: 210px; margin: -15px -10px 5px 12px; object-fit: contain; }
 .boss-precast h3 { clear: both; padding: 9px; color: #ffd428; background: #111; letter-spacing: .08em; }
 .phase-two-overlay { background: repeating-linear-gradient(135deg, rgba(0,0,0,.88) 0 18px, rgba(255,212,40,.82) 18px 36px); }
