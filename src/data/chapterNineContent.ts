@@ -59,7 +59,7 @@ export const chapterNineLocations: ChapterNineLocation[] = [
       { speaker: "Bianca", text: "咦？那束光里有一个不属于彩窗的亮点。" },
       { speaker: "Bianca", text: "靠近以后就消散了。看来又找到一条。" },
     ],
-    message: { title: "异世界的信息", body: "Bianca酱～异世界旅游开心吗？希望你成长的旅途都充满着奇妙的际遇，愿你遇见的人都是好人，经历的事都是好事～ 生日快乐呀", signature: "Nancy", avatar: "touxiang2.png" },
+    message: { title: "异世界的信息", body: "Bianca酱～异世界旅游开心吗？享受旅程的同时请不要忘了 “常回现世看看～ 回现世看看～” (≧∇≦) 希望你成长的旅途都充满着奇妙的际遇，愿你遇见的人都是好人，经历的事都是好事～ 生日快乐呀!", signature: "Nancy", avatar: "touxiang2.png" },
   },
   {
     id: "cathedral-square", name: "教堂广场", icon: "jiaotangguangchang.png", scene: "jiaotangguangchang1.png", position: { left: 37.45, top: 39.8 },
@@ -84,7 +84,7 @@ export const chapterNineLocations: ChapterNineLocation[] = [
       { speaker: "Bianca", text: "风里好像混进了一点不属于蒙德的光。" },
       { speaker: "Bianca", text: "找到了——又一条异世界的信息。" },
     ],
-    message: { title: "异世界的信息", body: "希望新的一岁，想去的地方都能去，想见的人都能见到，每一天都有值得期待的事情。", signature: "风神像下的一阵风", avatar: "touxiang9.png" },
+    message: { title: "献予粉色奇迹的祝福", body: "愿你如三月七般，永远充满活力与笑容，在星海中留下灿烂的足迹。愿你的每一次冒险都如相机捕捉的瞬间，定格美好，冰晶般闪耀。生日快乐，愿你的梦想如花朵般绽放，前程似锦!", signature: "三月七", avatar: "touxiang9.png" },
   },
   {
     id: "guild", name: "冒险家协会", icon: "maoxianjiaxiehui.png", scene: "maoxianjiaxiehui1.png", position: { left: 54, top: 77.5 },
@@ -128,7 +128,7 @@ export const chapterNineLocations: ChapterNineLocation[] = [
       { speaker: "Bianca", text: "这个小风车摆件居然会自己转。" },
       { speaker: "Bianca", text: "没有风……那就是残存的异界气息了。" },
     ],
-    message: { title: "异世界的信息", body: "可以买没必要的小东西，也可以做没必要但开心的事。快乐本来就很有必要。", signature: "钱包尚未退出群聊", avatar: "touxiang6.png" },
+    message: { title: "异世界的信息", body: "这一年，开拓的道路依旧危机四伏，强力的敌人觊觎你的力量，贪婪的敌人折磨你的心。我依旧会尽我所能，护你平安。愿你无忧，愿我们的旅程有惊无险。", signature: "丹恒", avatar: "touxiang6.png" },
   },
   {
     id: "training", name: "骑士团训练场", icon: "qishituanxunlianchang.png", scene: "qishituanxunlianchang1.png", position: { left: 34, top: 55 },
@@ -140,7 +140,7 @@ export const chapterNineLocations: ChapterNineLocation[] = [
       { speaker: "Bianca", text: "训练木桩旁边闪了一下……这也算是成长的纪念吗？" },
       { speaker: "Bianca", text: "好，又收集到一条。" },
     ],
-    message: { title: "异世界的信息", body: "成长不一定要很伟大。有时候，只是比上次少摔一点点。", signature: "来自训练场的掌声", avatar: "touxiang7.png" },
+    message: { title: "CK3小皇帝的祝福", body: "Bianca生日快乐！嘿嘿有没有被这个“大制作”吓到！恭喜你（快要）成功完成这次莫名其妙的一世界冒险，也顺利解锁了人生的新一岁！祝你未来的每一段旅程都能遇见有趣的人、看到漂亮的风景、收货意想不到的惊喜！下一段冒险即将开始，祝你新的一岁自由自在，心想事成！", signature: "神秘的作者大大", avatar: "touxiang7.png" },
   },
   {
     id: "lab", name: "魔法实验室", icon: "mofashiyanshi.png", scene: "mofashiyanshi1.png", position: { left: 61, top: 74.5 },
@@ -151,7 +151,7 @@ export const chapterNineLocations: ChapterNineLocation[] = [
       { speaker: "Bianca", text: "不过在我靠近以后，它正在快速消散。" },
       { speaker: "Bianca", text: "最后一段回响，也收好了。" },
     ],
-    message: { title: "异世界的信息", body: "愿所有暂时找不到答案的问题，最后都变成值得讲给朋友听的故事。", signature: "跨越世界的回响", avatar: "touxiang8.png" },
+    message: { title: "献予智慧之星的祝福", body: "愿你在求知的旅途，与数据星海一同探寻最纯粹的真理。愿你解构无尽奥秘，为每一场实验奏响成功的篇章。你在此间的足迹，终将点燃满载星梦的智慧之火。", signature: "黑塔", avatar: "touxiang8.png" },
   },
 ];
 
