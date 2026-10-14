@@ -4139,7 +4139,8 @@ main {
 .map-zoom-controls button:last-child { padding: 0 8px; font-size: .64rem; }
 .map-zoom-controls button:disabled { opacity: .35; }
 .map-zoom-controls b { min-width: 42px; font-size: .65rem; text-align: center; }
-.map-gesture-hint { position: absolute; z-index: 9; left: 50%; bottom: 11px; display: none; transform: translateX(-50%); padding: 6px 10px; border-radius: 999px; background: #344660c7; color: #fff; font-size: .6rem; font-weight: 800; pointer-events: none; }
+.map-gesture-hint { position: absolute; z-index: 9; left: 50%; bottom: 11px; display: none; transform: translateX(-50%); padding: 6px 10px; border-radius: 999px; background: #344660c7; color: #fff; font-size: .6rem; font-weight: 800; pointer-events: none; transition: opacity .25s ease, transform .25s ease; }
+.map-gesture-hint.is-hidden { opacity: 0; transform: translate(-50%, 7px); }
 .map-location-card { position: absolute; z-index: 8; top: 15px; right: 15px; width: min(250px, 46%); padding: 19px 15px 15px; border: 2px solid #344660; border-radius: 17px; background: #fffaf0ed; box-shadow: 4px 5px 0 #344660; backdrop-filter: blur(5px); }
 .map-location-card b, .map-location-card small { display: block; }
 .map-location-card small { margin: 6px 0 12px; line-height: 1.4; }

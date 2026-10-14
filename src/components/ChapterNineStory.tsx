@@ -23,6 +23,15 @@ export function ChapterNineStory({ onComplete, paused = false }: Props) {
   const clickLock = useRef(false);
   const clickTimer = useRef<number | undefined>(undefined);
   const dragRef = useRef<{ x: number; y: number; panX: number; panY: number } | null>(null);
+  const mapPointersRef = useRef(new Map<number, { x: number; y: number }>());
+  const pinchRef = useRef<{
+    distance: number;
+    zoom: number;
+    panX: number;
+    panY: number;
+    midpointX: number;
+    midpointY: number;
+  } | null>(null);
   const draggedRef = useRef(false);
 
   const selected = chapterNineLocations.find((location) => location.id === selectedId) ?? null;
@@ -69,13 +78,59 @@ export function ChapterNineStory({ onComplete, paused = false }: Props) {
 
   const startMapDrag = (event: React.PointerEvent<HTMLDivElement>) => {
     const target = event.target as HTMLElement;
+    mapPointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    event.currentTarget.setPointerCapture(event.pointerId);
+
+    const points = [...mapPointersRef.current.values()];
+    if (points.length === 2) {
+      const [first, second] = points;
+      pinchRef.current = {
+        distance: Math.hypot(second.x - first.x, second.y - first.y),
+        zoom: mapZoom,
+        panX: mapPan.x,
+        panY: mapPan.y,
+        midpointX: (first.x + second.x) / 2,
+        midpointY: (first.y + second.y) / 2,
+      };
+      dragRef.current = null;
+      draggedRef.current = true;
+      return;
+    }
+
     if (target.closest(".map-hotspot, .map-location-card, .map-zoom-controls")) return;
     dragRef.current = { x: event.clientX, y: event.clientY, panX: mapPan.x, panY: mapPan.y };
     draggedRef.current = false;
-    event.currentTarget.setPointerCapture(event.pointerId);
   };
 
   const moveMap = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (mapPointersRef.current.has(event.pointerId)) {
+      mapPointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    }
+
+    const points = [...mapPointersRef.current.values()];
+    if (points.length >= 2 && pinchRef.current) {
+      const [first, second] = points;
+      const distance = Math.hypot(second.x - first.x, second.y - first.y);
+      const midpointX = (first.x + second.x) / 2;
+      const midpointY = (first.y + second.y) / 2;
+      const nextZoom = Math.max(1, Math.min(2.6, pinchRef.current.zoom * distance / Math.max(1, pinchRef.current.distance)));
+      const frame = event.currentTarget.parentElement?.getBoundingClientRect();
+      const centerX = frame ? frame.left + frame.width / 2 : pinchRef.current.midpointX;
+      const centerY = frame ? frame.top + frame.height / 2 : pinchRef.current.midpointY;
+      const ratio = nextZoom / pinchRef.current.zoom;
+      const limit = 150 * (nextZoom - 1);
+      const nextPanX = midpointX - centerX - ratio * (pinchRef.current.midpointX - centerX - pinchRef.current.panX);
+      const nextPanY = midpointY - centerY - ratio * (pinchRef.current.midpointY - centerY - pinchRef.current.panY);
+
+      draggedRef.current = true;
+      setMapZoom(Number(nextZoom.toFixed(3)));
+      setMapPan(nextZoom === 1 ? { x: 0, y: 0 } : {
+        x: Math.max(-limit, Math.min(limit, nextPanX)),
+        y: Math.max(-limit, Math.min(limit, nextPanY)),
+      });
+      return;
+    }
+
     if (!dragRef.current || mapZoom <= 1) return;
     const dx = event.clientX - dragRef.current.x;
     const dy = event.clientY - dragRef.current.y;
@@ -88,9 +143,11 @@ export function ChapterNineStory({ onComplete, paused = false }: Props) {
   };
 
   const stopMapDrag = (event: React.PointerEvent<HTMLDivElement>) => {
+    mapPointersRef.current.delete(event.pointerId);
+    pinchRef.current = null;
     dragRef.current = null;
     if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
-    window.setTimeout(() => { draggedRef.current = false; }, 80);
+    if (mapPointersRef.current.size === 0) window.setTimeout(() => { draggedRef.current = false; }, 80);
   };
 
   return <section className="scene chapter-nine-story">
@@ -125,7 +182,7 @@ export function ChapterNineStory({ onComplete, paused = false }: Props) {
           })}
         </div>
         <div className="map-zoom-controls"><button onClick={() => changeZoom(-0.25)} disabled={mapZoom <= 1} aria-label="缩小地图">−</button><b>{Math.round(mapZoom * 100)}%</b><button onClick={() => changeZoom(0.25)} disabled={mapZoom >= 2.6} aria-label="放大地图">＋</button><button onClick={() => { setMapZoom(1); setMapPan({ x: 0, y: 0 }); }} aria-label="复位地图">复位</button></div>
-        <div className="map-gesture-hint">放大后可拖动地图</div>
+        <div className={`map-gesture-hint ${mapZoom > 1 ? "is-hidden" : ""}`}>放大后可拖动地图</div>
         {selected && <div className="map-location-card"><button className="map-card-close" onClick={() => setSelectedId(null)}>×</button><b>{selected.name}</b><small>{explored.includes(selected.id) ? "这里的回响已经收集完毕" : "似乎有微弱的异界气息"}</small><button disabled={explored.includes(selected.id)} onClick={() => startLocation(selected)}>{explored.includes(selected.id) ? "已探索" : "探索"}</button></div>}
       </div>
       {allExplored && <button className="sticker-button return-wall" onClick={onComplete}>回去找菲林斯</button>}
