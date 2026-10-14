@@ -79,10 +79,12 @@ export function ChapterNineStory({ onComplete, paused = false }: Props) {
   const startMapDrag = (event: React.PointerEvent<HTMLDivElement>) => {
     const target = event.target as HTMLElement;
     mapPointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
-    event.currentTarget.setPointerCapture(event.pointerId);
 
     const points = [...mapPointersRef.current.values()];
     if (points.length === 2) {
+      for (const pointerId of mapPointersRef.current.keys()) {
+        if (!event.currentTarget.hasPointerCapture(pointerId)) event.currentTarget.setPointerCapture(pointerId);
+      }
       const [first, second] = points;
       pinchRef.current = {
         distance: Math.hypot(second.x - first.x, second.y - first.y),
@@ -98,6 +100,7 @@ export function ChapterNineStory({ onComplete, paused = false }: Props) {
     }
 
     if (target.closest(".map-hotspot, .map-location-card, .map-zoom-controls")) return;
+    event.currentTarget.setPointerCapture(event.pointerId);
     dragRef.current = { x: event.clientX, y: event.clientY, panX: mapPan.x, panY: mapPan.y };
     draggedRef.current = false;
   };
