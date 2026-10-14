@@ -47,6 +47,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
   const [pressure, setPressure] = useState(0);
   const [groupProject, setGroupProject] = useState(false);
   const [presentationPreparing, setPresentationPreparing] = useState(false);
+  const [extensionCooldown, setExtensionCooldown] = useState(0);
   const [considerationCooldown, setConsiderationCooldown] = useState(0);
   const [phase2, setPhase2] = useState(startAtPhase2);
   const [rubricUsed, setRubricUsed] = useState(false);
@@ -106,6 +107,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
   const useSkill = async (id: UniversitySkillId) => {
     if (isBattlePaused || stage !== "battle" || pendingBossSkill || actionLocked) return;
     if (id === "graduation" && energy < UNIVERSITY_SKILLS.graduation.energyCost) return;
+    if (id === "extension" && extensionCooldown > 0) return;
     if (id === "consideration" && considerationCooldown > 0) return;
     const skill = universitySkills.find((item) => item.id === id)!;
     const multiplier = groupProject && id !== "groupChat" ? UNSW_SKILLS.groupwork.playerDamageMultiplier : 1;
@@ -126,6 +128,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
       setBossHit(true);
     }
     setEnergy((value) => id === "graduation" ? 0 : Math.min(ENERGY_CONFIG.maxEnergy, value + skill.energy));
+    setExtensionCooldown((value) => id === "extension" ? UNIVERSITY_SKILLS.extension.cooldown : Math.max(0, value - 1));
     setConsiderationCooldown((value) => id === "consideration" ? UNIVERSITY_SKILLS.consideration.cooldown : Math.max(0, value - 1));
     setTurn(nextTurn);
 
@@ -194,7 +197,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
 
   const resetBoss = () => {
     setStage("battle"); setBossHp(UNSW_MAX_HP); setHp(BIANCA_BOSS_MAX_HP); setEnergy(0); setTurn(0); setPressure(0);
-    setGroupProject(false); setPresentationPreparing(false); setConsiderationCooldown(0); setPhase2(false); setRubricUsed(false);
+    setGroupProject(false); setPresentationPreparing(false); setExtensionCooldown(0); setConsiderationCooldown(0); setPhase2(false); setRubricUsed(false);
     setCourseFeeUsed(false); setPendingBossSkill(null); setStatus("UNSW 正在等待你的选择。");
     setOrderShifted(false); setUltimateAnnounced(false); setActionLocked(false); setActingSkill(false); setBossHit(false);
     setPlayerHitFx(false); setCombatTexts([]); setCombatEffect(null); setBattleDialogue(null); setSkillNamePop(null);
@@ -213,7 +216,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     {battleDialogue && <BattleShout speaker={battleDialogue.speaker} text={battleDialogue.text} tag={battleDialogue.tag} />}
     {skillNamePop && <strong className="unsw-skill-pop">{skillNamePop}</strong>}
     <CombatGuide entries={unswCombatGuideEntries} open={isCombatGuideOpen} onOpenChange={setIsCombatGuideOpen} currentStats={{ "bianca-unsw": `HP ${hp}/${BIANCA_BOSS_MAX_HP} · 能量 ${energy}/${ENERGY_CONFIG.maxEnergy}`, unsw: `HP ${bossHp}/${UNSW_MAX_HP}` }} />
-    {stage === "battle" && <><div className="battle-status-toast unsw-status">{status}{pressure ? `　｜Pressure ×${pressure}` : ""}</div><div className="battle-skills university-skills">{visibleSkills.map((skill) => <button key={skill.id} className={skill.id === "graduation" ? "ultimate" : ""} disabled={actionLocked || (skill.id === "graduation" && energy < UNIVERSITY_SKILLS.graduation.energyCost) || (skill.id === "consideration" && considerationCooldown > 0)} onClick={() => useSkill(skill.id)}>{skill.name}<small>{skill.id === "graduation" ? `${energy}/${ENERGY_CONFIG.maxEnergy}` : skill.id === "consideration" && considerationCooldown ? `冷却 ${considerationCooldown}` : skill.description}</small></button>)}</div></>}
+    {stage === "battle" && <><div className="battle-status-toast unsw-status">{status}{pressure ? `　｜Pressure ×${pressure}` : ""}</div><div className="battle-skills university-skills">{visibleSkills.map((skill) => <button key={skill.id} className={skill.id === "graduation" ? "ultimate" : ""} disabled={actionLocked || (skill.id === "graduation" && energy < UNIVERSITY_SKILLS.graduation.energyCost) || (skill.id === "extension" && extensionCooldown > 0) || (skill.id === "consideration" && considerationCooldown > 0)} onClick={() => useSkill(skill.id)}>{skill.name}<small>{skill.id === "graduation" ? `${energy}/${ENERGY_CONFIG.maxEnergy}` : skill.id === "extension" && extensionCooldown ? `冷却 ${extensionCooldown}` : skill.id === "consideration" && considerationCooldown ? `冷却 ${considerationCooldown}` : skill.description}</small></button>)}</div></>}
 
     {(stage === "entrance" || stage === "awakening") && <div className="battle-dialogue-overlay unsw-story-overlay"><div><span className={`dialogue-speaker speaker-${currentStory[0]}`}>{currentStory[0]}</span><p>{currentStory[1]}</p><button className="dialogue-next" onClick={advanceStory}>继续</button></div></div>}
     {stage === "phase2" && <div className="battle-overlay phase-two-overlay"><div><img src={bossAsset("UNSW2.png")} alt="大笑的 UNSW" onError={(event) => { event.currentTarget.hidden = true; }} /><h3>PHASE 2</h3><b>WEEK 10</b><p>UNSW：哈哈哈哈哈哈！</p><p>你以为快结束了？现在才 Week 10！</p><button className="dialogue-next" onClick={() => setStage("battle")}>继续战斗</button></div></div>}

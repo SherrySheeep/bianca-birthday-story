@@ -97,7 +97,7 @@ export const UNSW_SKILLS = {
 export const UNIVERSITY_SKILLS = {
   xlookup: { damage: 68, energyGain: 22 },
   deadline: { damage: 112, energyGain: 30, selfDamage: 10 },
-  extension: { damage: 25, energyGain: 18, actionDelay: 1 },
+  extension: { damage: 25, energyGain: 18, actionDelay: 1, cooldown: 2 },
   groupChat: { damage: 35, energyGain: 20 },
   consideration: { damage: 0, energyGain: 10, heal: 65, cooldown: 3 },
   graduation: { damage: 230, energyCost: 100 },
