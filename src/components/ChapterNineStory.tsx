@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { chapterNineEnding, chapterNineLocations, chapterNineOpening, type ChapterNineLine, type ChapterNineLocation } from "../data/chapterNineContent";
 import { SectionHeader } from "./UI";
 
-type Props = { onComplete: () => void; paused?: boolean };
+type ChapterNineDebugAction = { type: "startExplore"; key: number } | null;
+type Props = { onComplete: () => void; paused?: boolean; debugAction?: ChapterNineDebugAction };
 type Phase = "opening" | "task" | "map" | "location" | "message" | "ending" | "complete";
 
 const root = `${import.meta.env.BASE_URL}chapter-nine/`;
@@ -12,7 +13,7 @@ const portraitSource = (line: ChapterNineLine) => {
   return line.portrait.folder === "existing" ? `${import.meta.env.BASE_URL}${line.portrait.file}` : asset("npcs", line.portrait.file);
 };
 
-export function ChapterNineStory({ onComplete, paused = false }: Props) {
+export function ChapterNineStory({ onComplete, paused = false, debugAction = null }: Props) {
   const [phase, setPhase] = useState<Phase>("opening");
   const [lineIndex, setLineIndex] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -42,6 +43,14 @@ export function ChapterNineStory({ onComplete, paused = false }: Props) {
   const portrait = currentLine ? portraitSource(currentLine) : null;
 
   useEffect(() => () => window.clearTimeout(clickTimer.current), []);
+
+  useEffect(() => {
+    if (!debugAction || debugAction.type !== "startExplore") return;
+    setActiveId(null);
+    setSelectedId(null);
+    setLineIndex(0);
+    setPhase("map");
+  }, [debugAction]);
 
   const advance = () => {
     if (paused || clickLock.current || !currentLine) return;
