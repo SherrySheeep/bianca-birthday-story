@@ -68,6 +68,11 @@ export function ChapterSevenStory({ onComplete, paused = false }: Props) {
   };
 
   const continueAfterChoice = () => {
+    if (choiceResponse?.continueStory) {
+      advance();
+      return;
+    }
+
     const viewedCount = selectedChoices[lineIndex]?.length ?? 0;
     const totalCount = currentLine.choices?.length ?? 0;
 

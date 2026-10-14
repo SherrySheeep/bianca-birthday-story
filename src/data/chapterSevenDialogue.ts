@@ -4,6 +4,7 @@ export type ChapterSevenChoice = {
   label: string;
   responseSpeaker: "安柏" | "旁白";
   response: string;
+  continueStory?: boolean;
 };
 
 export type ChapterSevenLine = {
@@ -30,7 +31,7 @@ export const chapterSevenDialogue: ChapterSevenLine[] = [
       { label: "终于没有人拉着我往下一个地方跑了", responseSpeaker: "安柏", response: "嘿！我听到的！" },
       { label: "这里真的是蒙德吗？", responseSpeaker: "旁白", response: "嘿嘿，你猜。" },
       { label: "我的行李……", responseSpeaker: "旁白", response: "行李飞走啦！" },
-      { label: "不会还真的像菲林斯说的那样，“被送到了正确的位置”吧？", responseSpeaker: "旁白", response: "命运的选择！" },
+      { label: "不会还真的像菲林斯说的那样，“被送到了正确的位置”吧？", responseSpeaker: "旁白", response: "命运的选择！", continueStory: true },
     ],
   },
 
@@ -41,7 +42,7 @@ export const chapterSevenDialogue: ChapterSevenLine[] = [
     choices: [
       { label: "我要看风车！", responseSpeaker: "旁白", response: "前面的区域以后再来探索吧。" },
       { label: "我要看骑士团！", responseSpeaker: "旁白", response: "建模师表示你饶了我吧。" },
-      { label: "我要看酒馆！", responseSpeaker: "旁白", response: "命运的选择！" },
+      { label: "我要看酒馆！", responseSpeaker: "旁白", response: "命运的选择！", continueStory: true },
     ],
   },
 
