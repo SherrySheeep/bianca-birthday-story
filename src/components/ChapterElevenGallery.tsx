@@ -4,22 +4,24 @@ import { ContinueButton, SectionHeader } from "./UI";
 
 type Props = { onComplete: () => void };
 
-const CGS_PER_PAGE = 6;
+const GROUPS_PER_PAGE = 4;
 
 export function ChapterElevenGallery({ onComplete }: Props) {
   const [page, setPage] = useState(0);
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [selectedGroupIndex, setSelectedGroupIndex] = useState<number | null>(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [closing, setClosing] = useState(false);
   const gridRef = useRef<HTMLDivElement>(null);
   const swipeStartRef = useRef<{ x: number; y: number } | null>(null);
   const closeTimerRef = useRef<number | undefined>(undefined);
-  const totalPages = Math.max(1, Math.ceil(cgManifest.length / CGS_PER_PAGE));
-  const pageCgs = useMemo(
-    () => cgManifest.slice(page * CGS_PER_PAGE, (page + 1) * CGS_PER_PAGE),
+  const totalPages = Math.max(1, Math.ceil(cgManifest.length / GROUPS_PER_PAGE));
+  const pageGroups = useMemo(
+    () => cgManifest.slice(page * GROUPS_PER_PAGE, (page + 1) * GROUPS_PER_PAGE),
     [page],
   );
-  const selected = selectedIndex === null ? null : cgManifest[selectedIndex];
-  const lightboxOpen = selectedIndex !== null;
+  const selectedGroup = selectedGroupIndex === null ? null : cgManifest[selectedGroupIndex];
+  const selectedImage = selectedGroup?.images[selectedImageIndex] ?? null;
+  const lightboxOpen = selectedGroupIndex !== null;
 
   useEffect(() => {
     setPage((current) => Math.min(current, totalPages - 1));
@@ -42,28 +44,28 @@ export function ChapterElevenGallery({ onComplete }: Props) {
     if (closing) return;
     setClosing(true);
     closeTimerRef.current = window.setTimeout(() => {
-      setSelectedIndex(null);
+      setSelectedGroupIndex(null);
+      setSelectedImageIndex(0);
       setClosing(false);
     }, 180);
   }, [closing]);
 
-  const moveSelection = useCallback((direction: -1 | 1) => {
-    setSelectedIndex((current) => {
-      if (current === null) return null;
-      return Math.max(0, Math.min(cgManifest.length - 1, current + direction));
-    });
-  }, []);
+  const moveImage = useCallback((direction: -1 | 1) => {
+    if (selectedGroupIndex === null) return;
+    const imageCount = cgManifest[selectedGroupIndex]?.images.length ?? 0;
+    setSelectedImageIndex((current) => Math.max(0, Math.min(imageCount - 1, current + direction)));
+  }, [selectedGroupIndex]);
 
   useEffect(() => {
     if (!lightboxOpen) return;
     const handleKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") closeViewer();
-      if (event.key === "ArrowLeft") moveSelection(-1);
-      if (event.key === "ArrowRight") moveSelection(1);
+      if (event.key === "ArrowLeft") moveImage(-1);
+      if (event.key === "ArrowRight") moveImage(1);
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [closeViewer, lightboxOpen, moveSelection]);
+  }, [closeViewer, lightboxOpen, moveImage]);
 
   const changePage = (nextPage: number) => {
     const safePage = Math.max(0, Math.min(totalPages - 1, nextPage));
@@ -79,8 +81,8 @@ export function ChapterElevenGallery({ onComplete }: Props) {
     const dx = touch.clientX - start.x;
     const dy = touch.clientY - start.y;
     if (Math.abs(dx) < 55 || Math.abs(dx) <= Math.abs(dy)) return;
-    if (dx < 0) moveSelection(1);
-    else moveSelection(-1);
+    if (dx < 0) moveImage(1);
+    else moveImage(-1);
   };
 
   return <section className="scene memory-scene cg-gallery-scene">
@@ -89,11 +91,14 @@ export function ChapterElevenGallery({ onComplete }: Props) {
     </SectionHeader>
 
     {cgManifest.length > 0 ? <div className="cg-gallery-grid" ref={gridRef}>
-      {pageCgs.map((cg, index) => {
-        const globalIndex = page * CGS_PER_PAGE + index;
-        return <button className="cg-polaroid" type="button" key={cg.number} onClick={() => setSelectedIndex(globalIndex)} aria-label={`查看 ${cg.title}`}>
-          <span className="cg-image-area"><img src={cg.url} alt={cg.title} /></span>
-          <strong>{cg.title}</strong>
+      {pageGroups.map((group, index) => {
+        const globalIndex = page * GROUPS_PER_PAGE + index;
+        return <button className="cg-polaroid" type="button" key={group.number} onClick={() => {
+          setSelectedGroupIndex(globalIndex);
+          setSelectedImageIndex(0);
+        }} aria-label={`查看 ${group.title}`}>
+          <span className="cg-image-area"><img src={group.images[0]} alt={group.title} /></span>
+          <strong>{group.title}</strong>
         </button>;
       })}
     </div> : <div className="cg-empty-note"><span>✦</span><p>回忆正在整理中……</p><small>这里很快就会住进新的旅途留影。</small></div>}
@@ -106,7 +111,7 @@ export function ChapterElevenGallery({ onComplete }: Props) {
 
     <ContinueButton onClick={onComplete} />
 
-    {selected && <div className={`cg-lightbox ${closing ? "is-closing" : ""}`} role="dialog" aria-modal="true" aria-label={`查看 ${selected.title}`} onClick={closeViewer}>
+    {selectedGroup && selectedImage && <div className={`cg-lightbox ${closing ? "is-closing" : ""}`} role="dialog" aria-modal="true" aria-label={`查看 ${selectedGroup.title}`} onClick={closeViewer}>
       <div
         className="cg-lightbox-panel"
         onClick={(event) => event.stopPropagation()}
@@ -117,11 +122,11 @@ export function ChapterElevenGallery({ onComplete }: Props) {
         onTouchEnd={finishSwipe}
       >
         <button className="cg-lightbox-close" type="button" onClick={closeViewer} aria-label="关闭 CG">×</button>
-        <div className="cg-lightbox-image"><img src={selected.url} alt={selected.title} /></div>
-        <h3>{selected.title}</h3>
-        <span className="cg-lightbox-count">{selectedIndex! + 1} / {cgManifest.length}</span>
-        <button className="cg-lightbox-nav previous" type="button" disabled={selectedIndex === 0} onClick={() => moveSelection(-1)} aria-label="上一张 CG">‹</button>
-        <button className="cg-lightbox-nav next" type="button" disabled={selectedIndex === cgManifest.length - 1} onClick={() => moveSelection(1)} aria-label="下一张 CG">›</button>
+        <div className="cg-lightbox-image"><img src={selectedImage} alt={`${selectedGroup.title} ${selectedImageIndex + 1}`} /></div>
+        <h3>{selectedGroup.title}</h3>
+        <span className="cg-lightbox-count">{selectedImageIndex + 1} / {selectedGroup.images.length}</span>
+        <button className="cg-lightbox-nav previous" type="button" disabled={selectedImageIndex === 0} onClick={() => moveImage(-1)} aria-label="上一张 CG">‹</button>
+        <button className="cg-lightbox-nav next" type="button" disabled={selectedImageIndex === selectedGroup.images.length - 1} onClick={() => moveImage(1)} aria-label="下一张 CG">›</button>
       </div>
     </div>}
   </section>;

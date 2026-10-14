@@ -69,18 +69,27 @@ function collectChapterElevenCgs(publicDir: string, base: string) {
     }
   }
 
-  return readdirSync(cgDirectory)
-    .map((fileName) => ({ fileName, match: fileName.match(/^CG(\d+)\.png$/i) }))
-    .filter((entry): entry is { fileName: string; match: RegExpMatchArray } => Boolean(entry.match))
-    .map(({ fileName, match }) => {
-      const number = Number(match[1]);
-      return {
-        number,
-        title: titles.get(number) ?? `CG ${number}`,
-        url: `${base}chapter-eleven/cg/${encodeURIComponent(fileName)}`,
-      };
-    })
-    .sort((a, b) => a.number - b.number);
+  const groupedImages = new Map<number, Array<{ order: number; url: string }>>();
+
+  for (const fileName of readdirSync(cgDirectory)) {
+    const match = fileName.match(/^CG(\d+)(?:-(\d+))?\.png$/i);
+    if (!match) continue;
+    const number = Number(match[1]);
+    const images = groupedImages.get(number) ?? [];
+    images.push({
+      order: match[2] ? Number(match[2]) : 0,
+      url: `${base}chapter-eleven/cg/${encodeURIComponent(fileName)}`,
+    });
+    groupedImages.set(number, images);
+  }
+
+  return [...groupedImages.entries()]
+    .sort(([left], [right]) => left - right)
+    .map(([number, images]) => ({
+      number,
+      title: titles.get(number) ?? `CG ${number}`,
+      images: images.sort((left, right) => left.order - right.order).map((image) => image.url),
+    }));
 }
 
 function chapterElevenCgManifestPlugin() {
