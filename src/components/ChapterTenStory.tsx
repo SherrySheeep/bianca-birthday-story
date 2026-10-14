@@ -99,6 +99,6 @@ export function ChapterTenStory({ onComplete, paused = false }: Props) {
 
     {phase === "openEyes" && <div className="open-eyes-card"><span>✦</span><h3>现在，可以睁开眼睛了。</h3><button className="sticker-button" onClick={() => { setLineIndex(0); setPhase("cakeReveal"); }}>睁开眼睛</button></div>}
 
-    {phase === "chapterComplete" && <div className="chapter-ten-completion"><div className="checkin-complete">✓ 第十章完成</div><p>神秘物品安全抵达现实世界。</p><small>故事还没有结束，朋友们准备的最后几页正在后面等你。</small><button className="dialogue-next return-airport" onClick={onComplete}>继续往下</button></div>}
+    {phase === "chapterComplete" && <div className="chapter-ten-completion"><div className="checkin-complete">✓ 第十章完成</div><p>神秘物品安全抵达现实世界。</p><small>而那个被你一路小心守护的东西，正在等待着某个特别的时刻。</small><button className="dialogue-next return-airport" onClick={onComplete}>继续往下</button></div>}
   </section>;
 }

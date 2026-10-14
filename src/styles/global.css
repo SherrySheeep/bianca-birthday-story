@@ -1020,7 +1020,7 @@ main {
 }
 .cg-polaroid {
   min-width: 0;
-  padding: clamp(7px, 2.2vw, 12px) clamp(7px, 2.2vw, 12px) clamp(13px, 3vw, 20px);
+  padding: clamp(7px, 2.2vw, 10px) clamp(7px, 2.2vw, 12px) clamp(13px, 3vw, 20px);
   overflow: hidden;
   border: 2px solid #493a39;
   border-radius: 3px;
@@ -1038,7 +1038,7 @@ main {
   display: grid;
   place-items: center;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 4 / 3.5;
   overflow: hidden;
   border: 1px solid #8e817d;
   background: #eaf4f5;
@@ -1047,8 +1047,8 @@ main {
 .cg-polaroid strong {
   display: grid;
   place-items: center;
-  min-height: 2.7em;
-  margin: 10px 2px 0;
+  min-height: 1.5em;
+  margin: 5px 2px 0;
   font-family: "Ma Shan Zheng", "Noto Sans SC", sans-serif;
   font-size: clamp(1rem, 4.2vw, 1.35rem);
   font-weight: 400;

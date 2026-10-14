@@ -59,7 +59,7 @@ export const chapterNineLocations: ChapterNineLocation[] = [
       { speaker: "Bianca", text: "咦？那束光里有一个不属于彩窗的亮点。" },
       { speaker: "Bianca", text: "靠近以后就消散了。看来又找到一条。" },
     ],
-    message: { title: "异世界的信息", body: "Bianca酱～异世界旅游开心吗？享受旅程的同时请不要忘了 “常回现世看看～ 回现世看看～” (≧∇≦) 希望你成长的旅途都充满着奇妙的际遇，愿你遇见的人都是好人，经历的事都是好事～ 生日快乐呀!", signature: "Nancy", avatar: "touxiang2.png" },
+    message: { title: "带着奇怪歌声的祝福", body: "Bianca酱～异世界旅游开心吗？享受旅程的同时请不要忘了 “常回现世看看～ 回现世看看～” (≧∇≦) 希望你成长的旅途都充满着奇妙的际遇，愿你遇见的人都是好人，经历的事都是好事～ 生日快乐呀!", signature: "Nancy", avatar: "touxiang2.png" },
   },
   {
     id: "cathedral-square", name: "教堂广场", icon: "jiaotangguangchang.png", scene: "jiaotangguangchang1.png", position: { left: 37.45, top: 39.8 },
@@ -140,7 +140,7 @@ export const chapterNineLocations: ChapterNineLocation[] = [
       { speaker: "Bianca", text: "训练木桩旁边闪了一下……这也算是成长的纪念吗？" },
       { speaker: "Bianca", text: "好，又收集到一条。" },
     ],
-    message: { title: "CK3小皇帝的祝福", body: "Bianca生日快乐！嘿嘿有没有被这个“大制作”吓到！恭喜你（快要）成功完成这次莫名其妙的一世界冒险，也顺利解锁了人生的新一岁！祝你未来的每一段旅程都能遇见有趣的人、看到漂亮的风景、收货意想不到的惊喜！下一段冒险即将开始，祝你新的一岁自由自在，心想事成！", signature: "神秘的作者大大", avatar: "touxiang7.png" },
+    message: { title: "CK3小皇帝的信件", body: "Bianca生日快乐！嘿嘿有没有被这个“大制作”吓到！恭喜你（快要）成功完成这次莫名其妙的冒险，也顺利解锁了人生的新一岁！祝你未来的每一段旅程都能遇见有趣的人、看到漂亮的风景、收货意想不到的惊喜！下一段冒险即将开始，祝你新的一岁自由自在，心想事成！", signature: "神秘的作者大大", avatar: "touxiang7.png" },
   },
   {
     id: "lab", name: "魔法实验室", icon: "mofashiyanshi.png", scene: "mofashiyanshi1.png", position: { left: 61, top: 74.5 },
