@@ -59,7 +59,7 @@ export const chapterNineLocations: ChapterNineLocation[] = [
       { speaker: "Bianca", text: "咦？那束光里有一个不属于彩窗的亮点。" },
       { speaker: "Bianca", text: "靠近以后就消散了。看来又找到一条。" },
     ],
-    message: { title: "异世界的信息", body: "愿生活偶尔慢下来，让你听见自己真正喜欢的声音。", signature: "一束很远的光", avatar: "touxiang2.png" },
+    message: { title: "异世界的信息", body: "Bianca酱～异世界旅游开心吗？！享受旅程的同时请不要忘了 “常回现世看看～ 回现世看看～” (≧∇≦) 希望你成长的旅途都充满着奇妙的际遇，愿你遇见的人都是好人，经历的事都是好事～ 生日快乐呀", signature: "Nancy", avatar: "touxiang2.png" },
   },
   {
     id: "cathedral-square", name: "教堂广场", icon: "jiaotangguangchang.png", scene: "jiaotangguangchang1.png", position: { left: 37.45, top: 39.8 },
