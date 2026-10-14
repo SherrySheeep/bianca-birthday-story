@@ -1099,6 +1099,8 @@ main {
   inset: 0;
   display: grid;
   place-items: center;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
   background: rgba(20, 18, 25, .88);
   backdrop-filter: blur(5px);
@@ -1111,6 +1113,7 @@ main {
   grid-template-rows: minmax(0, 1fr) auto auto;
   width: min(94vw, 1050px);
   height: min(100%, 820px);
+  max-height: 820px;
   padding: clamp(10px, 2.5vw, 20px);
   border: 2px solid #f8eacb;
   border-radius: 22px;

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import cgManifest from "virtual:chapter-eleven-cg-manifest";
 import { ContinueButton, SectionHeader } from "./UI";
 
@@ -111,7 +112,7 @@ export function ChapterElevenGallery({ onComplete }: Props) {
 
     <ContinueButton onClick={onComplete} />
 
-    {selectedGroup && selectedImage && <div className={`cg-lightbox ${closing ? "is-closing" : ""}`} role="dialog" aria-modal="true" aria-label={`查看 ${selectedGroup.title}`} onClick={closeViewer}>
+    {selectedGroup && selectedImage && createPortal(<div className={`cg-lightbox ${closing ? "is-closing" : ""}`} role="dialog" aria-modal="true" aria-label={`查看 ${selectedGroup.title}`} onClick={closeViewer}>
       <div
         className="cg-lightbox-panel"
         onClick={(event) => event.stopPropagation()}
@@ -128,6 +129,6 @@ export function ChapterElevenGallery({ onComplete }: Props) {
         <button className="cg-lightbox-nav previous" type="button" disabled={selectedImageIndex === 0} onClick={() => moveImage(-1)} aria-label="上一张 CG">‹</button>
         <button className="cg-lightbox-nav next" type="button" disabled={selectedImageIndex === selectedGroup.images.length - 1} onClick={() => moveImage(1)} aria-label="下一张 CG">›</button>
       </div>
-    </div>}
+    </div>, document.body)}
   </section>;
 }
