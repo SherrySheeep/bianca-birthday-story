@@ -4761,9 +4761,9 @@ main {
   .ritual-modal { padding: 17px 13px; }
   .battle-eight-card { height: min(82dvh, 680px); min-height: 590px; border-radius: 20px; }
   .battle-order { top: 8px; right: 7px; width: 58px; padding: 6px; }
-  /* Compensate for the centred battle frame so the button follows the phone screen's right edge. */
-  .combat-guide-trigger { top:36.85%; left:auto; right:calc((100% - 100vw) / 2 + max(8px, env(safe-area-inset-right))); width:48px; min-height:48px; padding:3px; border-radius:12px; font-size:.48rem; }
-  .unsw-battle .combat-guide-trigger { top:20.65%; left:auto; right:calc((100% - 100vw) / 2 + max(8px, env(safe-area-inset-right))); width:48px; min-height:48px; }
+  /* Centre the guide button directly below the right-side action-order bar. */
+  .combat-guide-trigger { top:36.85%; left:auto; right:12px; width:48px; min-height:48px; padding:3px; border-radius:12px; font-size:.48rem; }
+  .unsw-battle .combat-guide-trigger { top:20.65%; left:auto; right:12px; width:48px; min-height:48px; }
   .combat-guide-trigger img { width:26px; height:26px; }
   .combat-guide-backdrop { padding:7px; }
   .combat-guide-book { width:100%; height:94%; border-radius:19px; background:linear-gradient(90deg,#f8e6b9 0 62px,#d5b77b 63px 65px,#fff0c7 66px); }
