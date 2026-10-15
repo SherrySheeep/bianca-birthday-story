@@ -110,7 +110,7 @@ export function ChapterElevenGallery({ onComplete }: Props) {
       <button type="button" disabled={page >= totalPages - 1} onClick={() => changePage(page + 1)}>下一页</button>
     </nav>
 
-    <ContinueButton onClick={onComplete} />
+    <ContinueButton label="拆最后一封信 💌" onClick={onComplete} />
 
     {selectedGroup && selectedImage && createPortal(<div className={`cg-lightbox ${closing ? "is-closing" : ""}`} role="dialog" aria-modal="true" aria-label={`查看 ${selectedGroup.title}`} onClick={closeViewer}>
       <div

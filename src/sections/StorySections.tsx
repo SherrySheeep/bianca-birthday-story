@@ -16,11 +16,7 @@ import {
   X,
 } from "lucide-react";
 import { content } from "../data/content";
-import {
-  BoardingPassCard,
-  MessageCard,
-  PolaroidCard,
-} from "../components/Cards";
+import { BoardingPassCard } from "../components/Cards";
 import {
   ContinueButton,
   PopupNote,
@@ -929,61 +925,6 @@ export function ChinaFun({ onDone }: { onDone: Done }) {
         </PopupNote>
       )}
       {seen.length >= 3 && <ContinueButton onClick={onDone} />}
-    </section>
-  );
-}
-
-export function Memories({ onDone }: { onDone: Done }) {
-  return (
-    <section className="scene memory-scene">
-      <SectionHeader number="12" kicker="MEMORY FILM" title="这一年的旅行存档">
-        <p>照片的位置先留好了，等真实回忆来入住。</p>
-      </SectionHeader>
-      <div className="polaroid-grid">
-        {content.memories.map((x, i) => (
-          <PolaroidCard item={x} index={i} key={x.title} />
-        ))}
-      </div>
-      <ContinueButton onClick={onDone} />
-    </section>
-  );
-}
-
-export function Jokes({ onDone }: { onDone: Done }) {
-  return (
-    <section className="scene joke-scene">
-      <SectionHeader number="13" kicker="FRIENDS ONLY" title="只有自己人看得懂">
-        <p>一些经得起时间，但经不起追问的内部资料。</p>
-      </SectionHeader>
-      <div className="joke-wall">
-        {content.jokes.map((x, i) => (
-          <div className={`joke-note j${i}`} key={x}>
-            <span>{i % 2 ? "♡" : "✦"}</span>
-            {x}
-          </div>
-        ))}
-      </div>
-      <ContinueButton onClick={onDone} />
-    </section>
-  );
-}
-
-export function Messages({ onDone }: { onDone: Done }) {
-  return (
-    <section className="scene message-scene">
-      <SectionHeader
-        number="14"
-        kicker="POSTCARDS FOR B"
-        title="朋友们寄来的几句话"
-      >
-        <p>旅行要慢慢走，祝福也值得慢慢拆。</p>
-      </SectionHeader>
-      <div className="messages-list">
-        {content.messages.map((x, i) => (
-          <MessageCard {...x} index={i} key={x.name} />
-        ))}
-      </div>
-      <ContinueButton label="拆最后一封信 💌" onClick={onDone} />
     </section>
   );
 }
