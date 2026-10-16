@@ -2,8 +2,12 @@ export type ChapterSevenScene = "gate" | "walk" | "tavernOutside" | "tavernInsid
 export type ChapterSevenCharacter = "amberFriendly" | "amberUrgent" | "venti" | "zhongli";
 export type ChapterSevenChoice = {
   label: string;
-  responseSpeaker: "安柏" | "旁白";
+  responseSpeaker: "安柏" | "旁白" | "温迪" | "钟离";
   response: string;
+  followUpResponses?: Array<{
+    speaker: "安柏" | "旁白" | "温迪" | "钟离";
+    text: string;
+  }>;
   continueStory?: boolean;
 };
 
@@ -53,13 +57,30 @@ export const chapterSevenDialogue: ChapterSevenLine[] = [
   outside("Bianca", "……？"),
   outside("温迪", "别站在门口啦。", "venti", 2),
   outside("温迪", "正好，我们刚刚还在聊你呢。", "venti", 2),
-  outside("Bianca", "……聊我？"),
-  outside("温迪", "进来就知道啦。", "venti", 2),
-
   tavern("钟离", "看来，结果已经出来了。", "zhongli", 1),
-  tavern("Bianca", "结果？"),
-  tavern("温迪", "对呀。\n 我和这位钟离先生刚刚打了个赌。", "venti", 2),
-  tavern("Bianca", "……\n 为什么你们会拿我的飞行考试打赌？"),
+  {
+    ...tavern("Bianca", "……"),
+    choices: [
+      {
+        label: "（看向温迪，温迪冲你灿烂一笑）你们在聊我？你们……是？",
+        responseSpeaker: "温迪",
+        response: "嘿嘿，进来就知道啦！",
+      },
+      {
+        label: "（看向旁白，旁白不语，只是一味地自豪）街上碰到了七神之二？提瓦特真是好地方！",
+        responseSpeaker: "旁白",
+        response: "旁白不语，只是一味地自豪。",
+      },
+      {
+        label: "（看向钟离，钟离淡定地喝了一口茶）结果是什么东西？",
+        responseSpeaker: "旁白",
+        response: "命运的选择！",
+        continueStory: true,
+      },
+    ],
+  },
+  tavern("温迪", "嘿嘿。\n我和这位钟离先生刚刚打了个赌。", "venti", 2),
+  tavern("Bianca", "……\n为什么你们会拿我的飞行考试打赌？"),
   tavern("温迪", "因为很有意思嘛。", "venti", 2),
   tavern("钟离", "我只是接受了他的赌约。", "zhongli", 1),
   tavern("Bianca", "这听起来也没有好到哪里去。"),
@@ -67,27 +88,60 @@ export const chapterSevenDialogue: ChapterSevenLine[] = [
   tavern("温迪", "你肯定能顺利通过飞行考试！", "venti", 2),
   tavern("钟离", "而我的判断是，", "zhongli", 1),
   tavern("钟离", "她会一边抱怨，一边通过考试。", "zhongli", 1),
-  tavern("Bianca", "……"),
+  {
+    ...tavern("Bianca", "……"),
+    choices: [
+      {
+        label: "（愤怒模式）为什么你们会拿我的飞行考试打赌啊？？",
+        responseSpeaker: "温迪",
+        response: "诶嘿，因为很有意思嘛。",
+      },
+      {
+        label: "（无奈模式）两个选择都没有好到哪里去诶。",
+        responseSpeaker: "钟离",
+        response: "小友此言差矣。",
+      },
+      {
+        label: "（自豪模式）（大声说）伟大的 Bianca 自然是轻松通过！",
+        responseSpeaker: "旁白",
+        response: "命运的选择！\n毕竟是伟大的B老师呀！",
+        continueStory: true,
+      },
+    ],
+  },
   tavern("温迪", "所以，怎么样？\n 飞行考试通过了吗？", "venti", 2),
   tavern("Bianca", "……通过了。"),
   tavern("温迪", "那你考试的时候有没有抱怨？", "venti", 2),
-  tavern("Bianca", "……"),
-  tavern("Bianca", "有。"),
-  tavern("钟离", "承让。", "zhongli", 4),
-  tavern("温迪", "啊——", "venti", 3),
-  tavern("温迪", "怎么连这个都算得这么准啊。", "venti", 3),
-  tavern("Bianca", "所以你输了？"),
-  tavern("温迪", "……看来是这样。", "venti", 3),
-  tavern("钟离", "赌约既成，自当履行。", "zhongli", 1),
-  tavern("温迪", "知道啦知道啦。", "venti", 3),
-  tavern("温迪", "不就是一顿酒嘛……", "venti", 3),
+  {
+    ...tavern("Bianca", "……"),
+    choices: [
+      {
+        label: "（温迪的胜利！）Bianca 怎么会抱怨呢（来自大C音）",
+        responseSpeaker: "温迪",
+        response: "啊，怎么这个都算得这么准啊。",
+        followUpResponses: [
+          { speaker: "钟离", text: "赌约既成，自当履行。拿酒来吧。" },
+        ],
+        continueStory: true,
+      },
+      {
+        label: "（钟离的胜利！）谁会喜欢考试啊！（来自 Sherry 音）",
+        responseSpeaker: "温迪",
+        response: "哦，看来今天是往生堂无往不胜的钟离先生罕见的失手时刻了。",
+        followUpResponses: [
+          { speaker: "钟离", text: "无妨。老板，请来一杯葡萄汁给这位吟游诗人。" },
+        ],
+        continueStory: true,
+      },
+    ],
+  },
 
-  tavern("Bianca", "所以……\n 你们既然刚刚就在聊我。"),
+  tavern("Bianca", "酒是个好东西。"),
+  tavern("Bianca", "不过还是回归正题！"),
+  tavern("旁白", "毕竟游戏要继续的。"),
+  tavern("Bianca", "你们既然刚刚就在聊我。"),
   tavern("Bianca", "是不是知道我为什么会出现在这里？"),
-  tavern("Bianca", "我原本明明在飞机上。"),
-  tavern("Bianca", "然后一眨眼，就拿着风之翼从天上往下掉。"),
   tavern("Bianca", "到底发生了什么？"),
-  tavern("Bianca", "还有，我要怎么回去？"),
 
   tavern("钟离", "或许，是因为某件不属于这个世界的东西。", "zhongli", 3),
   tavern("Bianca", "不属于这个世界的东西？"),

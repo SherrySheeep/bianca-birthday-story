@@ -34,6 +34,7 @@ export function ChapterSevenStory({ onComplete, paused = false }: Props) {
   const [backgroundLoaded, setBackgroundLoaded] = useState(false);
   const [portraitLoaded, setPortraitLoaded] = useState(false);
   const [choiceResponse, setChoiceResponse] = useState<ChapterSevenChoice | null>(null);
+  const [choiceResponseStep, setChoiceResponseStep] = useState(0);
   const [selectedChoices, setSelectedChoices] = useState<Record<number, string[]>>({});
   const clickLocked = useRef(false);
   const clickTimer = useRef<number | undefined>(undefined);
@@ -50,6 +51,7 @@ export function ChapterSevenStory({ onComplete, paused = false }: Props) {
     clickLocked.current = true;
     clickTimer.current = window.setTimeout(() => { clickLocked.current = false; }, 220);
     setChoiceResponse(null);
+    setChoiceResponseStep(0);
     if (lineIndex < chapterSevenDialogue.length - 1) {
       setLineIndex((value) => value + 1);
     } else {
@@ -65,9 +67,16 @@ export function ChapterSevenStory({ onComplete, paused = false }: Props) {
       [lineIndex]: [...(choices[lineIndex] ?? []), choice.label],
     }));
     setChoiceResponse(choice);
+    setChoiceResponseStep(0);
   };
 
   const continueAfterChoice = () => {
+    const responseCount = 1 + (choiceResponse?.followUpResponses?.length ?? 0);
+    if (choiceResponse && choiceResponseStep < responseCount - 1) {
+      setChoiceResponseStep((step) => step + 1);
+      return;
+    }
+
     if (choiceResponse?.continueStory) {
       advance();
       return;
@@ -80,11 +89,17 @@ export function ChapterSevenStory({ onComplete, paused = false }: Props) {
       advance();
     } else {
       setChoiceResponse(null);
+      setChoiceResponseStep(0);
     }
   };
 
-  const displayedSpeaker = choiceResponse?.responseSpeaker ?? currentLine.speaker;
-  const displayedText = choiceResponse?.response ?? currentLine.text;
+  const activeChoiceResponse = choiceResponse
+    ? choiceResponseStep === 0
+      ? { speaker: choiceResponse.responseSpeaker, text: choiceResponse.response }
+      : choiceResponse.followUpResponses?.[choiceResponseStep - 1]
+    : null;
+  const displayedSpeaker = activeChoiceResponse?.speaker ?? currentLine.speaker;
+  const displayedText = activeChoiceResponse?.text ?? currentLine.text;
 
   return (
     <section className="scene chapter-seven-story">
@@ -118,7 +133,7 @@ export function ChapterSevenStory({ onComplete, paused = false }: Props) {
             )}
           </div>
 
-          <div className="chapter-seven-dialogue" key={`${lineIndex}-${choiceResponse?.label ?? "line"}`}>
+          <div className="chapter-seven-dialogue" key={`${lineIndex}-${choiceResponse?.label ?? "line"}-${choiceResponseStep}`}>
             <span className={`dialogue-speaker speaker-${displayedSpeaker}`}>{displayedSpeaker}</span>
             <p>{displayedText}</p>
 
