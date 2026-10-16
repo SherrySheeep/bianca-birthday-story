@@ -1791,6 +1791,33 @@ main {
 .drawer-three {
   top: 59%;
 }
+
+/* 第一章最底层抽屉：新西兰护照贴纸 */
+.found-passport {
+  display: block;
+  width: clamp(125px, 34vw, 190px);
+  margin: 10px auto 12px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  transform: rotate(-3deg);
+  transition: transform 0.18s ease, filter 0.18s ease;
+}
+
+.found-passport:hover,
+.found-passport:focus-visible {
+  transform: translateY(-3px) rotate(0deg) scale(1.03);
+  filter: brightness(1.04);
+}
+
+.nz-passport-sticker {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(4px 6px 4px rgba(75, 48, 42, 0.24));
+}
 .room-object.suitcase {
   right: 1%;
   bottom: 1%;
@@ -3307,8 +3334,8 @@ main {
 .security-flash-sticker {
   position: absolute;
   z-index: 6;
-  left: 54.5%;
-  bottom: 32%;
+  left: 55%;
+  bottom: 39%;
   width: 20%;
   height: 20%;
   object-fit: contain;
@@ -4699,8 +4726,8 @@ main {
 
   /* 闪光贴纸：手机端位置与大小 */
   .security-flash-sticker {
-    left: 54.5%;
-    bottom: 32%;
+    left: 58.2%;
+    bottom: 32.5%;
     width: 20%;
     height: 20%;
   }

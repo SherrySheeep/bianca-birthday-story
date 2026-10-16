@@ -437,14 +437,12 @@ export function Room({ onDone }: { onDone: Done }) {
             {drawer === 3 && (
               <>
                 <h3>最底下的抽屉</h3>
-                <button className="found-passport" onClick={found}>
-                  <span>NEW ZEALAND</span>
-                  <b>
-                    PASSPORT
-                    <br />
-                    Uruwhenua
-                  </b>
-                  <i>♘</i>
+                <button className="found-passport" onClick={found} aria-label="收好新西兰护照">
+                  <img
+                    className="nz-passport-sticker"
+                    src={`${import.meta.env.BASE_URL}room-items/NZPassport1.png`}
+                    alt="新西兰护照贴纸"
+                  />
                 </button>
                 <p>原来藏在这里！点击护照把它收好。</p>
               </>
