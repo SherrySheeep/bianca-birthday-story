@@ -128,13 +128,13 @@ export const chapterSevenDialogue: ChapterSevenLine[] = [
       {
         label: "（温迪的胜利！）Bianca 怎么会抱怨呢（来自大C音）",
         responseSpeaker: "温迪",
-        response: "啊，怎么这个都算得这么准啊。",
+        response: "哦，看来今天是往生堂无往不胜的钟离先生罕见的失手时刻了。",
         responseCharacter: "venti",
-        responsePortrait: 3,
+        responsePortrait: 2,
         followUpResponses: [
           {
             speaker: "钟离",
-            text: "赌约既成，自当履行。拿酒来吧。",
+            text: "无妨。老板，请来一杯葡萄汁给这位吟游诗人。",
             character: "zhongli",
             portrait: 1,
           },
@@ -144,13 +144,13 @@ export const chapterSevenDialogue: ChapterSevenLine[] = [
       {
         label: "（钟离的胜利！）谁会喜欢考试啊！（来自 Sherry 音）",
         responseSpeaker: "温迪",
-        response: "哦，看来今天是往生堂无往不胜的钟离先生罕见的失手时刻了。",
+        response: "啊，怎么这个都算得这么准啊。",
         responseCharacter: "venti",
-        responsePortrait: 2,
+        responsePortrait: 3,
         followUpResponses: [
           {
             speaker: "钟离",
-            text: "无妨。老板，请来一杯葡萄汁给这位吟游诗人。",
+            text: "赌约既成，自当履行。拿酒来吧。",
             character: "zhongli",
             portrait: 1,
           },

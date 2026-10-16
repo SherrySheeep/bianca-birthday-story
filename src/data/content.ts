@@ -2,7 +2,7 @@ export const content = {
   title: 'B老师的旅行生日手账',
   eyebrow: 'BIANCA · 2026 TRAVEL JOURNAL',
   intro: '这一趟不赶飞机，只负责收集快乐。',
-  trip: { from: '悉尼', fromCode: 'SYD', to: '中国', toCode: 'XNN', departure: '2026.10.12', returnDate: '2026.10.20', passenger: 'BIANCA', flight: 'BB1020' },
+  trip: { from: '悉尼', fromCode: 'SYD', to: '中国', toCode: 'CHN', departure: '2026.10.12', returnDate: '2026.10.20', passenger: 'BIANCA', flight: 'BB1020' },
   roomWrong: { phone: '手机在这儿，但护照不会自己打电话。', laptop: '工作先放放，今天不准开会。', suitcase: '箱子很积极，可证件呢？', wardrobe: '衣服很多，能带走的只有一小半。', map: '路线研究完毕：先找到护照。', souvenir: '上次旅行的战利品正在围观。' },
   requiredItems: ['护照', '登机牌', '手机', '充电器', '衣服', '礼物'],
   sillyItems: [{name:'工作电脑',reply:'已被全体朋友礼貌请出行李箱。'}, {name:'十二双鞋',reply:'箱子：我真的装不下了。'}, {name:'整个悉尼',reply:'这个……托运费可能有点高。'}],
