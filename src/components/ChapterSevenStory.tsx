@@ -40,7 +40,26 @@ export function ChapterSevenStory({ onComplete, paused = false }: Props) {
   const clickTimer = useRef<number | undefined>(undefined);
   const currentLine = chapterSevenDialogue[Math.min(lineIndex, chapterSevenDialogue.length - 1)];
   const scene = sceneAssets[currentLine.scene];
-  const portrait = portraitSource(currentLine);
+  const activeChoiceResponse = choiceResponse
+    ? choiceResponseStep === 0
+      ? {
+          speaker: choiceResponse.responseSpeaker,
+          text: choiceResponse.response,
+          character: choiceResponse.responseCharacter,
+          portrait: choiceResponse.responsePortrait,
+        }
+      : choiceResponse.followUpResponses?.[choiceResponseStep - 1]
+    : null;
+  const displayedSpeaker = activeChoiceResponse?.speaker ?? currentLine.speaker;
+  const displayedText = activeChoiceResponse?.text ?? currentLine.text;
+  const displayedCharacter = activeChoiceResponse?.character ?? currentLine.character;
+  const portrait = portraitSource({
+    ...currentLine,
+    speaker: displayedSpeaker,
+    text: displayedText,
+    character: displayedCharacter,
+    portrait: activeChoiceResponse?.portrait ?? currentLine.portrait,
+  });
 
   useEffect(() => () => window.clearTimeout(clickTimer.current), []);
   useEffect(() => setBackgroundLoaded(false), [scene.image]);
@@ -93,14 +112,6 @@ export function ChapterSevenStory({ onComplete, paused = false }: Props) {
     }
   };
 
-  const activeChoiceResponse = choiceResponse
-    ? choiceResponseStep === 0
-      ? { speaker: choiceResponse.responseSpeaker, text: choiceResponse.response }
-      : choiceResponse.followUpResponses?.[choiceResponseStep - 1]
-    : null;
-  const displayedSpeaker = activeChoiceResponse?.speaker ?? currentLine.speaker;
-  const displayedText = activeChoiceResponse?.text ?? currentLine.text;
-
   return (
     <section className="scene chapter-seven-story">
       <SectionHeader number="07" kicker="ANGEL'S SHARE" title="酒馆里的赌约">
@@ -120,12 +131,12 @@ export function ChapterSevenStory({ onComplete, paused = false }: Props) {
             />
             {portrait && (
               <>
-                {!portraitLoaded && <div className="chapter-seven-portrait-placeholder">{currentLine.speaker}<br /><small>角色贴纸</small></div>}
+                {!portraitLoaded && <div className="chapter-seven-portrait-placeholder">{displayedSpeaker}<br /><small>角色贴纸</small></div>}
                 <img
                   key={portrait}
-                  className={`chapter-seven-portrait portrait-${currentLine.character}`}
+                  className={`chapter-seven-portrait portrait-${displayedCharacter}`}
                   src={portrait}
-                  alt={`${currentLine.speaker}立绘`}
+                  alt={`${displayedSpeaker}立绘`}
                   onLoad={() => setPortraitLoaded(true)}
                   onError={(event) => { event.currentTarget.hidden = true; setPortraitLoaded(false); }}
                 />

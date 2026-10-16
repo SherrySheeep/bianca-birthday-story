@@ -4,9 +4,13 @@ export type ChapterSevenChoice = {
   label: string;
   responseSpeaker: "安柏" | "旁白" | "温迪" | "钟离";
   response: string;
+  responseCharacter?: ChapterSevenCharacter;
+  responsePortrait?: 1 | 2 | 3 | 4 | 5;
   followUpResponses?: Array<{
     speaker: "安柏" | "旁白" | "温迪" | "钟离";
     text: string;
+    character?: ChapterSevenCharacter;
+    portrait?: 1 | 2 | 3 | 4 | 5;
   }>;
   continueStory?: boolean;
 };
@@ -57,14 +61,16 @@ export const chapterSevenDialogue: ChapterSevenLine[] = [
   outside("Bianca", "……？"),
   outside("温迪", "别站在门口啦。", "venti", 2),
   outside("温迪", "正好，我们刚刚还在聊你呢。", "venti", 2),
-  tavern("钟离", "看来，结果已经出来了。", "zhongli", 1),
+  outside("钟离", "看来，结果已经出来了。", "zhongli", 1),
   {
-    ...tavern("Bianca", "……"),
+    ...outside("Bianca", "……"),
     choices: [
       {
         label: "（看向温迪，温迪冲你灿烂一笑）你们在聊我？你们……是？",
         responseSpeaker: "温迪",
         response: "嘿嘿，进来就知道啦！",
+        responseCharacter: "venti",
+        responsePortrait: 2,
       },
       {
         label: "（看向旁白，旁白不语，只是一味地自豪）街上碰到了七神之二？提瓦特真是好地方！",
