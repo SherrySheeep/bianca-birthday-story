@@ -118,7 +118,7 @@ export const chapterNineLocations: ChapterNineLocation[] = [
       { speaker: "Bianca", text: "喷泉里的倒影刚才是不是慢了一拍？" },
       { speaker: "Bianca", text: "碰到水面以后，那道回响就散开了。" },
     ],
-    message: { title: "来自V神的吟唱", body: "大B异世界玩的开心吗！！！虽然异世界旅途已经过半了，但人生旅途最精彩的部分才刚刚开始！如果你的的天空下起大雨，我们会陪你一起炸乌云，如果前面太多阻碍看不到对岸，我们和你一起炸平！继续往前冲吧大B！！！", signature: "被神子伤透了心的前旅行者V", avatar: "touxiang5.png" },
+    message: { title: "来自V神的吟唱", body: "大B异世界玩的开心吗！虽然异世界旅途已经过半了，但人生旅途最精彩的部分才刚刚开始！如果你的的天空下起大雨，我们会陪你一起炸乌云，如果前面太多阻碍看不到对岸，我们和你一起炸平！继续往前冲吧大B！！！", signature: "被神子伤透了心的前旅行者V", avatar: "touxiang5.png" },
   },
   {
     id: "souvenir", name: "荣光之风", icon: "rongguangzhifeng.png", scene: "rongguangzhifeng1.png", position: { left: 68.5, top: 57 },
