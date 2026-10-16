@@ -1794,6 +1794,9 @@ main {
 
 /* 第一章最底层抽屉：新西兰护照贴纸 */
 .found-passport {
+  position: relative;
+  left: 0;
+  top: 0;
   display: block;
   width: clamp(125px, 34vw, 190px);
   margin: 10px auto 12px;
@@ -1859,33 +1862,6 @@ main {
   height: 220px;
   margin: auto;
   background-position: 100% 100%;
-}
-.found-passport {
-  width: 150px;
-  height: 190px;
-  margin: 5px auto;
-  border: 2px solid #d8c58e;
-  border-radius: 10px;
-  background: #193c38;
-  color: #e9d9a1;
-  box-shadow: 5px 6px 0 #493a39;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  cursor: pointer;
-  transform: rotate(-3deg);
-}
-.found-passport span {
-  font-weight: 800;
-}
-.found-passport b {
-  font-size: 0.75rem;
-}
-.found-passport i {
-  font-size: 2.6rem;
-  font-style: normal;
 }
 .geo-map {
   position: relative;
