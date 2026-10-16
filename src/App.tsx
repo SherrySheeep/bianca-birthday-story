@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ProgressBadge } from './components/UI';
 import { ChapterSixStory } from './components/ChapterSixStory';
 import { ChapterSevenStory } from './components/ChapterSevenStory';
@@ -7,6 +7,7 @@ import { ChapterNineStory } from './components/ChapterNineStory';
 import { ChapterTenStory } from './components/ChapterTenStory';
 import { ChapterElevenGallery } from './components/ChapterElevenGallery';
 import { LoadingScreen } from './components/LoadingScreen';
+import { preloadChapterWindow, retainChapterWindow } from './lib/imagePreloader';
 import { Airport, Cover, FinalCard, FlightBooking, Flying, Packing, Room } from './sections/StorySections';
 
 const TOTAL=12;
@@ -21,6 +22,8 @@ export default function App(){
   const [chapterEightDebugAction,setChapterEightDebugAction]=useState<ChapterEightDebugAction>(null);
   const [chapterSixDebugAction,setChapterSixDebugAction]=useState<ChapterSixDebugAction>(null);
   const [chapterNineDebugAction,setChapterNineDebugAction]=useState<ChapterNineDebugAction>(null);
+  const [preparingChapter,setPreparingChapter]=useState(false);
+  const chapterTransitioning=useRef(false);
   useEffect(()=>{setChapterEightDebugAction(null);setChapterSixDebugAction(null);setChapterNineDebugAction(null);},[chapter]);
   useEffect(()=>{
     const url=new URL(window.location.href);
@@ -28,8 +31,30 @@ export default function App(){
     window.history.replaceState({},'',url);
     if(!debugMode)setPaused(false);
   },[debugMode]);
-  const advance=useCallback(()=>setChapter(c=>Math.min(c+1,TOTAL)),[]);
-  const goBack=useCallback(()=>setChapter(c=>Math.max(c-1,0)),[]);
+  useEffect(()=>{
+    if(!preloadComplete)return;
+    let active=true;
+    void preloadChapterWindow(chapter,true).then(()=>{
+      if(active)retainChapterWindow(chapter,true);
+    });
+    return()=>{active=false;};
+  },[chapter,preloadComplete]);
+  const goToChapter=useCallback(async(target:number)=>{
+    const safeTarget=Math.max(0,Math.min(target,TOTAL));
+    if(chapterTransitioning.current||safeTarget===chapter)return;
+    chapterTransitioning.current=true;
+    setPreparingChapter(true);
+    try{
+      await preloadChapterWindow(safeTarget,false);
+      retainChapterWindow(safeTarget,safeTarget>=8);
+      setChapter(safeTarget);
+    }finally{
+      chapterTransitioning.current=false;
+      setPreparingChapter(false);
+    }
+  },[chapter]);
+  const advance=useCallback(()=>{void goToChapter(chapter+1);},[chapter,goToChapter]);
+  const goBack=useCallback(()=>{void goToChapter(chapter-1);},[chapter,goToChapter]);
   if(!preloadComplete)return <LoadingScreen onStart={()=>setPreloadComplete(true)}/>;
   return <main className={paused?'debug-paused':''}>
     <button
@@ -42,7 +67,8 @@ export default function App(){
     </button>
     {debugMode&&<div className="debug-controls">{chapter===6&&<><button onClick={()=>setChapterSixDebugAction({type:'enterExam',key:Date.now()})}>直接进入飞行考试</button><button onClick={()=>setChapterSixDebugAction({type:'skipExam',key:Date.now()})}>跳过飞行考试</button></>}{chapter===8&&<button onClick={()=>setChapterEightDebugAction({type:'enterBattle',key:Date.now()})}>进入战斗</button>}{chapter===9&&<button onClick={()=>setChapterNineDebugAction({type:'startExplore',key:Date.now()})}>开始探索</button>}<button onClick={()=>setPaused(value=>!value)}>{paused?'继续':'暂停'}</button><button onClick={advance}>下一章</button></div>}
     {debugMode&&chapter===8&&<div className="chapter-eight-debug-jumps"><button onClick={()=>setChapterEightDebugAction({type:'skipTutorial',key:Date.now()})}>跳过教程</button><button onClick={()=>setChapterEightDebugAction({type:'skipMobs',key:Date.now()})}>跳过小怪</button><button onClick={()=>setChapterEightDebugAction({type:'skipPhase1',key:Date.now()})}>跳过 Phase 1</button><button onClick={()=>setChapterEightDebugAction({type:'skipPhase2',key:Date.now()})}>跳过 Phase 2</button></div>}
-    {chapter>0&&<><button className="chapter-back" onClick={goBack}>回到过去</button><ProgressBadge current={chapter} total={TOTAL}/><button className="restart" onClick={()=>setChapter(0)}>从头再来</button></>}
+    {chapter>0&&<><button className="chapter-back" onClick={goBack}>回到过去</button><ProgressBadge current={chapter} total={TOTAL}/><button className="restart" onClick={()=>{void goToChapter(0);}}>从头再来</button></>}
     {chapter===0&&<Cover onDone={advance}/>} {chapter===1&&<Room onDone={advance}/>} {chapter===2&&<FlightBooking onDone={advance}/>} {chapter===3&&<Packing onDone={advance}/>} {chapter===4&&<Airport onDone={advance} debugMode={debugMode} paused={paused}/>} {chapter===5&&<Flying onDone={advance} paused={paused}/>} {chapter===6&&<ChapterSixStory onComplete={advance} paused={paused} debugAction={chapterSixDebugAction}/>} {chapter===7&&<ChapterSevenStory onComplete={advance} paused={paused}/>} {chapter===8&&<ChapterEightStory onComplete={advance} paused={paused} debugMode={debugMode} debugAction={chapterEightDebugAction}/>} {chapter===9&&<ChapterNineStory onComplete={advance} paused={paused} debugAction={chapterNineDebugAction}/>} {chapter===10&&<ChapterTenStory onComplete={advance} paused={paused}/>} {chapter===11&&<ChapterElevenGallery onComplete={advance}/>} {chapter===12&&<FinalCard/>}
+    {preparingChapter&&<div className="chapter-preload-status" role="status"><span>✦</span> 正在准备接下来的旅程……</div>}
   </main>
 }

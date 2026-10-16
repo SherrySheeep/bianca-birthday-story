@@ -4309,6 +4309,35 @@ main {
 .chapter-nine-completion .dialogue-next { float: none; }
 
 /* Global image preload gate */
+.chapter-preload-status {
+  position: fixed;
+  z-index: 1000;
+  left: 50%;
+  bottom: max(18px, env(safe-area-inset-bottom));
+  width: max-content;
+  max-width: calc(100vw - 32px);
+  padding: 10px 16px;
+  border: 2px solid #493a39;
+  border-radius: 999px;
+  color: #493a39;
+  background: #fff6cd;
+  box-shadow: 4px 5px 0 #493a39;
+  font-size: clamp(0.76rem, 3.4vw, 0.92rem);
+  font-weight: 900;
+  text-align: center;
+  transform: translateX(-50%);
+  animation: chapter-preload-pop 0.2s ease-out both;
+}
+
+.chapter-preload-status span {
+  color: #ef765f;
+}
+
+@keyframes chapter-preload-pop {
+  from { opacity: 0; transform: translate(-50%, 8px) scale(0.96); }
+  to { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+
 .loading-screen {
   min-height: 100dvh;
   display: grid;
