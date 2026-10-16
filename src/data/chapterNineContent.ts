@@ -49,7 +49,7 @@ export const chapterNineLocations: ChapterNineLocation[] = [
       { speaker: "Bianca", text: "等等，公告栏后面好像有一点不自然的光。" },
       { speaker: "Bianca", text: "找到了，是残留的异界回响。" },
     ],
-    message: { title: "异世界的信息", body: "愿你每次出发都带着好奇，也总能平安找到回来的路。", signature: "来自现实世界的一封小纸条", avatar: "touxiang1.png" },
+    message: { title: "墨墨大王的谕旨", body: "喵！喵喵喵喵喵喵喵喵喵喵！喵喵喵，喵喵喵喵喵喵喵！\n （翻译：喂！墨墨大王祝你生日快乐！常来玩，记得给我带罐头！）", signature: "画着小鱼干的一张小纸条", avatar: "touxiang1.png" },
   },
   {
     id: "cathedral", name: "西风大教堂", icon: "xifengdajiaotang.png", scene: "xifengdajiaotang1.png", position: { left: 19.5, top: 27.5 },
@@ -94,7 +94,7 @@ export const chapterNineLocations: ChapterNineLocation[] = [
       { speaker: "Bianca", text: "异世界怎么连我的名字都知道啊。" },
       { speaker: "Bianca", text: "纸张背面有一点发光……原来信息藏在这里。" },
     ],
-    message: { title: "异世界的信息", body: "今天也许没有攻略，但你一直都有把混乱走成故事的本事。", signature: "匿名委托人", avatar: "touxiang3.png" },
+    message: { title: "来自Cindy的祝福", body: "Bianca老师生日快乐！今年也非常高兴能认识你&share experiences，希望明年可以更多的spend time together，也希望明年继续快乐美满💐 Love youuu！", signature: "CY", avatar: "touxiang3.png" },
   },
   {
     id: "hotel", name: "歌德大酒店", icon: "gededajiudian.png", scene: "gededajiudian1.png", position: { left: 54, top: 47 },
@@ -106,7 +106,7 @@ export const chapterNineLocations: ChapterNineLocation[] = [
       { speaker: "Bianca", text: "……这句话听起来还挺适合写在明信片上。" },
       { speaker: "Bianca", text: "前台铜铃旁边有一圈奇怪的光。又一条信息。" },
     ],
-    message: { title: "异世界的信息", body: "走得再远，也别忘了给自己留一张柔软的床和一段安心的休息。", signature: "旅途中的旧友", avatar: "touxiang4.png" },
+    message: { title: "来自旧地图的神秘来信", body: "卡卡生日快乐！恭喜你成功解锁人生的新一岁～虽然高中地图早就通关了，我们也在新的区域各自冒险，但超级有意思的青春副本，还是现在假装大人的动力。想你想你!\n 愿你新的一岁幸运值拉满，烦恼自动清除，沿途能收获喜欢的风景、意外的惊喜，还有越来越闪闪发光的自己！", signature: "Karenn/Lori(〃'▽'〃)", avatar: "touxiang4.png" },
   },
   {
     id: "fountain", name: "喷泉广场", icon: "penquanguangchang.png", scene: "penquanguangchang1.png", position: { left: 48, top: 49 },

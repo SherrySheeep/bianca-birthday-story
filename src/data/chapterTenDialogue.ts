@@ -41,16 +41,14 @@ export const chapterTenKtvWake: ChapterTenLine[] = [
   { speaker: "旁白", text: "屏幕上，张杰的《经过》正放到熟悉的旋律。" },
   { speaker: "旁白", text: "Bianca 缓缓睁开眼睛。" },
   { speaker: "旁白", text: "而此时，时间已经来到了——\n【10月20日】" },
-  { speaker: "Bianca", text: "……诶？" },
-  { speaker: "Bianca", text: "这里是……" },
+  { speaker: "Bianca", text: "……诶？\n 这里是…" },
   { speaker: "Bianca", text: "KTV？" },
   { speaker: "Bianca", text: "我回来了？" },
-  { speaker: "Bianca", text: "等等……" },
-  { speaker: "Bianca", text: "我刚刚不是还在蒙德吗？" },
+  { speaker: "Bianca", text: "等等…\n 我刚刚不是还在蒙德吗？" },
 ];
 
 export const chapterTenFriends: ChapterTenLine[] = [
-  { speaker: "Sherry", text: "你终于回神啦？", portrait: "sherry" },
+  { speaker: "Sherry", text: "嘿！回神！回神！", portrait: "sherry" },
   { speaker: "Cindy", text: "你刚刚发呆发了好久。", portrait: "cindy" },
   { speaker: "Bianca", text: "……我？" },
   { speaker: "Sherry", text: "怎么了？", portrait: "sherry" },
