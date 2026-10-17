@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { BIANCA_BOSS_MAX_HP, UNSW_MAX_HP, universitySkills, unswBossSkills, type BossSkillId, type UniversitySkillId } from "../data/chapterEightBattleData";
 import { BATTLE_TIMING, ENERGY_CONFIG, UNSW_BATTLE_COPY, UNSW_SKILLS, UNSW_STATS, UNIVERSITY_SKILLS } from "../data/chapterEightBattleConfig";
 import { BattleEffectLayer, BattleShout, FloatingCombatText, type CombatEffect, type CombatText } from "./ChapterEightBattleEffects";
@@ -44,7 +44,8 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
   const [hp, setHp] = useState<number>(BIANCA_BOSS_MAX_HP);
   const [energy, setEnergy] = useState<number>(0);
   const [turn, setTurn] = useState(0);
-  const [pressure, setPressure] = useState(0);
+  const [pressureStacks, setPressureStacks] = useState<number[]>([]);
+  const pressureStacksRef = useRef<number[]>([]);
   const [groupProject, setGroupProject] = useState(false);
   const [presentationPreparing, setPresentationPreparing] = useState(false);
   const [extensionCooldown, setExtensionCooldown] = useState(0);
@@ -182,7 +183,8 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
       setStatus(groupProject ? "Bianca：Group Chat 99+ 清除了小组作业 debuff。" : "Bianca：群聊刷了 99 条，但暂时没有需要处理的小组作业。");
     } else if (id === "consideration") {
       setHp((value) => Math.min(BIANCA_BOSS_MAX_HP, value + UNIVERSITY_SKILLS.consideration.heal));
-      setPressure(0);
+      pressureStacksRef.current = [];
+      setPressureStacks([]);
       setStatus(`Bianca：Special Consideration 恢复 ${UNIVERSITY_SKILLS.consideration.heal} HP，并清除了 Deadline Pressure。`);
     } else if (id === "graduation") setStatus("Bianca：毕业命中 UNSW。这一天，终于来了。");
     else setStatus(`Bianca：${skill.name} 命中 UNSW。`);
@@ -207,8 +209,14 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
       if (!presentationPreparing) { setPresentationPreparing(true); damage = 0; statusText = "UNSW：PRESENTATION 正在蓄力；可用 Extension Request 延期。"; }
       else { damage = phase2 ? UNSW_SKILLS.presentation.phase2Damage : UNSW_SKILLS.presentation.damage; setPresentationPreparing(false); statusText = `UNSW：Presentation 正式开始，对 Bianca 造成 ${damage} 点伤害。没有讲稿，也没有退路。`; }
     }
-    if (id === "assignment") { setPressure((value) => value + 1); damage += pressure * UNSW_SKILLS.assignment.pressureBonusPerStack; statusText = `UNSW：${unswBossSkills[id].name} 对 Bianca 造成 ${damage} 点伤害，并增加 1 层 Deadline Pressure。`; }
-    if (id === "groupwork") { setGroupProject(true); statusText = `UNSW：给 Bianca 施加 Group Project，并造成 ${damage} 点伤害；Bianca 下一次攻击伤害降低。`; }
+    const addsPressure = id === "assignment" || id === "groupwork" || id === "finalExam";
+    const currentPressureStacks = pressureStacksRef.current;
+    const activePressureStacks = addsPressure && currentPressureStacks.length < UNSW_SKILLS.pressure.maxStacks
+      ? [UNSW_SKILLS.pressure.durationTurns, ...currentPressureStacks]
+      : currentPressureStacks;
+    if (addsPressure) { pressureStacksRef.current = activePressureStacks; setPressureStacks(activePressureStacks); }
+    if (id === "assignment") statusText = `UNSW：${unswBossSkills[id].name} 对 Bianca 造成 ${damage} 点伤害，并增加 1 层 Deadline Pressure。`;
+    if (id === "groupwork") { setGroupProject(true); statusText = `UNSW：给 Bianca 施加 Group Project、增加 1 层 Deadline Pressure，并造成 ${damage} 点伤害；Bianca 下一次攻击伤害降低。`; }
     if (id === "rubric") { setRubricUsed(true); setEnergy((value) => Math.max(0, value - UNSW_SKILLS.rubric.energyLoss)); statusText = `UNSW：${unswBossSkills[id].name} 造成 ${damage} 点伤害，并扣除 Bianca ${UNSW_SKILLS.rubric.energyLoss} 点能量。`; }
     if (id === "courseFee") {
       const { minCharge, maxCharge, damageRate } = UNSW_SKILLS.courseFee;
@@ -218,24 +226,39 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
       setCourseFeeUsed(true);
       statusText = `UNSW：${displayedSkillName}，并造成 ${damage} 点伤害。\nBianca：你打架为什么还能收钱啊？！`;
     }
-    if (id === "finalExam") statusText = `UNSW：${unswBossSkills[id].name} 对 Bianca 造成 ${damage} 点伤害。期末周正式开始。`;
+    if (id === "finalExam") statusText = `UNSW：${unswBossSkills[id].name} 对 Bianca 造成 ${damage} 点伤害，并增加 1 层 Deadline Pressure。期末周正式开始。`;
     setStatus(statusText);
     setSkillNamePop(displayedSkillName);
     setCombatEffect({ key: Date.now(), type: id === "finalExam" ? "ultimate-hard" : "normal", target: "bianca" });
     await wait(BATTLE_TIMING.projectile);
-    const nextHp = Math.max(0, hp - damage);
+    let nextHp = Math.max(0, hp - damage);
     if (damage) {
       setCombatTexts([{ id: `${Date.now()}-unsw-player`, target: "bianca", value: damage, kind: "hp" }]);
       setPlayerHitFx(true);
     }
     setHp(nextHp);
     await wait(BATTLE_TIMING.hit);
+    if (nextHp > 0 && activePressureStacks.length > 0) {
+      const pressureDamage = activePressureStacks.length * UNSW_SKILLS.pressure.damagePerStack;
+      nextHp = Math.max(0, nextHp - pressureDamage);
+      setStatus((current) => `${current}\nDeadline Pressure ×${activePressureStacks.length}，造成 ${pressureDamage} 点持续伤害。`);
+      setCombatTexts([{ id: `${Date.now()}-pressure-player`, target: "bianca", value: pressureDamage, kind: "hp" }]);
+      setPlayerHitFx(false);
+      await wait(40);
+      setPlayerHitFx(true);
+      setHp(nextHp);
+      await wait(BATTLE_TIMING.hit);
+    }
+    const agedPressureStacks = activePressureStacks.map((turns) => turns - 1).filter((turns) => turns > 0);
+    pressureStacksRef.current = agedPressureStacks;
+    setPressureStacks(agedPressureStacks);
     setPendingBossSkill(null); setBattleDialogue(null); setSkillNamePop(null); setCombatTexts([]); setCombatEffect(null); setPlayerHitFx(false); setActionLocked(false);
     if (nextHp <= 0) setStage("defeat");
   }
 
   const resetBoss = () => {
-    setStage("battle"); setBossHp(UNSW_MAX_HP); setHp(BIANCA_BOSS_MAX_HP); setEnergy(0); setTurn(0); setPressure(0);
+    pressureStacksRef.current = [];
+    setStage("battle"); setBossHp(UNSW_MAX_HP); setHp(BIANCA_BOSS_MAX_HP); setEnergy(0); setTurn(0); setPressureStacks([]);
     setGroupProject(false); setPresentationPreparing(false); setExtensionCooldown(0); setConsiderationCooldown(0); setPhase2(false); setRubricUsed(false);
     setCourseFeeUsed(false); setPendingBossSkill(null); setStatus("UNSW 正在等待你的选择。");
     setOrderShifted(false); setUltimateAnnounced(false); setActionLocked(false); setActingSkill(false); setBossHit(false);
@@ -260,13 +283,13 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     {debugMode && stage === "battle" && <button className="unsw-debug-damage" onClick={() => setBossHp((value) => Math.max(0, value - 50))}>血量 -50</button>}
     <div className="unsw-hp"><i><em style={{ width: `${bossHp / UNSW_MAX_HP * 100}%` }} /></i><span>HP {bossHp}/{UNSW_MAX_HP}</span></div>
     <div className="unsw-nameplate"><b>UNSW</b><small>The University of New South Wales</small></div>
-    <div className={`bianca-battle unsw-bianca ${playerHitFx ? "is-hit" : ""}`}><img src={asset(actingSkill ? "BiancaBattle2.png" : "BiancaBattle1.png")} alt="战斗中的 Bianca" />{pressure > 0 && <div className="unsw-pressure-indicator" title={`Deadline Pressure ×${pressure}`}><img src={asset("PressureIcon1.png")} alt="Deadline Pressure" /><b>×{pressure}</b></div>}<div><b>Bianca</b><i><em style={{ width: `${hp / BIANCA_BOSS_MAX_HP * 100}%` }} /></i><small>HP {hp}/{BIANCA_BOSS_MAX_HP}　能量 {energy}/{ENERGY_CONFIG.maxEnergy}</small></div></div>
+    <div className={`bianca-battle unsw-bianca ${playerHitFx ? "is-hit" : ""}`}><img src={asset(actingSkill ? "BiancaBattle2.png" : "BiancaBattle1.png")} alt="战斗中的 Bianca" />{pressureStacks.length > 0 && <div className="unsw-pressure-indicator" title={`Deadline Pressure：${pressureStacks.length} 层`}>{pressureStacks.map((_, index) => <img key={index} src={asset("PressureIcon1.png")} alt="Deadline Pressure" />)}</div>}<div><b>Bianca</b><i><em style={{ width: `${hp / BIANCA_BOSS_MAX_HP * 100}%` }} /></i><small>HP {hp}/{BIANCA_BOSS_MAX_HP}　能量 {energy}/{ENERGY_CONFIG.maxEnergy}</small></div></div>
     <BattleEffectLayer effect={combatEffect} />
     <FloatingCombatText items={combatTexts} />
     {battleDialogue && <BattleShout speaker={battleDialogue.speaker} text={battleDialogue.text} tag={battleDialogue.tag} />}
     {skillNamePop && <strong className="unsw-skill-pop">{skillNamePop}</strong>}
     <CombatGuide entries={unswCombatGuideEntries} open={isCombatGuideOpen} onOpenChange={setIsCombatGuideOpen} currentStats={{ "bianca-unsw": `HP ${hp}/${BIANCA_BOSS_MAX_HP} · 能量 ${energy}/${ENERGY_CONFIG.maxEnergy}`, unsw: `HP ${bossHp}/${UNSW_MAX_HP}` }} />
-    {stage === "battle" && <><div className="battle-status-toast unsw-status">{status}{pressure ? `　｜Pressure ×${pressure}` : ""}</div><div className="battle-skills university-skills">{visibleSkills.map((skill) => {
+    {stage === "battle" && <><div className="battle-status-toast unsw-status">{status}</div><div className="battle-skills university-skills">{visibleSkills.map((skill) => {
       const cost = skill.id === "graduation" ? UNIVERSITY_SKILLS.graduation.energyCost : UNIVERSITY_SKILLS[skill.id].energyCost;
       const graduationHardLocked = skill.id === "graduation" && (!phase2 || energy < cost);
       return <button key={skill.id} className={`${skill.id === "graduation" ? "ultimate" : ""} ${skill.id === "graduation" && (!graduationCanKill || !ultimateAnnounced) ? "is-locked" : ""}`} disabled={actionLocked || graduationHardLocked || energy < cost || (skill.id === "extension" && extensionCooldown > 0) || (skill.id === "consideration" && considerationCooldown > 0)} onClick={() => useSkill(skill.id)}>{skill.name}<small>{skill.id === "graduation" ? `${energy}/${cost}` : skill.id === "extension" && extensionCooldown ? `冷却 ${extensionCooldown}` : skill.id === "consideration" && considerationCooldown ? `冷却 ${considerationCooldown}` : <>{skill.description}{cost > 0 && <><br />能量 -{cost}</>}</>}</small></button>;

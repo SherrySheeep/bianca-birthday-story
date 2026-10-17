@@ -85,24 +85,26 @@ export const UNSW_STATS = {
 } as const;
 
 export const UNSW_SKILLS = {
-  assignment: { damage: 28, pressureBonusPerStack: 3 },
+  assignment: { damage: 28 },
   groupwork: { damage: 15, playerDamageMultiplier: 0.7 },
-  presentation: { damage: 60, phase2Damage: 72 },
+  presentation: { damage: 40, phase2Damage: 52 },
   quiz: { damage: 19 },
   rubric: { damage: 12, energyLoss: 18 },
   finalExam: { damage: 55 },
   // Course Fee 会在这个金额区间内随机收费，伤害为收费金额 × damageRate（向上取整）。
-  courseFee: { minCharge: 1000, maxCharge: 2500, damageRate: 0.15 },
+  courseFee: { minCharge: 1000, maxCharge: 2500, damageRate: 0.012 },
+  // Pressure 每层独立存在 3 个 UNSW 回合；每回合按当前层数结算持续伤害。
+  pressure: { damagePerStack: 3, maxStacks: 5, durationTurns: 3 },
 } as const;
 
 export const UNIVERSITY_SKILLS = {
   // energyCost 是施放时先消耗的能量；命中后仍会获得 energyGain。
-  xlookup: { damage: 68, energyCost: 0, energyGain: 22 },
-  deadline: { damage: 112, energyCost: 10, energyGain: 30, selfDamage: 10 },
-  extension: { damage: 25, energyCost: 15, energyGain: 18, actionDelay: 1, cooldown: 2 },
-  groupChat: { damage: 35, energyCost: 20, energyGain: 20 },
-  consideration: { damage: 0, energyCost: 25, energyGain: 10, heal: 65, cooldown: 3 },
-  graduation: { damage: 230, energyCost: 100 },
+  xlookup: { damage: 48, energyCost: 0, energyGain: 22 },
+  deadline: { damage: 82, energyCost: 5, energyGain: 0, selfDamage: 10 },
+  extension: { damage: 30, energyCost: 8, energyGain: 0, actionDelay: 1, cooldown: 2 },
+  groupChat: { damage: 35, energyCost: 10, energyGain: 0 },
+  consideration: { damage: 0, energyCost: 12, energyGain: 0, heal: 65, cooldown: 3 },
+  graduation: { damage: 200, energyCost: 100 },
 } as const;
 
 // Phase 2 台词与无法击杀 UNSW 时的弹幕都集中在这里，之后可以直接增删文字。
