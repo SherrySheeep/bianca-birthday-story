@@ -77,7 +77,7 @@ export const chapterTenTable: ChapterTenLine[] = [
   { speaker: "Bianca", text: "好像……" },
   { speaker: "Bianca", text: "要先完成某种仪式。" },
   { speaker: "Sherry", text: "又来？", portrait: "sherry" },
-  { speaker: "Bianca", text: "我也想问。" },
+  { speaker: "Bianca", text: "哇喔~" },
 ];
 
 export const chapterTenCakeReveal: ChapterTenLine[] = [
