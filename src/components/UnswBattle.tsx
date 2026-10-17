@@ -90,7 +90,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
   const actionOrder = pendingBossSkill ? ["UNSW", "Bianca"] : ["Bianca", "UNSW"];
   const visibleSkills = useMemo(() => universitySkills, []);
   const combatGuideEntries = useMemo(() => {
-    if (!retryAssist && !phase2) return unswCombatGuideEntries;
+    if (!retryAssist && !phase2 && groupworkTurns === 0) return unswCombatGuideEntries;
     return unswCombatGuideEntries.map((entry) => entry.id !== "bianca-unsw" ? entry : ({
       ...entry,
       skills: entry.skills.map((skill) => ({
