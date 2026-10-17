@@ -32,6 +32,13 @@ const awakeningLines = [
   ["安柏", "Bianca，这次就交给你了！"],
 ] as const;
 
+const defeatLines = [
+  ["Bianca", "可恶！！我不甘心！"],
+  ["Bianca", "我要重来！！"],
+  ["作者大大", "或者，你也可以请教请教我~"],
+  ["Bianca", "啊啊啊 UNSW 我跟你拼了！！"],
+] as const;
+
 function randomVariant(id: BossSkillId) {
   const variants = unswBossSkills[id].dialogueVariants;
   return variants[Math.floor(Math.random() * variants.length)];
@@ -67,6 +74,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
   const [skillNamePop, setSkillNamePop] = useState<string | null>(null);
   const [phaseDialogueIndex, setPhaseDialogueIndex] = useState(0);
   const [graduationDialogueIndex, setGraduationDialogueIndex] = useState(0);
+  const [defeatDialogueIndex, setDefeatDialogueIndex] = useState(0);
   const [isCombatGuideOpen, setIsCombatGuideOpen] = useState(false);
   const isBattlePaused = paused || isCombatGuideOpen;
   const wait = usePausableBattleWait(isBattlePaused);
@@ -256,7 +264,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     pressureStacksRef.current = nextPressureStacks;
     setPressureStacks(nextPressureStacks);
     setPendingBossSkill(null); setBattleDialogue(null); setSkillNamePop(null); setCombatTexts([]); setCombatEffect(null); setPlayerHitFx(false); setActionLocked(false);
-    if (nextHp <= 0) setStage("defeat");
+    if (nextHp <= 0) { setDefeatDialogueIndex(0); setStage("defeat"); }
   }
 
   const resetBoss = () => {
@@ -277,6 +285,11 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
   const advanceGraduationDialogue = () => {
     if (graduationDialogueIndex < UNSW_BATTLE_COPY.graduationReady.length - 1) setGraduationDialogueIndex((value) => value + 1);
     else { setGraduationDialogueIndex(0); setStatus("ULTIMATE READY · 毕业"); setStage("battle"); }
+  };
+
+  const advanceDefeatDialogue = () => {
+    if (defeatDialogueIndex < defeatLines.length - 1) setDefeatDialogueIndex((value) => value + 1);
+    else resetBoss();
   };
 
   return <div className={`battle-eight-card unsw-battle ${stage === "phase2" ? "week-ten" : ""} ${isCombatGuideOpen ? "combat-guide-paused" : ""}`} style={{ "--unsw-phase-speed": `${0.8 / UNSW_STATS.phase2SpeedMultiplier}s` } as CSSProperties}>
@@ -302,7 +315,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     {(stage === "entrance" || stage === "awakening") && <div className="battle-dialogue-overlay unsw-story-overlay"><div><span className={`dialogue-speaker speaker-${currentStory[0]}`}>{currentStory[0]}</span><p>{currentStory[1]}</p><button className="dialogue-next" onClick={advanceStory}>继续</button></div></div>}
     {stage === "phase2" && <div className="battle-dialogue-overlay unsw-story-overlay"><div><span className={`dialogue-speaker speaker-${UNSW_BATTLE_COPY.phase2Intro[phaseDialogueIndex].speaker}`}>{UNSW_BATTLE_COPY.phase2Intro[phaseDialogueIndex].speaker}</span><p>{UNSW_BATTLE_COPY.phase2Intro[phaseDialogueIndex].text}</p><button className="dialogue-next" onClick={advancePhaseDialogue}>继续</button></div></div>}
     {stage === "graduationReady" && <div className="battle-dialogue-overlay unsw-story-overlay"><div><span className="dialogue-speaker speaker-Bianca">Bianca</span><p>{UNSW_BATTLE_COPY.graduationReady[graduationDialogueIndex].text}</p><button className="dialogue-next" onClick={advanceGraduationDialogue}>继续</button></div></div>}
-    {stage === "defeat" && <div className="battle-overlay"><div><h3>挑战失败</h3><p>这次只需要重新挑战 UNSW，不会重播深渊法师教程。</p><button className="dialogue-next" onClick={resetBoss}>重新挑战 UNSW</button></div></div>}
+    {stage === "defeat" && <div className="battle-dialogue-overlay unsw-story-overlay"><div><span className={`dialogue-speaker speaker-${defeatLines[defeatDialogueIndex][0]}`}>{defeatLines[defeatDialogueIndex][0]}</span><p>{defeatLines[defeatDialogueIndex][1]}</p><button className="dialogue-next" onClick={advanceDefeatDialogue}>{defeatDialogueIndex === defeatLines.length - 1 ? "重新挑战" : "继续"}</button></div></div>}
     {stage === "bossDefeat" && <div className="battle-overlay graduation-overlay"><div><h3>GRADUATION COMPLETE</h3><p><b>UNSW：</b>这不可能——！</p><p><b>Bianca：</b>……毕业了？</p><button className="dialogue-next" onClick={onVictory}>Battle Complete</button></div></div>}
   </div>;
 }
