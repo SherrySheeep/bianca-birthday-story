@@ -40,7 +40,7 @@ function randomVariant(id: BossSkillId) {
 export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = false, onVictory }: Props) {
   const [stage, setStage] = useState<Stage>(startAtPhase2 ? "phase2" : "entrance");
   const [storyIndex, setStoryIndex] = useState(0);
-  const [bossHp, setBossHp] = useState<number>(UNSW_MAX_HP);
+  const [bossHp, setBossHp] = useState<number>(startAtPhase2 ? Math.ceil(UNSW_MAX_HP / 2) : UNSW_MAX_HP);
   const [hp, setHp] = useState<number>(BIANCA_BOSS_MAX_HP);
   const [energy, setEnergy] = useState<number>(0);
   const [turn, setTurn] = useState(0);
@@ -66,7 +66,6 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
   const [skillNamePop, setSkillNamePop] = useState<string | null>(null);
   const [phaseDialogueIndex, setPhaseDialogueIndex] = useState(0);
   const [graduationDialogueIndex, setGraduationDialogueIndex] = useState(0);
-  const [tauntBurst, setTauntBurst] = useState<{ boss: string; bianca?: string; key: number } | null>(null);
   const [isCombatGuideOpen, setIsCombatGuideOpen] = useState(false);
   const isBattlePaused = paused || isCombatGuideOpen;
   const wait = usePausableBattleWait(isBattlePaused);
@@ -122,8 +121,11 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     if (id === "graduation") {
       if (!phase2 || energy < UNIVERSITY_SKILLS.graduation.energyCost) return;
       if (!graduationCanKill || !ultimateAnnounced) {
-        setTauntBurst({ boss: UNSW_BATTLE_COPY.graduationLockedTaunt, key: Date.now() });
-        window.setTimeout(() => setTauntBurst(null), 1800);
+        setActionLocked(true);
+        setBattleDialogue({ speaker: "UNSW", text: UNSW_BATTLE_COPY.graduationLockedTaunt, tag: "嘲讽" });
+        await wait(BATTLE_TIMING.dialogueLine);
+        setBattleDialogue(null);
+        setActionLocked(false);
         return;
       }
     }
@@ -153,11 +155,12 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     setBossHit(true);
     if (survivalTaunt) {
       const taunts = UNSW_BATTLE_COPY.survivalTaunts;
-      setTauntBurst({
-        boss: taunts[Math.floor(Math.random() * taunts.length)],
-        bianca: ultimateAnnounced ? UNSW_BATTLE_COPY.biancaReply : undefined,
-        key: Date.now(),
-      });
+      setBattleDialogue({ speaker: "UNSW", text: taunts[Math.floor(Math.random() * taunts.length)], tag: "嘲讽" });
+      await wait(BATTLE_TIMING.dialogueLine);
+      if (ultimateAnnounced) {
+        setBattleDialogue({ speaker: "Bianca", text: UNSW_BATTLE_COPY.biancaReply, tag: "回应" });
+        await wait(BATTLE_TIMING.dialogueLine);
+      }
     }
     setEnergy((value) => id === "graduation" ? 0 : Math.min(ENERGY_CONFIG.maxEnergy, Math.max(0, value - energyCost) + skill.energy));
     setExtensionCooldown((value) => id === "extension" ? UNIVERSITY_SKILLS.extension.cooldown : Math.max(0, value - 1));
@@ -185,7 +188,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     else setStatus(`Bianca：${skill.name} 命中 UNSW。`);
 
     await wait(BATTLE_TIMING.hit);
-    setActingSkill(false); setBossHit(false); setCombatTexts([]); setCombatEffect(null); setBattleDialogue(null); setTauntBurst(null);
+    setActingSkill(false); setBossHit(false); setCombatTexts([]); setCombatEffect(null); setBattleDialogue(null);
     if (nextBossHp <= 0) { setActionLocked(false); setStage("bossDefeat"); return; }
     if (!phase2 && nextBossHp <= UNSW_MAX_HP * UNSW_STATS.phase2Threshold) { setActionLocked(false); setPhase2(true); setPhaseDialogueIndex(0); setStage("phase2"); return; }
     if (skipBossTurn) {
@@ -237,7 +240,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     setCourseFeeUsed(false); setPendingBossSkill(null); setStatus("UNSW 正在等待你的选择。");
     setOrderShifted(false); setUltimateAnnounced(false); setActionLocked(false); setActingSkill(false); setBossHit(false);
     setPlayerHitFx(false); setCombatTexts([]); setCombatEffect(null); setBattleDialogue(null); setSkillNamePop(null);
-    setPhaseDialogueIndex(0); setGraduationDialogueIndex(0); setTauntBurst(null);
+    setPhaseDialogueIndex(0); setGraduationDialogueIndex(0);
   };
 
   const advancePhaseDialogue = () => {
@@ -262,7 +265,6 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     <FloatingCombatText items={combatTexts} />
     {battleDialogue && <BattleShout speaker={battleDialogue.speaker} text={battleDialogue.text} tag={battleDialogue.tag} />}
     {skillNamePop && <strong className="unsw-skill-pop">{skillNamePop}</strong>}
-    {tauntBurst && <div className="unsw-taunt-burst" key={tauntBurst.key}><span>{tauntBurst.boss}</span>{tauntBurst.bianca && <i>{tauntBurst.bianca}</i>}</div>}
     <CombatGuide entries={unswCombatGuideEntries} open={isCombatGuideOpen} onOpenChange={setIsCombatGuideOpen} currentStats={{ "bianca-unsw": `HP ${hp}/${BIANCA_BOSS_MAX_HP} · 能量 ${energy}/${ENERGY_CONFIG.maxEnergy}`, unsw: `HP ${bossHp}/${UNSW_MAX_HP}` }} />
     {stage === "battle" && <><div className="battle-status-toast unsw-status">{status}{pressure ? `　｜Pressure ×${pressure}` : ""}</div><div className="battle-skills university-skills">{visibleSkills.map((skill) => {
       const cost = skill.id === "graduation" ? UNIVERSITY_SKILLS.graduation.energyCost : UNIVERSITY_SKILLS[skill.id].energyCost;
