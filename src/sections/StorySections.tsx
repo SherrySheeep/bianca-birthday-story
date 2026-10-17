@@ -101,7 +101,7 @@ export function Room({ onDone }: { onDone: Done }) {
   const [route, setRoute] = useState(false);
   const [routeWrong, setRouteWrong] = useState(false);
   const found = () =>
-    setNote("护照找到啦 ✓\n新西兰护照在手，B老师可以继续国际化了。");
+    setNote("护照找到啦 ✓\n护照在手，B老师可以继续国际化了。");
   const planRoute = () => {
     const correct = from === "澳大利亚 · 悉尼" && to === "中国 · 青海";
     setRouteWrong(!correct);
