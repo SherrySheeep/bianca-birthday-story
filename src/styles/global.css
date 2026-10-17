@@ -4017,6 +4017,8 @@ main {
 .combat-guide-row dl { display:flex; flex-wrap:wrap; gap:5px; margin:8px 0 0; }
 .combat-guide-row dl > div { display:flex; gap:4px; padding:3px 6px; border:1px solid #d0aa76; border-radius:999px; background:#fff1c7; font-size:.62rem; }
 .combat-guide-row dt { color:#956346; font-weight:850; }.combat-guide-row dd { margin:0; font-weight:950; }
+.combat-guide-row dl > div.combat-guide-stat-debuff { border-color:#df8f8f; color:#9b3038; background:#ffdada; }
+.combat-guide-row dl > div.combat-guide-stat-debuff dt { color:#b04a50; }
 .combat-guide-note { margin-top:12px; padding:10px 12px; border:2px dashed #c17c58; border-radius:12px; color:#7b4938; background:#ffe1b0; font-size:.75rem; font-weight:800; line-height:1.55; white-space:pre-line; }
 .combat-guide-paused .chapter-eight-fx *, .combat-guide-paused .battle-enemy img, .combat-guide-paused .bianca-battle img, .combat-guide-paused .combat-float, .combat-guide-paused .battle-shout, .combat-guide-paused .unsw-skill-pop, .combat-guide-paused.week-ten .unsw-boss > img { animation-play-state:paused !important; }
 .chapter-eight-debug-jumps { position: fixed; z-index: 100; top: 50%; right: 12px; display: grid; gap: 6px; transform: translateY(-50%); }

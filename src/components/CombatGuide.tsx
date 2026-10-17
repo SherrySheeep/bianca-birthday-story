@@ -40,7 +40,7 @@ export function CombatGuide({ entries, open, onOpenChange, currentStats = {} }: 
           </nav>
           <article className="combat-guide-page">
             <div className="combat-guide-title"><div><h3>{selected.name}</h3>{selected.subtitle && <p>{selected.subtitle}</p>}</div>{currentStats[selected.id] && <strong>{currentStats[selected.id]}</strong>}</div>
-            <div className="combat-guide-table"><div className="combat-guide-table-head"><b>技能</b><b>用途</b></div>{selected.skills.map((skill) => <div className="combat-guide-row" key={skill.name}><h4>{skill.name}</h4><div><p>{skill.description}</p>{skill.stats && <dl>{skill.stats.map((stat) => <div key={stat.label}><dt>{stat.label}</dt><dd>{stat.value}</dd></div>)}</dl>}</div></div>)}</div>
+            <div className="combat-guide-table"><div className="combat-guide-table-head"><b>技能</b><b>用途</b></div>{selected.skills.map((skill) => <div className="combat-guide-row" key={skill.name}><h4>{skill.name}</h4><div><p>{skill.description}</p>{skill.stats && <dl>{skill.stats.map((stat) => <div className={stat.tone ? `combat-guide-stat-${stat.tone}` : ""} key={stat.label}><dt>{stat.label}</dt><dd>{stat.value}</dd></div>)}</dl>}</div></div>)}</div>
             {selected.note && <aside className="combat-guide-note">✦ {selected.note}</aside>}
           </article>
         </div>

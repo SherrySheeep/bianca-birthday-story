@@ -54,7 +54,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
   const [turn, setTurn] = useState(0);
   const [pressureStacks, setPressureStacks] = useState<number[]>([]);
   const pressureStacksRef = useRef<number[]>([]);
-  const [groupProject, setGroupProject] = useState(false);
+  const [groupworkTurns, setGroupworkTurns] = useState(0);
   const [, setPresentationPreparing] = useState(false);
   const presentationPreparingRef = useRef(false);
   const presentationCancelledRef = useRef(false);
@@ -107,13 +107,20 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
                     ? UNIVERSITY_SKILLS.groupChat.phase2Damage
                     : Number(stat.value)
               : Number(stat.value);
-            return { ...stat, value: retryAssist ? Math.round(phase2Damage * UNSW_RETRY_ASSIST.playerDamageMultiplier) : phase2Damage };
+            const isGroupChat = skill.name === "Group Chat 99+";
+            const debuffMultiplier = groupworkTurns > 0 && !isGroupChat ? UNSW_SKILLS.groupwork.playerDamageMultiplier : 1;
+            const retryMultiplier = retryAssist ? UNSW_RETRY_ASSIST.playerDamageMultiplier : 1;
+            return {
+              ...stat,
+              value: Math.round(phase2Damage * debuffMultiplier * retryMultiplier),
+              tone: debuffMultiplier < 1 ? "debuff" as const : undefined,
+            };
           }
           return stat;
         }),
       })),
     }));
-  }, [phase2, retryAssist]);
+  }, [groupworkTurns, phase2, retryAssist]);
   const graduationCanKill = bossHp <= UNIVERSITY_SKILLS.graduation.damage;
 
   useEffect(() => {
@@ -180,7 +187,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     if (id === "extension" && extensionCooldown > 0) return;
     if (id === "consideration" && considerationCooldown > 0) return;
     const skill = universitySkills.find((item) => item.id === id)!;
-    const multiplier = groupProject && id !== "groupChat" ? UNSW_SKILLS.groupwork.playerDamageMultiplier : 1;
+    const multiplier = groupworkTurns > 0 && id !== "groupChat" ? UNSW_SKILLS.groupwork.playerDamageMultiplier : 1;
     const phaseDamage = phase2
       ? id === "deadline"
         ? UNIVERSITY_SKILLS.deadline.phase2Damage
@@ -242,8 +249,8 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
         setStatus("Bianca：PRESENTATION POSTPONED");
       } else setStatus("Bianca：Extension Request 将 UNSW 的下一次行动往后推了。");
     } else if (id === "groupChat") {
-      setGroupProject(false);
-      setStatus(groupProject ? "Bianca：Group Chat 99+ 清除了小组作业 debuff。" : "Bianca：群聊刷了 99 条，但暂时没有需要处理的小组作业。");
+      setGroupworkTurns(0);
+      setStatus(groupworkTurns > 0 ? "Bianca：Group Chat 99+ 清除了小组作业 debuff。" : "Bianca：群聊刷了 99 条，但暂时没有需要处理的小组作业。");
     } else if (id === "consideration") {
       const healAmount = phase2 ? UNIVERSITY_SKILLS.consideration.phase2Heal : UNIVERSITY_SKILLS.consideration.heal;
       setHp((value) => Math.min(BIANCA_BOSS_MAX_HP, value + healAmount));
@@ -252,6 +259,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
       setStatus(`Bianca：Special Consideration 恢复 ${healAmount} HP，并清除了 Deadline Pressure。`);
     } else if (id === "graduation") setStatus("Bianca：毕业命中 UNSW。这一天，终于来了。");
     else setStatus(`Bianca：${skill.name} 命中 UNSW。`);
+    if (id !== "groupChat") setGroupworkTurns((value) => Math.max(0, value - 1));
 
     await wait(BATTLE_TIMING.hit);
     setActingSkill(false); setBossHit(false); setCombatTexts([]); setCombatEffect(null); setBattleDialogue(null);
@@ -312,7 +320,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
       : agedPressureStacks;
     const pressureResult = "增加 1 层 Deadline Pressure";
     if (id === "assignment") statusText = `UNSW：${unswBossSkills[id].name} 对 Bianca 造成 ${damage} 点伤害，并${pressureResult}。`;
-    if (id === "groupwork") { setGroupProject(true); statusText = `UNSW：给 Bianca 施加 Group Project，${pressureResult}，并造成 ${damage} 点伤害；Bianca 下一次攻击伤害降低。`; }
+    if (id === "groupwork") { setGroupworkTurns(UNSW_SKILLS.groupwork.durationTurns); statusText = `UNSW：给 Bianca 施加 Group Project，${pressureResult}，并造成 ${damage} 点伤害；Bianca 接下来两个行动回合的攻击伤害降低。`; }
     if (id === "rubric") { setRubricUsed(true); setEnergy((value) => Math.max(0, value - UNSW_SKILLS.rubric.energyLoss)); statusText = `UNSW：${unswBossSkills[id].name} 造成 ${damage} 点伤害、${pressureResult}，并扣除 Bianca ${UNSW_SKILLS.rubric.energyLoss} 点能量。`; }
     if (id === "courseFee") {
       const { minCharge, maxCharge, damageRate } = UNSW_SKILLS.courseFee;
@@ -359,7 +367,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     suppressNextPresentationRef.current = false;
     setRetryAssist(true);
     setStage("battle"); setBossHp(UNSW_RETRY_ASSIST.bossStartingHp); setHp(BIANCA_BOSS_MAX_HP); setEnergy(UNSW_RETRY_ASSIST.playerStartingEnergy); setTurn(0); setPressureStacks([]);
-    setGroupProject(false); setPresentationPreparing(false); setExtensionCooldown(0); setConsiderationCooldown(0); setPhase2(true); setRubricUsed(false);
+    setGroupworkTurns(0); setPresentationPreparing(false); setExtensionCooldown(0); setConsiderationCooldown(0); setPhase2(true); setRubricUsed(false);
     setCourseFeeUsed(false); setPendingBossSkill(null); setStatus("UNSW 正在等待你的选择。");
     setOrderShifted(false); setUltimateAnnounced(false); setActionLocked(false); setActingSkill(false); setBossHit(false);
     setPlayerHitFx(false); setCombatTexts([]); setCombatEffect(null); setBattleDialogue(null); setSkillNamePop(null);

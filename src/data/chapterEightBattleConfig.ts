@@ -86,7 +86,7 @@ export const UNSW_STATS = {
 
 export const UNSW_SKILLS = {
   assignment: { damage: 28 },
-  groupwork: { damage: 15, playerDamageMultiplier: 0.7 },
+  groupwork: { damage: 15, playerDamageMultiplier: 0.7, durationTurns: 2 },
   presentation: { damage: 40, phase2Damage: 47 },
   quiz: { damage: 19 },
   rubric: { damage: 12, energyLoss: 18 },

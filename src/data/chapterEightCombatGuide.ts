@@ -11,7 +11,7 @@ import {
 export type CombatGuideSkill = {
   name: string;
   description: string;
-  stats?: Array<{ label: string; value: string | number }>;
+  stats?: Array<{ label: string; value: string | number; tone?: "debuff" }>;
 };
 
 export type CombatGuideEntry = {
@@ -100,7 +100,7 @@ export const unswCombatGuideEntries: CombatGuideEntry[] = [
     id: "unsw", name: "UNSW", subtitle: "The University of New South Wales", icon: icon("UNSWIcon1.png"),
     skills: [
       { name: "Assignment", description: "造成基础伤害，并为 Bianca 施加 1 层 Pressure。", stats: [{ label: "Base Damage", value: UNSW_SKILLS.assignment.damage }] },
-      { name: "Groupwork", description: "造成伤害、施加 1 层 Pressure 和 Groupwork，降低 Bianca 下一次攻击的输出。", stats: [{ label: "Damage", value: UNSW_SKILLS.groupwork.damage }, { label: "Player Damage Multiplier", value: UNSW_SKILLS.groupwork.playerDamageMultiplier }] },
+      { name: "Groupwork", description: "造成伤害、施加 1 层 Pressure 和 Groupwork，使 Bianca 接下来两个行动回合的输出降低。", stats: [{ label: "Damage", value: UNSW_SKILLS.groupwork.damage }, { label: "Player Damage Multiplier", value: UNSW_SKILLS.groupwork.playerDamageMultiplier }, { label: "Duration", value: UNSW_SKILLS.groupwork.durationTurns }] },
       { name: "Presentation", description: "UNSW 会先准备 Presentation 并施加一层 Pressure。下一次行动爆发出高额伤害。可以被 Extension Request 取消。", stats: [{ label: "Normal Damage", value: UNSW_SKILLS.presentation.damage }, { label: "Phase 2 Damage", value: UNSW_SKILLS.presentation.phase2Damage }] },
       { name: "Surprise Quiz", description: "快速发动的直接攻击。", stats: [{ label: "Damage", value: UNSW_SKILLS.quiz.damage }] },
       { name: "Rubric Updated", description: "改变当前战斗节奏，施加 1 层 Pressure，并削减 Bianca 的部分能量。", stats: [{ label: "Damage", value: UNSW_SKILLS.rubric.damage }, { label: "Energy Loss", value: UNSW_SKILLS.rubric.energyLoss }] },
