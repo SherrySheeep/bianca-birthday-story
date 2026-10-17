@@ -106,6 +106,6 @@ export const unswCombatGuideEntries: CombatGuideEntry[] = [
       { name: "Rubric Updated", description: "改变当前战斗节奏，施加 1 层 Pressure，并削减 Bianca 的部分能量。", stats: [{ label: "Damage", value: UNSW_SKILLS.rubric.damage }, { label: "Energy Loss", value: UNSW_SKILLS.rubric.energyLoss }] },
       { name: "Final Exam", description: "UNSW 后半阶段的强力攻击，并为 Bianca 施加 1 层 Pressure。", stats: [{ label: "Damage", value: UNSW_SKILLS.finalExam.damage }] },
       { name: "Course Fee", description: "随机收取学费，并造成收费金额一定比例的伤害。", stats: [{ label: "收费范围", value: `${UNSW_SKILLS.courseFee.minCharge}–${UNSW_SKILLS.courseFee.maxCharge}` }, { label: "伤害比例", value: `${(UNSW_SKILLS.courseFee.damageRate * 100).toFixed(1)}%` }] },
-    ], note: `Pressure：最多 ${UNSW_SKILLS.pressure.maxStacks} 层。一回合指 Bianca 与 UNSW 各行动一次；新获得的 Pressure 从下一轮开始结算，每层持续 ${UNSW_SKILLS.pressure.durationTurns} 个完整回合，每回合每层造成 ${UNSW_SKILLS.pressure.damagePerStack} 点伤害。可由 Special Consideration 清除。\n\n✦ Phase 2 — Week 10：HP 降至 ${Math.round(UNSW_STATS.phase2Threshold * 100)}% 时进入。行动演出速度变为 ${UNSW_STATS.phase2SpeedMultiplier}×，Presentation 伤害提升，并解锁 Final Exam。`,
+    ], note: `Pressure：最多 ${UNSW_SKILLS.pressure.maxStacks} 层。新获得的 Pressure 从下一轮开始结算，每层持续 ${UNSW_SKILLS.pressure.durationTurns} 个完整回合，每层每回合造成 ${UNSW_SKILLS.pressure.damagePerStack} 点伤害。可由 Special Consideration 清除。\n\n✦ Phase 2 — Week 10：HP 降至 ${Math.round(UNSW_STATS.phase2Threshold * 100)}% 时进入。Presentation 伤害提升，并解锁 Final Exam。`,
   },
 ];

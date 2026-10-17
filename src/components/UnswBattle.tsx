@@ -36,6 +36,7 @@ const defeatLines = [
   ["Bianca", "可恶！！我不甘心！"],
   ["Bianca", "我要重来！！"],
   ["作者大大", "或者，你也可以请教请教我~"],
+  ["作者大大", "毕竟让 Bianca 输的事我做不到~"],
   ["Bianca", "啊啊啊 UNSW 我跟你拼了！！"],
 ] as const;
 
@@ -225,9 +226,9 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     const nextPressureStacks = pressureAdded
       ? [UNSW_SKILLS.pressure.durationTurns, ...agedPressureStacks]
       : agedPressureStacks;
-    const pressureResult = pressureAdded ? "增加 1 层 Deadline Pressure" : "Deadline Pressure 已达上限";
+    const pressureResult = "增加 1 层 Deadline Pressure";
     if (id === "assignment") statusText = `UNSW：${unswBossSkills[id].name} 对 Bianca 造成 ${damage} 点伤害，并${pressureResult}。`;
-    if (id === "groupwork") { setGroupProject(true); statusText = `UNSW：给 Bianca 施加 Group Project、${pressureResult}，并造成 ${damage} 点伤害；Bianca 下一次攻击伤害降低。`; }
+    if (id === "groupwork") { setGroupProject(true); statusText = `UNSW：给 Bianca 施加 Group Project，${pressureResult}，并造成 ${damage} 点伤害；Bianca 下一次攻击伤害降低。`; }
     if (id === "rubric") { setRubricUsed(true); setEnergy((value) => Math.max(0, value - UNSW_SKILLS.rubric.energyLoss)); statusText = `UNSW：${unswBossSkills[id].name} 造成 ${damage} 点伤害、${pressureResult}，并扣除 Bianca ${UNSW_SKILLS.rubric.energyLoss} 点能量。`; }
     if (id === "courseFee") {
       const { minCharge, maxCharge, damageRate } = UNSW_SKILLS.courseFee;
@@ -253,7 +254,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     if (nextHp > 0 && currentPressureStacks.length > 0) {
       const pressureDamage = currentPressureStacks.length * UNSW_SKILLS.pressure.damagePerStack;
       nextHp = Math.max(0, nextHp - pressureDamage);
-      setStatus((current) => `${current}\nDeadline Pressure ×${currentPressureStacks.length}，造成 ${pressureDamage} 点持续伤害。`);
+      setStatus((current) => `${current}\nDeadline Pressure 造成 ${pressureDamage} 点持续伤害。`);
       setCombatTexts([{ id: `${Date.now()}-pressure-player`, target: "bianca", value: pressureDamage, kind: "hp" }]);
       setPlayerHitFx(false);
       await wait(40);
