@@ -33,7 +33,7 @@ export const unswBossSkills: Record<BossSkillId, {
   presentation: { name: "PRESENTATION · Preparing…", damage: UNSW_SKILLS.presentation.damage, dialogueVariants: [["躲什么躲！", "上台 Presentation！"], ["轮到你展示了！"]] },
   quiz: { name: "SURPRISE QUIZ", damage: UNSW_SKILLS.quiz.damage, dialogueVariants: [["准备好了？", "没准备也没用！"], ["接着！突击测验！"]] },
   rubric: { name: "RUBRIC UPDATED", damage: UNSW_SKILLS.rubric.damage, dialogueVariants: [["哈哈哈哈！", "规则——改了！"], ["再看一眼 Rubric 吧！"]] },
-  courseFee: { name: "COURSE FEE　-$1,248", damage: UNSW_SKILLS.courseFee.damage, dialogueVariants: [["想跑？", "先把学费交了！"]] },
+  courseFee: { name: "COURSE FEE", damage: 0, dialogueVariants: [["想跑？", "先把学费交了！"]] },
   finalExam: { name: "FINAL EXAM", damage: UNSW_SKILLS.finalExam.damage, dialogueVariants: [["还没结束！", "真正的考验现在才开始！"], ["最后一题——不许交白卷！"]] },
 };
 

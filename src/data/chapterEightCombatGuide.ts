@@ -105,7 +105,7 @@ export const unswCombatGuideEntries: CombatGuideEntry[] = [
       { name: "Surprise Quiz", description: "快速发动的直接攻击。", stats: [{ label: "Damage", value: UNSW_SKILLS.quiz.damage }] },
       { name: "Rubric Updated", description: "改变当前战斗节奏，并削减 Bianca 的部分能量。", stats: [{ label: "Damage", value: UNSW_SKILLS.rubric.damage }, { label: "Energy Loss", value: UNSW_SKILLS.rubric.energyLoss }] },
       { name: "Final Exam", description: "UNSW 后半阶段的强力攻击。", stats: [{ label: "Damage", value: UNSW_SKILLS.finalExam.damage }] },
-      { name: "Course Fee", description: "一个非常不讲道理的收费技能。", stats: [{ label: "Damage", value: UNSW_SKILLS.courseFee.damage }] },
+      { name: "Course Fee", description: "随机收取学费，并造成收费金额一定比例的伤害。", stats: [{ label: "收费范围", value: `${UNSW_SKILLS.courseFee.minCharge}–${UNSW_SKILLS.courseFee.maxCharge}` }, { label: "伤害比例", value: `${Math.round(UNSW_SKILLS.courseFee.damageRate * 100)}%` }] },
     ], note: `Phase 2 — Week 10：HP 降至 ${Math.round(UNSW_STATS.phase2Threshold * 100)}% 时进入。行动演出速度变为 ${UNSW_STATS.phase2SpeedMultiplier}×，Presentation 伤害提升，并解锁 Final Exam。`,
   },
 ];

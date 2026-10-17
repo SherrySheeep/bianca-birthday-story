@@ -91,16 +91,41 @@ export const UNSW_SKILLS = {
   quiz: { damage: 19 },
   rubric: { damage: 12, energyLoss: 18 },
   finalExam: { damage: 55 },
-  courseFee: { damage: 0 },
+  // Course Fee 会在这个金额区间内随机收费，伤害为收费金额 × damageRate（向上取整）。
+  courseFee: { minCharge: 1000, maxCharge: 2500, damageRate: 0.15 },
 } as const;
 
 export const UNIVERSITY_SKILLS = {
-  xlookup: { damage: 68, energyGain: 22 },
-  deadline: { damage: 112, energyGain: 30, selfDamage: 10 },
-  extension: { damage: 25, energyGain: 18, actionDelay: 1, cooldown: 2 },
-  groupChat: { damage: 35, energyGain: 20 },
-  consideration: { damage: 0, energyGain: 10, heal: 65, cooldown: 3 },
+  // energyCost 是施放时先消耗的能量；命中后仍会获得 energyGain。
+  xlookup: { damage: 68, energyCost: 0, energyGain: 22 },
+  deadline: { damage: 112, energyCost: 10, energyGain: 30, selfDamage: 10 },
+  extension: { damage: 25, energyCost: 15, energyGain: 18, actionDelay: 1, cooldown: 2 },
+  groupChat: { damage: 35, energyCost: 20, energyGain: 20 },
+  consideration: { damage: 0, energyCost: 25, energyGain: 10, heal: 65, cooldown: 3 },
   graduation: { damage: 230, energyCost: 100 },
+} as const;
+
+// Phase 2 台词与无法击杀 UNSW 时的弹幕都集中在这里，之后可以直接增删文字。
+export const UNSW_BATTLE_COPY = {
+  phase2Intro: [
+    { speaker: "UNSW", text: "哈哈哈哈哈！" },
+    { speaker: "UNSW", text: "你以为快结束了？" },
+    { speaker: "UNSW", text: "现在才 Week 10！" },
+    { speaker: "Bianca", text: "可恶啊……" },
+    { speaker: "Bianca", text: "啊啊啊啊啊受不了了我要毕业！！！" },
+    { speaker: "系统", text: "系统提示：终结技「毕业」已解锁。" },
+  ],
+  graduationReady: [
+    { speaker: "Bianca", text: "可恶，我感受到了周身涌动的力量！" },
+    { speaker: "Bianca", text: "我！要！毕！业！" },
+  ],
+  graduationLockedTaunt: "哟，assignment 没写完就要毕业？",
+  survivalTaunts: [
+    "就这？有本事毕业啊！",
+    "哈哈哈就不让你毕业！",
+    "只要你的 zid 还没有过期，你就别想逃出去！",
+  ],
+  biancaReply: "让我毕业！",
 } as const;
 
 export const BATTLE_TIMING = {

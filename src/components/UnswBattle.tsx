@@ -1,13 +1,13 @@
-import { useMemo, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { BIANCA_BOSS_MAX_HP, UNSW_MAX_HP, universitySkills, unswBossSkills, type BossSkillId, type UniversitySkillId } from "../data/chapterEightBattleData";
-import { BATTLE_TIMING, ENERGY_CONFIG, UNSW_SKILLS, UNSW_STATS, UNIVERSITY_SKILLS } from "../data/chapterEightBattleConfig";
+import { BATTLE_TIMING, ENERGY_CONFIG, UNSW_BATTLE_COPY, UNSW_SKILLS, UNSW_STATS, UNIVERSITY_SKILLS } from "../data/chapterEightBattleConfig";
 import { BattleEffectLayer, BattleShout, FloatingCombatText, type CombatEffect, type CombatText } from "./ChapterEightBattleEffects";
 import { CombatGuide } from "./CombatGuide";
 import { unswCombatGuideEntries } from "../data/chapterEightCombatGuide";
 import { usePausableBattleWait } from "../hooks/usePausableBattleWait";
 
 type Props = { paused?: boolean; debugMode?: boolean; startAtPhase2?: boolean; onVictory: () => void };
-type Stage = "entrance" | "awakening" | "battle" | "phase2" | "defeat" | "bossDefeat";
+type Stage = "entrance" | "awakening" | "battle" | "phase2" | "graduationReady" | "defeat" | "bossDefeat";
 
 const asset = (name: string) => `${import.meta.env.BASE_URL}chapter-eight/${name}`;
 const bossAsset = (name: string) => asset(`bosses/${name}`);
@@ -28,7 +28,7 @@ const awakeningLines = [
   ["Bianca", "这种感觉……"],
   ["Bianca", "是赶 due 前最后三个小时的力量。"],
   ["系统", "大学生技能已觉醒。"],
-  ["Bianca", "XLOOKUP……至少这个我会。"],
+  ["Bianca", "git push……至少这个我会。"],
   ["安柏", "Bianca，这次就交给你了！"],
 ] as const;
 
@@ -64,6 +64,9 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
   const [combatEffect, setCombatEffect] = useState<CombatEffect | null>(null);
   const [battleDialogue, setBattleDialogue] = useState<{ speaker: string; text: string; tag?: string } | null>(null);
   const [skillNamePop, setSkillNamePop] = useState<string | null>(null);
+  const [phaseDialogueIndex, setPhaseDialogueIndex] = useState(0);
+  const [graduationDialogueIndex, setGraduationDialogueIndex] = useState(0);
+  const [tauntBurst, setTauntBurst] = useState<{ boss: string; bianca?: string; key: number } | null>(null);
   const [isCombatGuideOpen, setIsCombatGuideOpen] = useState(false);
   const isBattlePaused = paused || isCombatGuideOpen;
   const wait = usePausableBattleWait(isBattlePaused);
@@ -73,6 +76,16 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
   const bossMood2 = pendingBossSkill || stage === "phase2" || stage === "bossDefeat";
   const actionOrder = pendingBossSkill ? ["UNSW", "Bianca"] : ["Bianca", "UNSW"];
   const visibleSkills = useMemo(() => universitySkills, []);
+  const graduationCanKill = bossHp <= UNIVERSITY_SKILLS.graduation.damage;
+
+  useEffect(() => {
+    if (stage !== "battle" || !phase2 || ultimateAnnounced || actionLocked || pendingBossSkill) return;
+    if (energy >= UNIVERSITY_SKILLS.graduation.energyCost && graduationCanKill) {
+      setUltimateAnnounced(true);
+      setGraduationDialogueIndex(0);
+      setStage("graduationReady");
+    }
+  }, [actionLocked, energy, graduationCanKill, pendingBossSkill, phase2, stage, ultimateAnnounced]);
 
   const advanceStory = () => {
     if (isBattlePaused) return;
@@ -106,13 +119,24 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
 
   const useSkill = async (id: UniversitySkillId) => {
     if (isBattlePaused || stage !== "battle" || pendingBossSkill || actionLocked) return;
-    if (id === "graduation" && energy < UNIVERSITY_SKILLS.graduation.energyCost) return;
+    if (id === "graduation") {
+      if (!phase2 || energy < UNIVERSITY_SKILLS.graduation.energyCost) return;
+      if (!graduationCanKill || !ultimateAnnounced) {
+        setTauntBurst({ boss: UNSW_BATTLE_COPY.graduationLockedTaunt, key: Date.now() });
+        window.setTimeout(() => setTauntBurst(null), 1800);
+        return;
+      }
+    }
+    const energyCost = id === "graduation" ? UNIVERSITY_SKILLS.graduation.energyCost : UNIVERSITY_SKILLS[id].energyCost;
+    if (energy < energyCost) return;
     if (id === "extension" && extensionCooldown > 0) return;
     if (id === "consideration" && considerationCooldown > 0) return;
     const skill = universitySkills.find((item) => item.id === id)!;
     const multiplier = groupProject && id !== "groupChat" ? UNSW_SKILLS.groupwork.playerDamageMultiplier : 1;
-    const damage = Math.round(skill.damage * multiplier);
-    const nextBossHp = Math.max(0, bossHp - damage);
+    const rawDamage = Math.round(skill.damage * multiplier);
+    const survivalTaunt = id !== "graduation" && rawDamage >= bossHp;
+    const damage = survivalTaunt ? 0 : rawDamage;
+    const nextBossHp = id === "graduation" ? 0 : Math.max(1, bossHp - damage);
     const nextTurn = turn + 1;
     let skipBossTurn = false;
 
@@ -125,9 +149,17 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     setBossHp(nextBossHp);
     if (damage) {
       setCombatTexts([{ id: `${Date.now()}-bianca-unsw`, target: "red", value: damage, kind: "hp" }]);
-      setBossHit(true);
     }
-    setEnergy((value) => id === "graduation" ? 0 : Math.min(ENERGY_CONFIG.maxEnergy, value + skill.energy));
+    setBossHit(true);
+    if (survivalTaunt) {
+      const taunts = UNSW_BATTLE_COPY.survivalTaunts;
+      setTauntBurst({
+        boss: taunts[Math.floor(Math.random() * taunts.length)],
+        bianca: ultimateAnnounced ? UNSW_BATTLE_COPY.biancaReply : undefined,
+        key: Date.now(),
+      });
+    }
+    setEnergy((value) => id === "graduation" ? 0 : Math.min(ENERGY_CONFIG.maxEnergy, Math.max(0, value - energyCost) + skill.energy));
     setExtensionCooldown((value) => id === "extension" ? UNIVERSITY_SKILLS.extension.cooldown : Math.max(0, value - 1));
     setConsiderationCooldown((value) => id === "consideration" ? UNIVERSITY_SKILLS.consideration.cooldown : Math.max(0, value - 1));
     setTurn(nextTurn);
@@ -153,13 +185,9 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     else setStatus(`Bianca：${skill.name} 命中 UNSW。`);
 
     await wait(BATTLE_TIMING.hit);
-    setActingSkill(false); setBossHit(false); setCombatTexts([]); setCombatEffect(null); setBattleDialogue(null);
+    setActingSkill(false); setBossHit(false); setCombatTexts([]); setCombatEffect(null); setBattleDialogue(null); setTauntBurst(null);
     if (nextBossHp <= 0) { setActionLocked(false); setStage("bossDefeat"); return; }
-    if (!phase2 && nextBossHp <= UNSW_MAX_HP * UNSW_STATS.phase2Threshold) { setActionLocked(false); setPhase2(true); setStage("phase2"); return; }
-    if (energy + skill.energy >= ENERGY_CONFIG.maxEnergy && id !== "graduation" && !ultimateAnnounced) {
-      setUltimateAnnounced(true);
-      setStatus("ULTIMATE READY · 毕业");
-    }
+    if (!phase2 && nextBossHp <= UNSW_MAX_HP * UNSW_STATS.phase2Threshold) { setActionLocked(false); setPhase2(true); setPhaseDialogueIndex(0); setStage("phase2"); return; }
     if (skipBossTurn) {
       window.setTimeout(() => setOrderShifted(false), 500);
       setActionLocked(false);
@@ -170,6 +198,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
 
   async function executeBossSkill(id: BossSkillId) {
     let damage = unswBossSkills[id].damage;
+    let displayedSkillName = unswBossSkills[id].name;
     let statusText = `UNSW：${unswBossSkills[id].name} 对 Bianca 造成 ${damage} 点伤害。`;
     if (id === "presentation") {
       if (!presentationPreparing) { setPresentationPreparing(true); damage = 0; statusText = "UNSW：PRESENTATION 正在蓄力；可用 Extension Request 延期。"; }
@@ -178,10 +207,17 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     if (id === "assignment") { setPressure((value) => value + 1); damage += pressure * UNSW_SKILLS.assignment.pressureBonusPerStack; statusText = `UNSW：${unswBossSkills[id].name} 对 Bianca 造成 ${damage} 点伤害，并增加 1 层 Deadline Pressure。`; }
     if (id === "groupwork") { setGroupProject(true); statusText = `UNSW：给 Bianca 施加 Group Project，并造成 ${damage} 点伤害；Bianca 下一次攻击伤害降低。`; }
     if (id === "rubric") { setRubricUsed(true); setEnergy((value) => Math.max(0, value - UNSW_SKILLS.rubric.energyLoss)); statusText = `UNSW：${unswBossSkills[id].name} 造成 ${damage} 点伤害，并扣除 Bianca ${UNSW_SKILLS.rubric.energyLoss} 点能量。`; }
-    if (id === "courseFee") { setCourseFeeUsed(true); statusText = `UNSW：COURSE FEE　-$1,248，并造成 ${damage} 点伤害。\nBianca：你打架为什么还能收钱啊？！`; }
+    if (id === "courseFee") {
+      const { minCharge, maxCharge, damageRate } = UNSW_SKILLS.courseFee;
+      const charge = Math.floor(Math.random() * (maxCharge - minCharge + 1)) + minCharge;
+      damage = Math.ceil(charge * damageRate);
+      displayedSkillName = `COURSE FEE　-$${charge.toLocaleString("en-AU")}`;
+      setCourseFeeUsed(true);
+      statusText = `UNSW：${displayedSkillName}，并造成 ${damage} 点伤害。\nBianca：你打架为什么还能收钱啊？！`;
+    }
     if (id === "finalExam") statusText = `UNSW：${unswBossSkills[id].name} 对 Bianca 造成 ${damage} 点伤害。期末周正式开始。`;
     setStatus(statusText);
-    setSkillNamePop(unswBossSkills[id].name);
+    setSkillNamePop(displayedSkillName);
     setCombatEffect({ key: Date.now(), type: id === "finalExam" ? "ultimate-hard" : "normal", target: "bianca" });
     await wait(BATTLE_TIMING.projectile);
     const nextHp = Math.max(0, hp - damage);
@@ -201,6 +237,17 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     setCourseFeeUsed(false); setPendingBossSkill(null); setStatus("UNSW 正在等待你的选择。");
     setOrderShifted(false); setUltimateAnnounced(false); setActionLocked(false); setActingSkill(false); setBossHit(false);
     setPlayerHitFx(false); setCombatTexts([]); setCombatEffect(null); setBattleDialogue(null); setSkillNamePop(null);
+    setPhaseDialogueIndex(0); setGraduationDialogueIndex(0); setTauntBurst(null);
+  };
+
+  const advancePhaseDialogue = () => {
+    if (phaseDialogueIndex < UNSW_BATTLE_COPY.phase2Intro.length - 1) setPhaseDialogueIndex((value) => value + 1);
+    else { setPhaseDialogueIndex(0); setStage("battle"); }
+  };
+
+  const advanceGraduationDialogue = () => {
+    if (graduationDialogueIndex < UNSW_BATTLE_COPY.graduationReady.length - 1) setGraduationDialogueIndex((value) => value + 1);
+    else { setGraduationDialogueIndex(0); setStatus("ULTIMATE READY · 毕业"); setStage("battle"); }
   };
 
   return <div className={`battle-eight-card unsw-battle ${stage === "phase2" ? "week-ten" : ""} ${isCombatGuideOpen ? "combat-guide-paused" : ""}`} style={{ "--unsw-phase-speed": `${0.8 / UNSW_STATS.phase2SpeedMultiplier}s` } as CSSProperties}>
@@ -215,11 +262,17 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     <FloatingCombatText items={combatTexts} />
     {battleDialogue && <BattleShout speaker={battleDialogue.speaker} text={battleDialogue.text} tag={battleDialogue.tag} />}
     {skillNamePop && <strong className="unsw-skill-pop">{skillNamePop}</strong>}
+    {tauntBurst && <div className="unsw-taunt-burst" key={tauntBurst.key}><span>{tauntBurst.boss}</span>{tauntBurst.bianca && <i>{tauntBurst.bianca}</i>}</div>}
     <CombatGuide entries={unswCombatGuideEntries} open={isCombatGuideOpen} onOpenChange={setIsCombatGuideOpen} currentStats={{ "bianca-unsw": `HP ${hp}/${BIANCA_BOSS_MAX_HP} · 能量 ${energy}/${ENERGY_CONFIG.maxEnergy}`, unsw: `HP ${bossHp}/${UNSW_MAX_HP}` }} />
-    {stage === "battle" && <><div className="battle-status-toast unsw-status">{status}{pressure ? `　｜Pressure ×${pressure}` : ""}</div><div className="battle-skills university-skills">{visibleSkills.map((skill) => <button key={skill.id} className={skill.id === "graduation" ? "ultimate" : ""} disabled={actionLocked || (skill.id === "graduation" && energy < UNIVERSITY_SKILLS.graduation.energyCost) || (skill.id === "extension" && extensionCooldown > 0) || (skill.id === "consideration" && considerationCooldown > 0)} onClick={() => useSkill(skill.id)}>{skill.name}<small>{skill.id === "graduation" ? `${energy}/${ENERGY_CONFIG.maxEnergy}` : skill.id === "extension" && extensionCooldown ? `冷却 ${extensionCooldown}` : skill.id === "consideration" && considerationCooldown ? `冷却 ${considerationCooldown}` : skill.description}</small></button>)}</div></>}
+    {stage === "battle" && <><div className="battle-status-toast unsw-status">{status}{pressure ? `　｜Pressure ×${pressure}` : ""}</div><div className="battle-skills university-skills">{visibleSkills.map((skill) => {
+      const cost = skill.id === "graduation" ? UNIVERSITY_SKILLS.graduation.energyCost : UNIVERSITY_SKILLS[skill.id].energyCost;
+      const graduationHardLocked = skill.id === "graduation" && (!phase2 || energy < cost);
+      return <button key={skill.id} className={`${skill.id === "graduation" ? "ultimate" : ""} ${skill.id === "graduation" && (!graduationCanKill || !ultimateAnnounced) ? "is-locked" : ""}`} disabled={actionLocked || graduationHardLocked || energy < cost || (skill.id === "extension" && extensionCooldown > 0) || (skill.id === "consideration" && considerationCooldown > 0)} onClick={() => useSkill(skill.id)}>{skill.name}<small>{skill.id === "graduation" ? `${energy}/${cost}` : skill.id === "extension" && extensionCooldown ? `冷却 ${extensionCooldown}` : skill.id === "consideration" && considerationCooldown ? `冷却 ${considerationCooldown}` : `${skill.description}${cost ? ` · 能量 -${cost}` : ""}`}</small></button>;
+    })}</div></>}
 
     {(stage === "entrance" || stage === "awakening") && <div className="battle-dialogue-overlay unsw-story-overlay"><div><span className={`dialogue-speaker speaker-${currentStory[0]}`}>{currentStory[0]}</span><p>{currentStory[1]}</p><button className="dialogue-next" onClick={advanceStory}>继续</button></div></div>}
-    {stage === "phase2" && <div className="battle-overlay phase-two-overlay"><div><img src={bossAsset("UNSW2.png")} alt="大笑的 UNSW" onError={(event) => { event.currentTarget.hidden = true; }} /><h3>PHASE 2</h3><b>WEEK 10</b><p>UNSW：哈哈哈哈哈哈！</p><p>你以为快结束了？现在才 Week 10！</p><button className="dialogue-next" onClick={() => setStage("battle")}>继续战斗</button></div></div>}
+    {stage === "phase2" && <div className="battle-dialogue-overlay unsw-story-overlay"><div><span className={`dialogue-speaker speaker-${UNSW_BATTLE_COPY.phase2Intro[phaseDialogueIndex].speaker}`}>{UNSW_BATTLE_COPY.phase2Intro[phaseDialogueIndex].speaker}</span><p>{UNSW_BATTLE_COPY.phase2Intro[phaseDialogueIndex].text}</p><button className="dialogue-next" onClick={advancePhaseDialogue}>继续</button></div></div>}
+    {stage === "graduationReady" && <div className="battle-dialogue-overlay unsw-story-overlay"><div><span className="dialogue-speaker speaker-Bianca">Bianca</span><p>{UNSW_BATTLE_COPY.graduationReady[graduationDialogueIndex].text}</p><button className="dialogue-next" onClick={advanceGraduationDialogue}>继续</button></div></div>}
     {stage === "defeat" && <div className="battle-overlay"><div><h3>挑战失败</h3><p>这次只需要重新挑战 UNSW，不会重播深渊法师教程。</p><button className="dialogue-next" onClick={resetBoss}>重新挑战 UNSW</button></div></div>}
     {stage === "bossDefeat" && <div className="battle-overlay graduation-overlay"><div><h3>GRADUATION COMPLETE</h3><p><b>UNSW：</b>这不可能——！</p><p><b>Bianca：</b>……毕业了？</p><button className="dialogue-next" onClick={onVictory}>Battle Complete</button></div></div>}
   </div>;
