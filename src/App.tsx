@@ -45,8 +45,11 @@ export default function App(){
     chapterTransitioning.current=true;
     setPreparingChapter(true);
     try{
-      await preloadChapterWindow(safeTarget,false);
-      retainChapterWindow(safeTarget,safeTarget>=8);
+      // 正向推进时只等待当前章节早已在后台准备的“后两章”。
+      // 新章节更后面的资源会在切换完成后继续后台加载，不阻塞本次跳转。
+      const preloadFromChapter=safeTarget>chapter?chapter:safeTarget;
+      await preloadChapterWindow(preloadFromChapter,false);
+      retainChapterWindow(safeTarget,safeTarget===8);
       setChapter(safeTarget);
     }finally{
       chapterTransitioning.current=false;
