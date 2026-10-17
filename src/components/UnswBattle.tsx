@@ -57,6 +57,8 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
   const [groupProject, setGroupProject] = useState(false);
   const [, setPresentationPreparing] = useState(false);
   const presentationPreparingRef = useRef(false);
+  const presentationCancelledRef = useRef(false);
+  const suppressNextPresentationRef = useRef(false);
   const [extensionCooldown, setExtensionCooldown] = useState(0);
   const [considerationCooldown, setConsiderationCooldown] = useState(0);
   const [phase2, setPhase2] = useState(startAtPhase2);
@@ -132,13 +134,20 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
   };
 
   const chooseBossSkill = (nextTurn: number): BossSkillId => {
-    if (presentationPreparingRef.current) return "presentation";
+    if (presentationCancelledRef.current) {
+      presentationPreparingRef.current = false;
+      presentationCancelledRef.current = false;
+    } else if (presentationPreparingRef.current) return "presentation";
     if (!courseFeeUsed) return "courseFee";
     if (phase2 && nextTurn % 4 === 0) return "finalExam";
     if (!rubricUsed && nextTurn >= 4) return "rubric";
-    const pool: BossSkillId[] = phase2
+    let pool: BossSkillId[] = phase2
       ? ["assignment", "assignment", "quiz", "groupwork", "presentation"]
       : ["assignment", "quiz", "groupwork", "presentation"];
+    if (suppressNextPresentationRef.current) {
+      suppressNextPresentationRef.current = false;
+      pool = pool.filter((skill) => skill !== "presentation");
+    }
     return pool[nextTurn % pool.length];
   };
 
@@ -228,6 +237,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
       skipBossTurn = true;
       if (presentationPreparingRef.current) {
         presentationPreparingRef.current = false;
+        presentationCancelledRef.current = true;
         setPresentationPreparing(false);
         setStatus("Bianca：PRESENTATION POSTPONED");
       } else setStatus("Bianca：Extension Request 将 UNSW 的下一次行动往后推了。");
@@ -249,6 +259,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     if (!phase2 && nextBossHp <= UNSW_MAX_HP * UNSW_STATS.phase2Threshold) {
       // Extension Request 已取消的 Presentation 不能跨阶段残留到 Phase 2。
       if (id === "extension") {
+        if (presentationCancelledRef.current) suppressNextPresentationRef.current = true;
         presentationPreparingRef.current = false;
         setPresentationPreparing(false);
         setOrderShifted(false);
@@ -264,6 +275,16 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
   };
 
   async function executeBossSkill(id: BossSkillId) {
+    if (id === "presentation" && presentationCancelledRef.current) {
+      presentationPreparingRef.current = false;
+      presentationCancelledRef.current = false;
+      suppressNextPresentationRef.current = true;
+      setPresentationPreparing(false);
+      setPendingBossSkill(null);
+      setBattleDialogue(null);
+      setActionLocked(false);
+      return;
+    }
     let damage = unswBossSkills[id].damage;
     let displayedSkillName = unswBossSkills[id].name;
     let statusText = `UNSW：${unswBossSkills[id].name} 对 Bianca 造成 ${damage} 点伤害。`;
@@ -334,6 +355,8 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
   const resetBoss = () => {
     pressureStacksRef.current = [];
     presentationPreparingRef.current = false;
+    presentationCancelledRef.current = false;
+    suppressNextPresentationRef.current = false;
     setRetryAssist(true);
     setStage("battle"); setBossHp(UNSW_RETRY_ASSIST.bossStartingHp); setHp(BIANCA_BOSS_MAX_HP); setEnergy(UNSW_RETRY_ASSIST.playerStartingEnergy); setTurn(0); setPressureStacks([]);
     setGroupProject(false); setPresentationPreparing(false); setExtensionCooldown(0); setConsiderationCooldown(0); setPhase2(true); setRubricUsed(false);
@@ -345,7 +368,17 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
 
   const advancePhaseDialogue = () => {
     if (phaseDialogueIndex < UNSW_BATTLE_COPY.phase2Intro.length - 1) setPhaseDialogueIndex((value) => value + 1);
-    else { setPhaseDialogueIndex(0); setStage("battle"); }
+    else {
+      if (presentationCancelledRef.current) {
+        presentationPreparingRef.current = false;
+        presentationCancelledRef.current = false;
+        suppressNextPresentationRef.current = true;
+        setPresentationPreparing(false);
+        setPendingBossSkill(null);
+      }
+      setPhaseDialogueIndex(0);
+      setStage("battle");
+    }
   };
 
   const advanceGraduationDialogue = () => {
