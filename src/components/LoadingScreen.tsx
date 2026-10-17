@@ -38,7 +38,6 @@ export function LoadingScreen({ onStart }: Props) {
         <span style={{ width: `${progress}%` }} />
       </div>
       <p className="loading-message">{ready ? "行李看起来都在。应该吧。" : loadingMessages[messageIndex]}</p>
-      <small>{loaded} / {total} 张图片</small>
       {ready && <button className="sticker-button loading-start" onClick={onStart}>开始旅程</button>}
     </div>
   </main>;
