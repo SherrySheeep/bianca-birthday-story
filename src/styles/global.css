@@ -4017,7 +4017,7 @@ main {
 .combat-guide-row dl { display:flex; flex-wrap:wrap; gap:5px; margin:8px 0 0; }
 .combat-guide-row dl > div { display:flex; gap:4px; padding:3px 6px; border:1px solid #d0aa76; border-radius:999px; background:#fff1c7; font-size:.62rem; }
 .combat-guide-row dt { color:#956346; font-weight:850; }.combat-guide-row dd { margin:0; font-weight:950; }
-.combat-guide-note { margin-top:12px; padding:10px 12px; border:2px dashed #c17c58; border-radius:12px; color:#7b4938; background:#ffe1b0; font-size:.75rem; font-weight:800; line-height:1.55; }
+.combat-guide-note { margin-top:12px; padding:10px 12px; border:2px dashed #c17c58; border-radius:12px; color:#7b4938; background:#ffe1b0; font-size:.75rem; font-weight:800; line-height:1.55; white-space:pre-line; }
 .combat-guide-paused .chapter-eight-fx *, .combat-guide-paused .battle-enemy img, .combat-guide-paused .bianca-battle img, .combat-guide-paused .combat-float, .combat-guide-paused .battle-shout, .combat-guide-paused .unsw-skill-pop, .combat-guide-paused.week-ten .unsw-boss > img { animation-play-state:paused !important; }
 .chapter-eight-debug-jumps { position: fixed; z-index: 100; top: 50%; right: 12px; display: grid; gap: 6px; transform: translateY(-50%); }
 .chapter-eight-debug-jumps button { min-width: 104px; padding: 7px 10px; border: 1px solid #5d493d; border-radius: 10px; color: #332820; background: rgba(255,241,176,.9); box-shadow: 2px 3px 0 rgba(50,40,32,.28); font-size: .68rem; font-weight: 900; cursor: pointer; }
@@ -4197,11 +4197,13 @@ main {
 .unsw-boss.is-hit > img { animation: combat-hit .36s ease-out both; }
 .unsw-skill-pop { position: absolute; z-index: 28; top: 34%; right: 10%; color: #ffd428; font-size: clamp(1.05rem,3vw,1.7rem); font-weight: 1000; letter-spacing: .05em; -webkit-text-stroke: 2px #111; paint-order: stroke fill; text-shadow: 0 4px 0 #111,0 7px 10px #0008; pointer-events: none; animation: unsw-skill-pop .9s ease-out both; }
 .university-skills button.is-locked { filter: grayscale(.72) brightness(.72); }
-.unsw-debug-damage { position: absolute; z-index: 30; top: 17%; left: 8%; padding: 7px 10px; border: 2px solid #fff; border-radius: 10px; color: #fff; background: #c94848; box-shadow: 2px 3px 0 #1118; font-size: .7rem; font-weight: 950; cursor: pointer; }
+.unsw-debug-damage, .unsw-debug-heal { position: absolute; z-index: 30; padding: 7px 10px; border: 2px solid #fff; border-radius: 10px; color: #fff; box-shadow: 2px 3px 0 #1118; font-size: .7rem; font-weight: 950; cursor: pointer; }
+.unsw-debug-damage { top: 17%; left: 8%; background: #c94848; }
+.unsw-debug-heal { top: 49%; left: 5%; background: #4d9c70; }
 .unsw-bianca { bottom: 30%; height: 31%; }
 .unsw-bianca > div { position: absolute; left: 53%; bottom: 7%; width: 45%; padding: 7px; }
 .unsw-bianca > .unsw-pressure-indicator { z-index: 9; left: 17%; bottom: -8%; width: auto; padding: 0; border: 0; background: transparent; box-shadow: none; display: flex; align-items: center; gap: 3px; flex-wrap: nowrap; }
-.unsw-pressure-indicator img { width: clamp(28px, 5vw, 46px); height: clamp(28px, 5vw, 46px); object-fit: contain; filter: drop-shadow(2px 3px 0 rgba(34,27,40,.35)); }
+.unsw-pressure-indicator img { width: clamp(18px, 5vw, 46px); height: clamp(28px, 5vw, 46px); object-fit: contain; filter: drop-shadow(2px 3px 0 rgba(34,27,40,.35)); }
 .unsw-bianca > div > b { font-size: 0.8rem; }
 .unsw-status { bottom: 116px; border-color: #ffd428; color: #fff6c4; background: rgba(10,10,10,.9); overflow: hidden; white-space: normal; overflow-wrap: anywhere; }
 .university-skills { left: 12px; right: 12px; display: grid; grid-template-columns: repeat(3, 1fr); }
@@ -4986,8 +4988,9 @@ main {
   .unsw-nameplate { top: 39.5%; right: 1%; width: 57%; padding: 6px 8px; }
   .unsw-skill-pop { top: 31%; right: 7%; font-size: 1rem; }
   .unsw-debug-damage { top: 14%; left: 4%; padding: 5px 7px; font-size: .58rem; }
+  .unsw-debug-heal { top: 49%; left: 2%; padding: 5px 7px; font-size: .58rem; }
   .unsw-bianca { bottom: 27%; width: 49%; height: 26%; }
-  .unsw-bianca > .unsw-pressure-indicator { left: 11%; bottom: -12%; }
+  .unsw-bianca > .unsw-pressure-indicator { left: 8%; bottom: -10%; }
   .unsw-status { top: 330px; bottom: 150px; left: 77%; width: 45%; max-height: none; transform: translateX(-50%); padding: 8px 14px; border-radius: 16px; overflow: hidden; white-space: normal; overflow-wrap: anywhere; }
   .university-skills { left: 7px; right: 7px; bottom: 7px; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
   .university-skills button { min-height: 66px; padding: 4px 2px; font-size: .61rem; }

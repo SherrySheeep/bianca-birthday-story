@@ -209,7 +209,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
       if (!presentationPreparing) { setPresentationPreparing(true); damage = 0; statusText = "UNSW：PRESENTATION 正在蓄力；可用 Extension Request 延期。"; }
       else { damage = phase2 ? UNSW_SKILLS.presentation.phase2Damage : UNSW_SKILLS.presentation.damage; setPresentationPreparing(false); statusText = `UNSW：Presentation 正式开始，对 Bianca 造成 ${damage} 点伤害。没有讲稿，也没有退路。`; }
     }
-    const addsPressure = id === "assignment" || id === "groupwork" || id === "finalExam";
+    const addsPressure = id === "assignment" || id === "groupwork" || id === "rubric" || id === "finalExam" || (id === "presentation" && damage > 0);
     const currentPressureStacks = pressureStacksRef.current;
     // 一回合是一来一回：旧 Pressure 在本次 UNSW 行动结算一次，新施加的层数从下一轮才开始计时和扣血。
     const agedPressureStacks = currentPressureStacks.map((turns) => turns - 1).filter((turns) => turns > 0);
@@ -220,7 +220,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     const pressureResult = pressureAdded ? "增加 1 层 Deadline Pressure" : "Deadline Pressure 已达上限";
     if (id === "assignment") statusText = `UNSW：${unswBossSkills[id].name} 对 Bianca 造成 ${damage} 点伤害，并${pressureResult}。`;
     if (id === "groupwork") { setGroupProject(true); statusText = `UNSW：给 Bianca 施加 Group Project、${pressureResult}，并造成 ${damage} 点伤害；Bianca 下一次攻击伤害降低。`; }
-    if (id === "rubric") { setRubricUsed(true); setEnergy((value) => Math.max(0, value - UNSW_SKILLS.rubric.energyLoss)); statusText = `UNSW：${unswBossSkills[id].name} 造成 ${damage} 点伤害，并扣除 Bianca ${UNSW_SKILLS.rubric.energyLoss} 点能量。`; }
+    if (id === "rubric") { setRubricUsed(true); setEnergy((value) => Math.max(0, value - UNSW_SKILLS.rubric.energyLoss)); statusText = `UNSW：${unswBossSkills[id].name} 造成 ${damage} 点伤害、${pressureResult}，并扣除 Bianca ${UNSW_SKILLS.rubric.energyLoss} 点能量。`; }
     if (id === "courseFee") {
       const { minCharge, maxCharge, damageRate } = UNSW_SKILLS.courseFee;
       const charge = Math.floor(Math.random() * (maxCharge - minCharge + 1)) + minCharge;
@@ -230,6 +230,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
       statusText = `UNSW：${displayedSkillName}，并造成 ${damage} 点伤害。\nBianca：你打架为什么还能收钱啊？！`;
     }
     if (id === "finalExam") statusText = `UNSW：${unswBossSkills[id].name} 对 Bianca 造成 ${damage} 点伤害，并${pressureResult}。期末周正式开始。`;
+    if (id === "presentation" && damage > 0) statusText = `${statusText}\n同时${pressureResult}。`;
     setStatus(statusText);
     setSkillNamePop(displayedSkillName);
     setCombatEffect({ key: Date.now(), type: id === "finalExam" ? "ultimate-hard" : "normal", target: "bianca" });
@@ -283,6 +284,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     <div className={`battle-order ${orderShifted ? "is-delayed" : ""}`}><b>行动顺序</b>{actionOrder.map((name, index) => <div className={`order-avatar ${index === 0 ? "active" : ""}`} key={name}><img src={name === "Bianca" ? asset("BiancaIcon.png") : bossAsset("UNSWIcon1.png")} alt={name} /><span>{name === "Bianca" ? "B" : "U"}</span></div>)}</div>
     <div className={`unsw-boss ${bossHit ? "is-hit" : ""}`}><img src={bossMood2 ? bossAsset("UNSW2.png") : bossAsset("UNSW1.png")} alt="UNSW" onError={(event) => { event.currentTarget.hidden = true; }} /></div>
     {debugMode && stage === "battle" && <button className="unsw-debug-damage" onClick={() => setBossHp((value) => Math.max(0, value - 50))}>血量 -50</button>}
+    {debugMode && stage === "battle" && <button className="unsw-debug-heal" onClick={() => setHp((value) => Math.min(BIANCA_BOSS_MAX_HP, value + 20))}>血量 +20</button>}
     <div className="unsw-hp"><i><em style={{ width: `${bossHp / UNSW_MAX_HP * 100}%` }} /></i><span>HP {bossHp}/{UNSW_MAX_HP}</span></div>
     <div className="unsw-nameplate"><b>UNSW</b><small>The University of New South Wales</small></div>
     <div className={`bianca-battle unsw-bianca ${playerHitFx ? "is-hit" : ""}`}><img src={asset(actingSkill ? "BiancaBattle2.png" : "BiancaBattle1.png")} alt="战斗中的 Bianca" />{pressureStacks.length > 0 && <div className="unsw-pressure-indicator" title={`Deadline Pressure：${pressureStacks.length} 层`}>{pressureStacks.map((_, index) => <img key={index} src={asset("PressureIcon1.png")} alt="Deadline Pressure" />)}</div>}<div><b>Bianca</b><i><em style={{ width: `${hp / BIANCA_BOSS_MAX_HP * 100}%` }} /></i><small>HP {hp}/{BIANCA_BOSS_MAX_HP}　能量 {energy}/{ENERGY_CONFIG.maxEnergy}</small></div></div>
