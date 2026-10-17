@@ -103,7 +103,7 @@ export const UNIVERSITY_SKILLS = {
   deadline: { damage: 82, energyCost: 8, energyGain: 0, selfDamage: 10 },
   extension: { damage: 30, energyCost: 10, energyGain: 0, actionDelay: 1, cooldown: 1 },
   groupChat: { damage: 35, energyCost: 12, energyGain: 0 },
-  consideration: { damage: 0, energyCost: 20, energyGain: 0, heal: 85, cooldown: 2 },
+  consideration: { damage: 0, energyCost: 20, energyGain: 0, heal: 85, phase2Heal: 100, cooldown: 2 },
   graduation: { damage: 200, energyCost: 100 },
 } as const;
 

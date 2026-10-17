@@ -92,7 +92,7 @@ export const unswCombatGuideEntries: CombatGuideEntry[] = [
       { name: "Deadline Rush", description: "以赶 Deadline 的爆发力造成高额伤害，但 Bianca 自己也会受到一定反噬伤害。", stats: [{ label: "Damage", value: UNIVERSITY_SKILLS.deadline.damage }, { label: "Self Damage", value: UNIVERSITY_SKILLS.deadline.selfDamage }] },
       { name: "Extension Request", description: "延后 UNSW 的下一次行动；如果 Presentation 正在准备，会直接取消本次准备。", stats: [{ label: "Damage", value: UNIVERSITY_SKILLS.extension.damage }, { label: "Action Delay", value: UNIVERSITY_SKILLS.extension.actionDelay }, { label: "Cooldown", value: UNIVERSITY_SKILLS.extension.cooldown }] },
       { name: "Group Chat 99+", description: "清除 Groupwork 带来的输出降低效果，并对 UNSW 造成伤害。", stats: [{ label: "Damage", value: UNIVERSITY_SKILLS.groupChat.damage }] },
-      { name: "Special Consideration", description: "恢复 Bianca 的生命值，并清除 Deadline Pressure。", stats: [{ label: "Heal", value: UNIVERSITY_SKILLS.consideration.heal }, { label: "Cooldown", value: UNIVERSITY_SKILLS.consideration.cooldown }] },
+      { name: "Special Consideration", description: "恢复 Bianca 的生命值，并清除 Deadline Pressure。", stats: [{ label: "Phase 1 Heal", value: UNIVERSITY_SKILLS.consideration.heal }, { label: "Phase 2 Heal", value: UNIVERSITY_SKILLS.consideration.phase2Heal }, { label: "Cooldown", value: UNIVERSITY_SKILLS.consideration.cooldown }] },
       { name: "毕业", description: "Bianca 的最终技能，对 UNSW 造成极高伤害。", stats: [{ label: "Damage", value: UNIVERSITY_SKILLS.graduation.damage }] },
     ],
   },

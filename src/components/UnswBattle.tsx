@@ -213,10 +213,11 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
       setGroupProject(false);
       setStatus(groupProject ? "Bianca：Group Chat 99+ 清除了小组作业 debuff。" : "Bianca：群聊刷了 99 条，但暂时没有需要处理的小组作业。");
     } else if (id === "consideration") {
-      setHp((value) => Math.min(BIANCA_BOSS_MAX_HP, value + UNIVERSITY_SKILLS.consideration.heal));
+      const healAmount = phase2 ? UNIVERSITY_SKILLS.consideration.phase2Heal : UNIVERSITY_SKILLS.consideration.heal;
+      setHp((value) => Math.min(BIANCA_BOSS_MAX_HP, value + healAmount));
       pressureStacksRef.current = [];
       setPressureStacks([]);
-      setStatus(`Bianca：Special Consideration 恢复 ${UNIVERSITY_SKILLS.consideration.heal} HP，并清除了 Deadline Pressure。`);
+      setStatus(`Bianca：Special Consideration 恢复 ${healAmount} HP，并清除了 Deadline Pressure。`);
     } else if (id === "graduation") setStatus("Bianca：毕业命中 UNSW。这一天，终于来了。");
     else setStatus(`Bianca：${skill.name} 命中 UNSW。`);
 
