@@ -93,13 +93,13 @@ export const UNSW_SKILLS = {
   finalExam: { damage: 55 },
   // Course Fee 会在这个金额区间内随机收费，伤害为收费金额 × damageRate（向上取整）。
   courseFee: { minCharge: 1000, maxCharge: 2500, damageRate: 0.012 },
-  // Pressure 每层独立存在 3 个 UNSW 回合；每回合按当前层数结算持续伤害。
+  // 一回合 = Bianca 行动一次 + UNSW 行动一次。新 Pressure 从下一轮开始结算，共持续 3 个完整回合。
   pressure: { damagePerStack: 3, maxStacks: 5, durationTurns: 3 },
 } as const;
 
 export const UNIVERSITY_SKILLS = {
   // energyCost 是施放时先消耗的能量；命中后仍会获得 energyGain。
-  xlookup: { damage: 48, energyCost: 0, energyGain: 22 },
+  xlookup: { damage: 56, energyCost: 0, energyGain: 22 },
   deadline: { damage: 82, energyCost: 5, energyGain: 0, selfDamage: 10 },
   extension: { damage: 30, energyCost: 8, energyGain: 0, actionDelay: 1, cooldown: 2 },
   groupChat: { damage: 35, energyCost: 10, energyGain: 0 },

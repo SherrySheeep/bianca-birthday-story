@@ -211,12 +211,15 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     }
     const addsPressure = id === "assignment" || id === "groupwork" || id === "finalExam";
     const currentPressureStacks = pressureStacksRef.current;
-    const activePressureStacks = addsPressure && currentPressureStacks.length < UNSW_SKILLS.pressure.maxStacks
-      ? [UNSW_SKILLS.pressure.durationTurns, ...currentPressureStacks]
-      : currentPressureStacks;
-    if (addsPressure) { pressureStacksRef.current = activePressureStacks; setPressureStacks(activePressureStacks); }
-    if (id === "assignment") statusText = `UNSW：${unswBossSkills[id].name} 对 Bianca 造成 ${damage} 点伤害，并增加 1 层 Deadline Pressure。`;
-    if (id === "groupwork") { setGroupProject(true); statusText = `UNSW：给 Bianca 施加 Group Project、增加 1 层 Deadline Pressure，并造成 ${damage} 点伤害；Bianca 下一次攻击伤害降低。`; }
+    // 一回合是一来一回：旧 Pressure 在本次 UNSW 行动结算一次，新施加的层数从下一轮才开始计时和扣血。
+    const agedPressureStacks = currentPressureStacks.map((turns) => turns - 1).filter((turns) => turns > 0);
+    const pressureAdded = addsPressure && agedPressureStacks.length < UNSW_SKILLS.pressure.maxStacks;
+    const nextPressureStacks = pressureAdded
+      ? [UNSW_SKILLS.pressure.durationTurns, ...agedPressureStacks]
+      : agedPressureStacks;
+    const pressureResult = pressureAdded ? "增加 1 层 Deadline Pressure" : "Deadline Pressure 已达上限";
+    if (id === "assignment") statusText = `UNSW：${unswBossSkills[id].name} 对 Bianca 造成 ${damage} 点伤害，并${pressureResult}。`;
+    if (id === "groupwork") { setGroupProject(true); statusText = `UNSW：给 Bianca 施加 Group Project、${pressureResult}，并造成 ${damage} 点伤害；Bianca 下一次攻击伤害降低。`; }
     if (id === "rubric") { setRubricUsed(true); setEnergy((value) => Math.max(0, value - UNSW_SKILLS.rubric.energyLoss)); statusText = `UNSW：${unswBossSkills[id].name} 造成 ${damage} 点伤害，并扣除 Bianca ${UNSW_SKILLS.rubric.energyLoss} 点能量。`; }
     if (id === "courseFee") {
       const { minCharge, maxCharge, damageRate } = UNSW_SKILLS.courseFee;
@@ -226,7 +229,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
       setCourseFeeUsed(true);
       statusText = `UNSW：${displayedSkillName}，并造成 ${damage} 点伤害。\nBianca：你打架为什么还能收钱啊？！`;
     }
-    if (id === "finalExam") statusText = `UNSW：${unswBossSkills[id].name} 对 Bianca 造成 ${damage} 点伤害，并增加 1 层 Deadline Pressure。期末周正式开始。`;
+    if (id === "finalExam") statusText = `UNSW：${unswBossSkills[id].name} 对 Bianca 造成 ${damage} 点伤害，并${pressureResult}。期末周正式开始。`;
     setStatus(statusText);
     setSkillNamePop(displayedSkillName);
     setCombatEffect({ key: Date.now(), type: id === "finalExam" ? "ultimate-hard" : "normal", target: "bianca" });
@@ -238,10 +241,10 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     }
     setHp(nextHp);
     await wait(BATTLE_TIMING.hit);
-    if (nextHp > 0 && activePressureStacks.length > 0) {
-      const pressureDamage = activePressureStacks.length * UNSW_SKILLS.pressure.damagePerStack;
+    if (nextHp > 0 && currentPressureStacks.length > 0) {
+      const pressureDamage = currentPressureStacks.length * UNSW_SKILLS.pressure.damagePerStack;
       nextHp = Math.max(0, nextHp - pressureDamage);
-      setStatus((current) => `${current}\nDeadline Pressure ×${activePressureStacks.length}，造成 ${pressureDamage} 点持续伤害。`);
+      setStatus((current) => `${current}\nDeadline Pressure ×${currentPressureStacks.length}，造成 ${pressureDamage} 点持续伤害。`);
       setCombatTexts([{ id: `${Date.now()}-pressure-player`, target: "bianca", value: pressureDamage, kind: "hp" }]);
       setPlayerHitFx(false);
       await wait(40);
@@ -249,9 +252,8 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
       setHp(nextHp);
       await wait(BATTLE_TIMING.hit);
     }
-    const agedPressureStacks = activePressureStacks.map((turns) => turns - 1).filter((turns) => turns > 0);
-    pressureStacksRef.current = agedPressureStacks;
-    setPressureStacks(agedPressureStacks);
+    pressureStacksRef.current = nextPressureStacks;
+    setPressureStacks(nextPressureStacks);
     setPendingBossSkill(null); setBattleDialogue(null); setSkillNamePop(null); setCombatTexts([]); setCombatEffect(null); setPlayerHitFx(false); setActionLocked(false);
     if (nextHp <= 0) setStage("defeat");
   }
