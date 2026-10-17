@@ -94,7 +94,18 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
         ...skill,
         stats: skill.stats?.map((stat) => {
           if (skill.name === "git push" && stat.label === "Energy Gain" && phase2) return { ...stat, value: retryAssist ? UNSW_RETRY_ASSIST.gitPushEnergyGain : UNIVERSITY_SKILLS.xlookup.phase2EnergyGain };
-          if (stat.label === "Damage" && retryAssist) return { ...stat, value: Math.round(Number(stat.value) * UNSW_RETRY_ASSIST.playerDamageMultiplier) };
+          if (stat.label === "Damage") {
+            const phase2Damage = phase2
+              ? skill.name === "Deadline Rush"
+                ? UNIVERSITY_SKILLS.deadline.phase2Damage
+                : skill.name === "Extension Request"
+                  ? UNIVERSITY_SKILLS.extension.phase2Damage
+                  : skill.name === "Group Chat 99+"
+                    ? UNIVERSITY_SKILLS.groupChat.phase2Damage
+                    : Number(stat.value)
+              : Number(stat.value);
+            return { ...stat, value: retryAssist ? Math.round(phase2Damage * UNSW_RETRY_ASSIST.playerDamageMultiplier) : phase2Damage };
+          }
           return stat;
         }),
       })),
@@ -160,7 +171,16 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     if (id === "consideration" && considerationCooldown > 0) return;
     const skill = universitySkills.find((item) => item.id === id)!;
     const multiplier = groupProject && id !== "groupChat" ? UNSW_SKILLS.groupwork.playerDamageMultiplier : 1;
-    const rawDamage = Math.round(skill.damage * multiplier * (retryAssist ? UNSW_RETRY_ASSIST.playerDamageMultiplier : 1));
+    const phaseDamage = phase2
+      ? id === "deadline"
+        ? UNIVERSITY_SKILLS.deadline.phase2Damage
+        : id === "extension"
+          ? UNIVERSITY_SKILLS.extension.phase2Damage
+          : id === "groupChat"
+            ? UNIVERSITY_SKILLS.groupChat.phase2Damage
+            : skill.damage
+      : skill.damage;
+    const rawDamage = Math.round(phaseDamage * multiplier * (retryAssist ? UNSW_RETRY_ASSIST.playerDamageMultiplier : 1));
     const survivalTaunt = id !== "graduation" && rawDamage >= bossHp;
     const damage = survivalTaunt ? 0 : rawDamage;
     const nextBossHp = id === "graduation" ? 0 : Math.max(1, bossHp - damage);
