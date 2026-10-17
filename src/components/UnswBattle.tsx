@@ -55,7 +55,8 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
   const [pressureStacks, setPressureStacks] = useState<number[]>([]);
   const pressureStacksRef = useRef<number[]>([]);
   const [groupProject, setGroupProject] = useState(false);
-  const [presentationPreparing, setPresentationPreparing] = useState(false);
+  const [, setPresentationPreparing] = useState(false);
+  const presentationPreparingRef = useRef(false);
   const [extensionCooldown, setExtensionCooldown] = useState(0);
   const [considerationCooldown, setConsiderationCooldown] = useState(0);
   const [phase2, setPhase2] = useState(startAtPhase2);
@@ -131,7 +132,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
   };
 
   const chooseBossSkill = (nextTurn: number): BossSkillId => {
-    if (presentationPreparing) return "presentation";
+    if (presentationPreparingRef.current) return "presentation";
     if (!courseFeeUsed) return "courseFee";
     if (phase2 && nextTurn % 4 === 0) return "finalExam";
     if (!rubricUsed && nextTurn >= 4) return "rubric";
@@ -225,7 +226,8 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     } else if (id === "extension") {
       setOrderShifted(true);
       skipBossTurn = true;
-      if (presentationPreparing) {
+      if (presentationPreparingRef.current) {
+        presentationPreparingRef.current = false;
         setPresentationPreparing(false);
         setStatus("Bianca：PRESENTATION POSTPONED");
       } else setStatus("Bianca：Extension Request 将 UNSW 的下一次行动往后推了。");
@@ -244,7 +246,15 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     await wait(BATTLE_TIMING.hit);
     setActingSkill(false); setBossHit(false); setCombatTexts([]); setCombatEffect(null); setBattleDialogue(null);
     if (nextBossHp <= 0) { setActionLocked(false); setStage("bossDefeat"); return; }
-    if (!phase2 && nextBossHp <= UNSW_MAX_HP * UNSW_STATS.phase2Threshold) { setActionLocked(false); setPhase2(true); setPhaseDialogueIndex(0); setStage("phase2"); return; }
+    if (!phase2 && nextBossHp <= UNSW_MAX_HP * UNSW_STATS.phase2Threshold) {
+      // Extension Request 已取消的 Presentation 不能跨阶段残留到 Phase 2。
+      if (id === "extension") {
+        presentationPreparingRef.current = false;
+        setPresentationPreparing(false);
+        setOrderShifted(false);
+      }
+      setActionLocked(false); setPhase2(true); setPhaseDialogueIndex(0); setStage("phase2"); return;
+    }
     if (skipBossTurn) {
       window.setTimeout(() => setOrderShifted(false), 500);
       setActionLocked(false);
@@ -257,11 +267,21 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     let damage = unswBossSkills[id].damage;
     let displayedSkillName = unswBossSkills[id].name;
     let statusText = `UNSW：${unswBossSkills[id].name} 对 Bianca 造成 ${damage} 点伤害。`;
+    const wasPresentationPreparing = presentationPreparingRef.current;
     if (id === "presentation") {
-      if (!presentationPreparing) { setPresentationPreparing(true); damage = 0; statusText = "UNSW：PRESENTATION 正在蓄力；可用 Extension Request 延期。"; }
-      else { damage = phase2 ? UNSW_SKILLS.presentation.phase2Damage : UNSW_SKILLS.presentation.damage; setPresentationPreparing(false); statusText = `UNSW：Presentation 正式开始，对 Bianca 造成 ${damage} 点伤害。没有讲稿，也没有退路。`; }
+      if (!wasPresentationPreparing) {
+        presentationPreparingRef.current = true;
+        setPresentationPreparing(true);
+        damage = 0;
+        statusText = "UNSW：PRESENTATION 正在蓄力；可用 Extension Request 延期。";
+      } else {
+        presentationPreparingRef.current = false;
+        damage = phase2 ? UNSW_SKILLS.presentation.phase2Damage : UNSW_SKILLS.presentation.damage;
+        setPresentationPreparing(false);
+        statusText = `UNSW：Presentation 正式开始，对 Bianca 造成 ${damage} 点伤害。没有讲稿，也没有退路。`;
+      }
     }
-    const addsPressure = id === "assignment" || id === "groupwork" || id === "rubric" || id === "finalExam" || (id === "presentation" && !presentationPreparing);
+    const addsPressure = id === "assignment" || id === "groupwork" || id === "rubric" || id === "finalExam" || (id === "presentation" && !wasPresentationPreparing);
     const currentPressureStacks = pressureStacksRef.current;
     // 一回合是一来一回：旧 Pressure 在本次 UNSW 行动结算一次，新施加的层数从下一轮才开始计时和扣血。
     const agedPressureStacks = currentPressureStacks.map((turns) => turns - 1).filter((turns) => turns > 0);
@@ -282,7 +302,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
       statusText = `UNSW：${displayedSkillName}，并造成 ${damage} 点伤害。\nBianca：你打架为什么还能收钱啊？！`;
     }
     if (id === "finalExam") statusText = `UNSW：${unswBossSkills[id].name} 对 Bianca 造成 ${damage} 点伤害，并${pressureResult}。期末周正式开始。`;
-    if (id === "presentation" && !presentationPreparing) statusText = `${statusText}\n同时${pressureResult}。`;
+    if (id === "presentation" && !wasPresentationPreparing) statusText = `${statusText}\n同时${pressureResult}。`;
     setStatus(statusText);
     setSkillNamePop(displayedSkillName);
     setCombatEffect({ key: Date.now(), type: id === "finalExam" ? "ultimate-hard" : "normal", target: "bianca" });
@@ -313,6 +333,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
 
   const resetBoss = () => {
     pressureStacksRef.current = [];
+    presentationPreparingRef.current = false;
     setRetryAssist(true);
     setStage("battle"); setBossHp(UNSW_RETRY_ASSIST.bossStartingHp); setHp(BIANCA_BOSS_MAX_HP); setEnergy(UNSW_RETRY_ASSIST.playerStartingEnergy); setTurn(0); setPressureStacks([]);
     setGroupProject(false); setPresentationPreparing(false); setExtensionCooldown(0); setConsiderationCooldown(0); setPhase2(true); setRubricUsed(false);
