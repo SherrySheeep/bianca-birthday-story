@@ -260,7 +260,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     {debugMode && stage === "battle" && <button className="unsw-debug-damage" onClick={() => setBossHp((value) => Math.max(0, value - 50))}>血量 -50</button>}
     <div className="unsw-hp"><i><em style={{ width: `${bossHp / UNSW_MAX_HP * 100}%` }} /></i><span>HP {bossHp}/{UNSW_MAX_HP}</span></div>
     <div className="unsw-nameplate"><b>UNSW</b><small>The University of New South Wales</small></div>
-    <div className={`bianca-battle unsw-bianca ${playerHitFx ? "is-hit" : ""}`}><img src={asset(actingSkill ? "BiancaBattle2.png" : "BiancaBattle1.png")} alt="战斗中的 Bianca" /><div><b>Bianca</b><i><em style={{ width: `${hp / BIANCA_BOSS_MAX_HP * 100}%` }} /></i><small>HP {hp}/{BIANCA_BOSS_MAX_HP}　能量 {energy}/{ENERGY_CONFIG.maxEnergy}</small></div></div>
+    <div className={`bianca-battle unsw-bianca ${playerHitFx ? "is-hit" : ""}`}><img src={asset(actingSkill ? "BiancaBattle2.png" : "BiancaBattle1.png")} alt="战斗中的 Bianca" />{pressure > 0 && <div className="unsw-pressure-indicator" title={`Deadline Pressure ×${pressure}`}><img src={asset("PressureIcon1.png")} alt="Deadline Pressure" /><b>×{pressure}</b></div>}<div><b>Bianca</b><i><em style={{ width: `${hp / BIANCA_BOSS_MAX_HP * 100}%` }} /></i><small>HP {hp}/{BIANCA_BOSS_MAX_HP}　能量 {energy}/{ENERGY_CONFIG.maxEnergy}</small></div></div>
     <BattleEffectLayer effect={combatEffect} />
     <FloatingCombatText items={combatTexts} />
     {battleDialogue && <BattleShout speaker={battleDialogue.speaker} text={battleDialogue.text} tag={battleDialogue.tag} />}
