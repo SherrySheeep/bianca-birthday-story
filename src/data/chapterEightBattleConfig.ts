@@ -99,7 +99,7 @@ export const UNSW_SKILLS = {
 
 export const UNIVERSITY_SKILLS = {
   // energyCost 是施放时先消耗的能量；命中后仍会获得 energyGain。
-  xlookup: { damage: 56, energyCost: 0, energyGain: 22 },
+  xlookup: { damage: 56, energyCost: 0, energyGain: 22, phase2EnergyGain: 32 },
   deadline: { damage: 82, energyCost: 8, energyGain: 0, selfDamage: 10 },
   extension: { damage: 30, energyCost: 10, energyGain: 0, actionDelay: 1, cooldown: 1 },
   groupChat: { damage: 35, energyCost: 12, energyGain: 0 },
@@ -112,7 +112,6 @@ export const UNSW_RETRY_ASSIST = {
   bossStartingHp: 310,
   playerStartingEnergy: 75,
   playerDamageMultiplier: 1.1,
-  gitPushEnergyGain: 30,
 } as const;
 
 // Phase 2 台词与无法击杀 UNSW 时的弹幕都集中在这里，之后可以直接增删文字。

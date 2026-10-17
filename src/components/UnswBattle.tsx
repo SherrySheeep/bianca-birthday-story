@@ -87,19 +87,19 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
   const actionOrder = pendingBossSkill ? ["UNSW", "Bianca"] : ["Bianca", "UNSW"];
   const visibleSkills = useMemo(() => universitySkills, []);
   const combatGuideEntries = useMemo(() => {
-    if (!retryAssist) return unswCombatGuideEntries;
+    if (!retryAssist && !phase2) return unswCombatGuideEntries;
     return unswCombatGuideEntries.map((entry) => entry.id !== "bianca-unsw" ? entry : ({
       ...entry,
       skills: entry.skills.map((skill) => ({
         ...skill,
         stats: skill.stats?.map((stat) => {
-          if (skill.name === "git push" && stat.label === "Energy Gain") return { ...stat, value: UNSW_RETRY_ASSIST.gitPushEnergyGain };
-          if (stat.label === "Damage") return { ...stat, value: Math.round(Number(stat.value) * UNSW_RETRY_ASSIST.playerDamageMultiplier) };
+          if (skill.name === "git push" && stat.label === "Energy Gain" && phase2) return { ...stat, value: UNIVERSITY_SKILLS.xlookup.phase2EnergyGain };
+          if (stat.label === "Damage" && retryAssist) return { ...stat, value: Math.round(Number(stat.value) * UNSW_RETRY_ASSIST.playerDamageMultiplier) };
           return stat;
         }),
       })),
     }));
-  }, [retryAssist]);
+  }, [phase2, retryAssist]);
   const graduationCanKill = bossHp <= UNIVERSITY_SKILLS.graduation.damage;
 
   useEffect(() => {
@@ -187,7 +187,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
         await wait(BATTLE_TIMING.dialogueLine);
       }
     }
-    const energyGain = retryAssist && id === "xlookup" ? UNSW_RETRY_ASSIST.gitPushEnergyGain : skill.energy;
+    const energyGain = phase2 && id === "xlookup" ? UNIVERSITY_SKILLS.xlookup.phase2EnergyGain : skill.energy;
     setEnergy((value) => id === "graduation" ? 0 : Math.min(ENERGY_CONFIG.maxEnergy, Math.max(0, value - energyCost) + energyGain));
     setExtensionCooldown((value) => id === "extension" ? UNIVERSITY_SKILLS.extension.cooldown : Math.max(0, value - 1));
     setConsiderationCooldown((value) => id === "consideration" ? UNIVERSITY_SKILLS.consideration.cooldown : Math.max(0, value - 1));
