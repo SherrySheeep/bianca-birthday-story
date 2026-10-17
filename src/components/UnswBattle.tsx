@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { BIANCA_BOSS_MAX_HP, UNSW_MAX_HP, universitySkills, unswBossSkills, type BossSkillId, type UniversitySkillId } from "../data/chapterEightBattleData";
-import { BATTLE_TIMING, ENERGY_CONFIG, UNSW_BATTLE_COPY, UNSW_SKILLS, UNSW_STATS, UNIVERSITY_SKILLS } from "../data/chapterEightBattleConfig";
+import { BATTLE_TIMING, ENERGY_CONFIG, UNSW_BATTLE_COPY, UNSW_RETRY_ASSIST, UNSW_SKILLS, UNSW_STATS, UNIVERSITY_SKILLS } from "../data/chapterEightBattleConfig";
 import { BattleEffectLayer, BattleShout, FloatingCombatText, type CombatEffect, type CombatText } from "./ChapterEightBattleEffects";
 import { CombatGuide } from "./CombatGuide";
 import { unswCombatGuideEntries } from "../data/chapterEightCombatGuide";
@@ -76,6 +76,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
   const [phaseDialogueIndex, setPhaseDialogueIndex] = useState(0);
   const [graduationDialogueIndex, setGraduationDialogueIndex] = useState(0);
   const [defeatDialogueIndex, setDefeatDialogueIndex] = useState(0);
+  const [retryAssist, setRetryAssist] = useState(false);
   const [isCombatGuideOpen, setIsCombatGuideOpen] = useState(false);
   const isBattlePaused = paused || isCombatGuideOpen;
   const wait = usePausableBattleWait(isBattlePaused);
@@ -85,6 +86,20 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
   const bossMood2 = pendingBossSkill || stage === "phase2" || stage === "bossDefeat";
   const actionOrder = pendingBossSkill ? ["UNSW", "Bianca"] : ["Bianca", "UNSW"];
   const visibleSkills = useMemo(() => universitySkills, []);
+  const combatGuideEntries = useMemo(() => {
+    if (!retryAssist) return unswCombatGuideEntries;
+    return unswCombatGuideEntries.map((entry) => entry.id !== "bianca-unsw" ? entry : ({
+      ...entry,
+      skills: entry.skills.map((skill) => ({
+        ...skill,
+        stats: skill.stats?.map((stat) => {
+          if (skill.name === "git push" && stat.label === "Energy Gain") return { ...stat, value: UNSW_RETRY_ASSIST.gitPushEnergyGain };
+          if (stat.label === "Damage") return { ...stat, value: Math.round(Number(stat.value) * UNSW_RETRY_ASSIST.playerDamageMultiplier) };
+          return stat;
+        }),
+      })),
+    }));
+  }, [retryAssist]);
   const graduationCanKill = bossHp <= UNIVERSITY_SKILLS.graduation.damage;
 
   useEffect(() => {
@@ -145,7 +160,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     if (id === "consideration" && considerationCooldown > 0) return;
     const skill = universitySkills.find((item) => item.id === id)!;
     const multiplier = groupProject && id !== "groupChat" ? UNSW_SKILLS.groupwork.playerDamageMultiplier : 1;
-    const rawDamage = Math.round(skill.damage * multiplier);
+    const rawDamage = Math.round(skill.damage * multiplier * (retryAssist ? UNSW_RETRY_ASSIST.playerDamageMultiplier : 1));
     const survivalTaunt = id !== "graduation" && rawDamage >= bossHp;
     const damage = survivalTaunt ? 0 : rawDamage;
     const nextBossHp = id === "graduation" ? 0 : Math.max(1, bossHp - damage);
@@ -172,7 +187,8 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
         await wait(BATTLE_TIMING.dialogueLine);
       }
     }
-    setEnergy((value) => id === "graduation" ? 0 : Math.min(ENERGY_CONFIG.maxEnergy, Math.max(0, value - energyCost) + skill.energy));
+    const energyGain = retryAssist && id === "xlookup" ? UNSW_RETRY_ASSIST.gitPushEnergyGain : skill.energy;
+    setEnergy((value) => id === "graduation" ? 0 : Math.min(ENERGY_CONFIG.maxEnergy, Math.max(0, value - energyCost) + energyGain));
     setExtensionCooldown((value) => id === "extension" ? UNIVERSITY_SKILLS.extension.cooldown : Math.max(0, value - 1));
     setConsiderationCooldown((value) => id === "consideration" ? UNIVERSITY_SKILLS.consideration.cooldown : Math.max(0, value - 1));
     setTurn(nextTurn);
@@ -218,7 +234,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
       if (!presentationPreparing) { setPresentationPreparing(true); damage = 0; statusText = "UNSW：PRESENTATION 正在蓄力；可用 Extension Request 延期。"; }
       else { damage = phase2 ? UNSW_SKILLS.presentation.phase2Damage : UNSW_SKILLS.presentation.damage; setPresentationPreparing(false); statusText = `UNSW：Presentation 正式开始，对 Bianca 造成 ${damage} 点伤害。没有讲稿，也没有退路。`; }
     }
-    const addsPressure = id === "assignment" || id === "groupwork" || id === "rubric" || id === "finalExam" || (id === "presentation" && damage > 0);
+    const addsPressure = id === "assignment" || id === "groupwork" || id === "rubric" || id === "finalExam" || (id === "presentation" && !presentationPreparing);
     const currentPressureStacks = pressureStacksRef.current;
     // 一回合是一来一回：旧 Pressure 在本次 UNSW 行动结算一次，新施加的层数从下一轮才开始计时和扣血。
     const agedPressureStacks = currentPressureStacks.map((turns) => turns - 1).filter((turns) => turns > 0);
@@ -239,7 +255,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
       statusText = `UNSW：${displayedSkillName}，并造成 ${damage} 点伤害。\nBianca：你打架为什么还能收钱啊？！`;
     }
     if (id === "finalExam") statusText = `UNSW：${unswBossSkills[id].name} 对 Bianca 造成 ${damage} 点伤害，并${pressureResult}。期末周正式开始。`;
-    if (id === "presentation" && damage > 0) statusText = `${statusText}\n同时${pressureResult}。`;
+    if (id === "presentation" && !presentationPreparing) statusText = `${statusText}\n同时${pressureResult}。`;
     setStatus(statusText);
     setSkillNamePop(displayedSkillName);
     setCombatEffect({ key: Date.now(), type: id === "finalExam" ? "ultimate-hard" : "normal", target: "bianca" });
@@ -270,8 +286,9 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
 
   const resetBoss = () => {
     pressureStacksRef.current = [];
-    setStage("battle"); setBossHp(UNSW_MAX_HP); setHp(BIANCA_BOSS_MAX_HP); setEnergy(0); setTurn(0); setPressureStacks([]);
-    setGroupProject(false); setPresentationPreparing(false); setExtensionCooldown(0); setConsiderationCooldown(0); setPhase2(false); setRubricUsed(false);
+    setRetryAssist(true);
+    setStage("battle"); setBossHp(UNSW_RETRY_ASSIST.bossStartingHp); setHp(BIANCA_BOSS_MAX_HP); setEnergy(UNSW_RETRY_ASSIST.playerStartingEnergy); setTurn(0); setPressureStacks([]);
+    setGroupProject(false); setPresentationPreparing(false); setExtensionCooldown(0); setConsiderationCooldown(0); setPhase2(true); setRubricUsed(false);
     setCourseFeeUsed(false); setPendingBossSkill(null); setStatus("UNSW 正在等待你的选择。");
     setOrderShifted(false); setUltimateAnnounced(false); setActionLocked(false); setActingSkill(false); setBossHit(false);
     setPlayerHitFx(false); setCombatTexts([]); setCombatEffect(null); setBattleDialogue(null); setSkillNamePop(null);
@@ -306,7 +323,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     <FloatingCombatText items={combatTexts} />
     {battleDialogue && <BattleShout speaker={battleDialogue.speaker} text={battleDialogue.text} tag={battleDialogue.tag} />}
     {skillNamePop && <strong className="unsw-skill-pop">{skillNamePop}</strong>}
-    <CombatGuide entries={unswCombatGuideEntries} open={isCombatGuideOpen} onOpenChange={setIsCombatGuideOpen} currentStats={{ "bianca-unsw": `HP ${hp}/${BIANCA_BOSS_MAX_HP} · 能量 ${energy}/${ENERGY_CONFIG.maxEnergy}`, unsw: `HP ${bossHp}/${UNSW_MAX_HP}` }} />
+    <CombatGuide entries={combatGuideEntries} open={isCombatGuideOpen} onOpenChange={setIsCombatGuideOpen} currentStats={{ "bianca-unsw": `HP ${hp}/${BIANCA_BOSS_MAX_HP} · 能量 ${energy}/${ENERGY_CONFIG.maxEnergy}`, unsw: `HP ${bossHp}/${UNSW_MAX_HP}` }} />
     {stage === "battle" && <><div className="battle-status-toast unsw-status">{status}</div><div className="battle-skills university-skills">{visibleSkills.map((skill) => {
       const cost = skill.id === "graduation" ? UNIVERSITY_SKILLS.graduation.energyCost : UNIVERSITY_SKILLS[skill.id].energyCost;
       const graduationHardLocked = skill.id === "graduation" && (!phase2 || energy < cost);

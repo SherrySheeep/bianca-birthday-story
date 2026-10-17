@@ -88,7 +88,7 @@ export const unswCombatGuideEntries: CombatGuideEntry[] = [
   {
     id: "bianca-unsw", name: "Bianca", icon: icon("BiancaIcon2.png"),
     skills: [
-      { name: "git push", description: "稳定的基础攻击技能，对 UNSW 造成直接伤害。", stats: [{ label: "Damage", value: UNIVERSITY_SKILLS.xlookup.damage }] },
+      { name: "git push", description: "稳定的基础攻击技能，对 UNSW 造成直接伤害并积蓄能量。", stats: [{ label: "Damage", value: UNIVERSITY_SKILLS.xlookup.damage }, { label: "Energy Gain", value: UNIVERSITY_SKILLS.xlookup.energyGain }] },
       { name: "Deadline Rush", description: "以赶 Deadline 的爆发力造成高额伤害，但 Bianca 自己也会受到一定反噬伤害。", stats: [{ label: "Damage", value: UNIVERSITY_SKILLS.deadline.damage }, { label: "Self Damage", value: UNIVERSITY_SKILLS.deadline.selfDamage }] },
       { name: "Extension Request", description: "延后 UNSW 的下一次行动；如果 Presentation 正在准备，会直接取消本次准备。", stats: [{ label: "Damage", value: UNIVERSITY_SKILLS.extension.damage }, { label: "Action Delay", value: UNIVERSITY_SKILLS.extension.actionDelay }, { label: "Cooldown", value: UNIVERSITY_SKILLS.extension.cooldown }] },
       { name: "Group Chat 99+", description: "清除 Groupwork 带来的输出降低效果，并对 UNSW 造成伤害。", stats: [{ label: "Damage", value: UNIVERSITY_SKILLS.groupChat.damage }] },
@@ -101,7 +101,7 @@ export const unswCombatGuideEntries: CombatGuideEntry[] = [
     skills: [
       { name: "Assignment", description: "造成基础伤害，并为 Bianca 施加 1 层 Pressure。", stats: [{ label: "Base Damage", value: UNSW_SKILLS.assignment.damage }] },
       { name: "Groupwork", description: "造成伤害、施加 1 层 Pressure 和 Groupwork，降低 Bianca 下一次攻击的输出。", stats: [{ label: "Damage", value: UNSW_SKILLS.groupwork.damage }, { label: "Player Damage Multiplier", value: UNSW_SKILLS.groupwork.playerDamageMultiplier }] },
-      { name: "Presentation", description: "高伤害技能。UNSW 会先准备 Presentation，下一次行动发动并施加 1 层 Pressure；可以被 Extension Request 取消准备。", stats: [{ label: "Normal Damage", value: UNSW_SKILLS.presentation.damage }, { label: "Phase 2 Damage", value: UNSW_SKILLS.presentation.phase2Damage }] },
+      { name: "Presentation", description: "UNSW 会先准备 Presentation 并施加一层 Pressure。下一次行动爆发出高额伤害。可以被 Extension Request 取消。", stats: [{ label: "Normal Damage", value: UNSW_SKILLS.presentation.damage }, { label: "Phase 2 Damage", value: UNSW_SKILLS.presentation.phase2Damage }] },
       { name: "Surprise Quiz", description: "快速发动的直接攻击。", stats: [{ label: "Damage", value: UNSW_SKILLS.quiz.damage }] },
       { name: "Rubric Updated", description: "改变当前战斗节奏，施加 1 层 Pressure，并削减 Bianca 的部分能量。", stats: [{ label: "Damage", value: UNSW_SKILLS.rubric.damage }, { label: "Energy Loss", value: UNSW_SKILLS.rubric.energyLoss }] },
       { name: "Final Exam", description: "UNSW 后半阶段的强力攻击，并为 Bianca 施加 1 层 Pressure。", stats: [{ label: "Damage", value: UNSW_SKILLS.finalExam.damage }] },
