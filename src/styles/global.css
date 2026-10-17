@@ -4988,10 +4988,10 @@ main {
   .unsw-nameplate { top: 39.5%; right: 1%; width: 57%; padding: 6px 8px; }
   .unsw-skill-pop { top: 31%; right: 7%; font-size: 1rem; }
   .unsw-debug-damage { top: 14%; left: 4%; padding: 5px 7px; font-size: .58rem; }
-  .unsw-debug-heal { top: 49%; left: 2%; padding: 5px 7px; font-size: .58rem; }
+  .unsw-debug-heal { top: 53%; left: 27%; padding: 5px 7px; font-size: .58rem; }
   .unsw-bianca { bottom: 27%; width: 49%; height: 26%; }
   .unsw-bianca > .unsw-pressure-indicator { left: 8%; bottom: -10%; }
-  .unsw-status { top: 330px; bottom: 150px; left: 77%; width: 45%; max-height: none; transform: translateX(-50%); padding: 8px 14px; border-radius: 16px; overflow: hidden; white-space: normal; overflow-wrap: anywhere; }
+  .unsw-status { top: 320px; bottom: 145px; left: 77%; width: 45%; max-height: none; transform: translateX(-50%); padding: 8px 14px; border-radius: 16px; overflow: hidden; white-space: normal; overflow-wrap: anywhere; }
   .university-skills { left: 7px; right: 7px; bottom: 7px; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
   .university-skills button { min-height: 66px; padding: 4px 2px; font-size: .61rem; }
   .university-skills small { font-size: .48rem; }

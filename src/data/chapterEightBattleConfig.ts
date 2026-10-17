@@ -87,10 +87,10 @@ export const UNSW_STATS = {
 export const UNSW_SKILLS = {
   assignment: { damage: 28 },
   groupwork: { damage: 15, playerDamageMultiplier: 0.7 },
-  presentation: { damage: 40, phase2Damage: 52 },
+  presentation: { damage: 40, phase2Damage: 47 },
   quiz: { damage: 19 },
   rubric: { damage: 12, energyLoss: 18 },
-  finalExam: { damage: 55 },
+  finalExam: { damage: 52 },
   // Course Fee 会在这个金额区间内随机收费，伤害为收费金额 × damageRate（向上取整）。
   courseFee: { minCharge: 1000, maxCharge: 2500, damageRate: 0.012 },
   // 一回合 = Bianca 行动一次 + UNSW 行动一次。新 Pressure 从下一轮开始结算，共持续 3 个完整回合。
@@ -100,10 +100,10 @@ export const UNSW_SKILLS = {
 export const UNIVERSITY_SKILLS = {
   // energyCost 是施放时先消耗的能量；命中后仍会获得 energyGain。
   xlookup: { damage: 56, energyCost: 0, energyGain: 22 },
-  deadline: { damage: 82, energyCost: 5, energyGain: 0, selfDamage: 10 },
-  extension: { damage: 30, energyCost: 8, energyGain: 0, actionDelay: 1, cooldown: 2 },
-  groupChat: { damage: 35, energyCost: 10, energyGain: 0 },
-  consideration: { damage: 0, energyCost: 12, energyGain: 0, heal: 65, cooldown: 3 },
+  deadline: { damage: 82, energyCost: 8, energyGain: 0, selfDamage: 10 },
+  extension: { damage: 30, energyCost: 10, energyGain: 0, actionDelay: 1, cooldown: 2 },
+  groupChat: { damage: 35, energyCost: 12, energyGain: 0 },
+  consideration: { damage: 0, energyCost: 20, energyGain: 0, heal: 85, cooldown: 2 },
   graduation: { damage: 200, energyCost: 100 },
 } as const;
 
