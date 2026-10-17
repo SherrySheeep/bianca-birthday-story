@@ -112,6 +112,7 @@ export const UNSW_RETRY_ASSIST = {
   bossStartingHp: 310,
   playerStartingEnergy: 75,
   playerDamageMultiplier: 1.1,
+  gitPushEnergyGain: 38,
 } as const;
 
 // Phase 2 台词与无法击杀 UNSW 时的弹幕都集中在这里，之后可以直接增删文字。
