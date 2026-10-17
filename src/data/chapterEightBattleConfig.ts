@@ -99,7 +99,7 @@ export const UNSW_SKILLS = {
 
 export const UNIVERSITY_SKILLS = {
   // energyCost 是施放时先消耗的能量；命中后仍会获得 energyGain。
-  xlookup: { damage: 56, energyCost: 0, energyGain: 22, phase2EnergyGain: 32 },
+  xlookup: { damage: 46, energyCost: 0, energyGain: 22, phase2EnergyGain: 32 },
   deadline: { damage: 82, phase2Damage: 90, energyCost: 8, energyGain: 0, selfDamage: 10 },
   extension: { damage: 30, phase2Damage: 40, energyCost: 10, energyGain: 0, actionDelay: 1, cooldown: 1 },
   groupChat: { damage: 35, phase2Damage: 45, energyCost: 8, energyGain: 0 },
