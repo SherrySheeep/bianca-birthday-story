@@ -50,6 +50,15 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
   const [storyIndex, setStoryIndex] = useState(0);
   const [bossHp, setBossHp] = useState<number>(startAtPhase2 ? Math.ceil(UNSW_MAX_HP / 2) : UNSW_MAX_HP);
   const [hp, setHp] = useState<number>(BIANCA_BOSS_MAX_HP);
+  // Enemy actions can run in the same async sequence as Bianca's heal/self-damage.
+  // Keep an authoritative ref so they never calculate from a stale render snapshot.
+  const hpRef = useRef<number>(BIANCA_BOSS_MAX_HP);
+  const commitHp = (next: number | ((current: number) => number)) => {
+    const value = typeof next === "function" ? next(hpRef.current) : next;
+    hpRef.current = value;
+    setHp(value);
+    return value;
+  };
   const [energy, setEnergy] = useState<number>(0);
   const [turn, setTurn] = useState(0);
   const [pressureStacks, setPressureStacks] = useState<number[]>([]);
@@ -237,7 +246,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     setTurn(nextTurn);
 
     if (id === "deadline") {
-      setHp((value) => Math.max(1, value - UNIVERSITY_SKILLS.deadline.selfDamage));
+      commitHp((value) => Math.max(1, value - UNIVERSITY_SKILLS.deadline.selfDamage));
       setStatus(`Bianca：Deadline Rush 命中 UNSW；自己燃烧 ${UNIVERSITY_SKILLS.deadline.selfDamage} HP，换来赶 due 的爆发力。`);
     } else if (id === "extension") {
       setOrderShifted(true);
@@ -253,7 +262,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
       setStatus(groupworkTurns > 0 ? "Bianca：Group Chat 99+ 清除了小组作业 debuff。" : "Bianca：群聊刷了 99 条，但暂时没有需要处理的小组作业。");
     } else if (id === "consideration") {
       const healAmount = phase2 ? UNIVERSITY_SKILLS.consideration.phase2Heal : UNIVERSITY_SKILLS.consideration.heal;
-      setHp((value) => Math.min(BIANCA_BOSS_MAX_HP, value + healAmount));
+      commitHp((value) => Math.min(BIANCA_BOSS_MAX_HP, value + healAmount));
       pressureStacksRef.current = [];
       setPressureStacks([]);
       setStatus(`Bianca：Special Consideration 恢复 ${healAmount} HP，并清除了 Deadline Pressure。`);
@@ -336,12 +345,12 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     setSkillNamePop(displayedSkillName);
     setCombatEffect({ key: Date.now(), type: id === "finalExam" ? "ultimate-hard" : "normal", target: "bianca" });
     await wait(BATTLE_TIMING.projectile);
-    let nextHp = Math.max(0, hp - damage);
+    let nextHp = Math.max(0, hpRef.current - damage);
     if (damage) {
       setCombatTexts([{ id: `${Date.now()}-unsw-player`, target: "bianca", value: damage, kind: "hp" }]);
       setPlayerHitFx(true);
     }
-    setHp(nextHp);
+    commitHp(nextHp);
     await wait(BATTLE_TIMING.hit);
     if (nextHp > 0 && currentPressureStacks.length > 0) {
       const pressureDamage = currentPressureStacks.length * UNSW_SKILLS.pressure.damagePerStack;
@@ -351,7 +360,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
       setPlayerHitFx(false);
       await wait(40);
       setPlayerHitFx(true);
-      setHp(nextHp);
+      commitHp(nextHp);
       await wait(BATTLE_TIMING.hit);
     }
     pressureStacksRef.current = nextPressureStacks;
@@ -366,7 +375,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     presentationCancelledRef.current = false;
     suppressNextPresentationRef.current = false;
     setRetryAssist(true);
-    setStage("battle"); setBossHp(UNSW_RETRY_ASSIST.bossStartingHp); setHp(BIANCA_BOSS_MAX_HP); setEnergy(UNSW_RETRY_ASSIST.playerStartingEnergy); setTurn(0); setPressureStacks([]);
+    setStage("battle"); setBossHp(UNSW_RETRY_ASSIST.bossStartingHp); commitHp(BIANCA_BOSS_MAX_HP); setEnergy(UNSW_RETRY_ASSIST.playerStartingEnergy); setTurn(0); setPressureStacks([]);
     setGroupworkTurns(0); setPresentationPreparing(false); setExtensionCooldown(0); setConsiderationCooldown(0); setPhase2(true); setRubricUsed(false);
     setCourseFeeUsed(false); setPendingBossSkill(null); setStatus("UNSW 正在等待你的选择。");
     setOrderShifted(false); setUltimateAnnounced(false); setActionLocked(false); setActingSkill(false); setBossHit(false);
@@ -404,7 +413,7 @@ export function UnswBattle({ paused = false, debugMode = false, startAtPhase2 = 
     <div className={`battle-order ${orderShifted ? "is-delayed" : ""}`}><b>行动顺序</b>{actionOrder.map((name, index) => <div className={`order-avatar ${index === 0 ? "active" : ""}`} key={name}><img src={name === "Bianca" ? asset("BiancaIcon.png") : bossAsset("UNSWIcon1.png")} alt={name} /><span>{name === "Bianca" ? "B" : "U"}</span></div>)}</div>
     <div className={`unsw-boss ${bossHit ? "is-hit" : ""}`}><img src={bossMood2 ? bossAsset("UNSW2.png") : bossAsset("UNSW1.png")} alt="UNSW" onError={(event) => { event.currentTarget.hidden = true; }} /></div>
     {debugMode && stage === "battle" && <button className="unsw-debug-damage" onClick={() => setBossHp((value) => Math.max(0, value - 50))}>血量 -50</button>}
-    {debugMode && stage === "battle" && <button className="unsw-debug-heal" onClick={() => setHp((value) => Math.min(BIANCA_BOSS_MAX_HP, value + 20))}>血量 +20</button>}
+    {debugMode && stage === "battle" && <button className="unsw-debug-heal" onClick={() => commitHp((value) => Math.min(BIANCA_BOSS_MAX_HP, value + 20))}>血量 +20</button>}
     <div className="unsw-hp"><i><em style={{ width: `${bossHp / UNSW_MAX_HP * 100}%` }} /></i><span>HP {bossHp}/{UNSW_MAX_HP}</span></div>
     <div className="unsw-nameplate"><b>UNSW</b><small>The University of New South Wales</small></div>
     <div className={`bianca-battle unsw-bianca ${playerHitFx ? "is-hit" : ""}`}><img src={asset(actingSkill ? "BiancaBattle2.png" : "BiancaBattle1.png")} alt="战斗中的 Bianca" />{pressureStacks.length > 0 && <div className="unsw-pressure-indicator" title={`Deadline Pressure：${pressureStacks.length} 层`}>{pressureStacks.map((_, index) => <img key={index} src={asset("PressureIcon1.png")} alt="Deadline Pressure" />)}</div>}<div><b>Bianca</b><i><em style={{ width: `${hp / BIANCA_BOSS_MAX_HP * 100}%` }} /></i><small>HP {hp}/{BIANCA_BOSS_MAX_HP}　能量 {energy}/{ENERGY_CONFIG.maxEnergy}</small></div></div>
